@@ -19,8 +19,8 @@
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 PCF8574 pcf20(0x20);
 
-#define NUMBER_OF_STRING 4
-#define MAX_STRING_SIZE 40
+#define NUMBER_OF_OPTIONS 20
+#define MAX_STRING_SIZE 20
 
 #define BUTTON_DOWN 0
 #define BUTTON_LEFT 2
@@ -29,22 +29,41 @@ PCF8574 pcf20(0x20);
 #define BUTTON_ENTER 4
 #define IS_PRESSED(BUTTONS, BUTTON) (((BUTTONS) & (1<<(BUTTON))) == (1<<(BUTTON)))
 
-char mainMenuText[NUMBER_OF_STRING][MAX_STRING_SIZE] = 
+unsigned char menuPosition = 0;
+
+char menuTreeText[NUMBER_OF_OPTIONS][MAX_STRING_SIZE] = 
 {
+  //Main Menu
   "Program",
   "Card",
   "Setup",
-  "Start"
-};
+  "Start",
 
-char editMenuText[NUMBER_OF_STRING][MAX_STRING_SIZE] = 
-{
+  //Program
   "Edit",
   "Clear Prg",
   "Password",
-  "Msg Config"
-};
+  "Msg Config",
 
+  //Card
+  "Card1",
+  "Card2",
+  "Card3",
+  "Card4",
+
+  //Setup
+  "Setup1",
+  "Setup2",
+  "Setup3",
+  "Setup4",
+
+  //Clock
+  "Start1",
+  "Start2",
+  "Start3",
+  "Start4"
+  
+};
 
 unsigned char getButtons(){
   while(true){
@@ -62,32 +81,29 @@ unsigned char getButtons(){
   return 0x0;
 }
 
-unsigned int drawMenu(char menu[][MAX_STRING_SIZE]){
+unsigned int enterMenu(int fromPos){
   display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE); 
-  int menuPosition = 0;
+  int pos = fromPos;
+  int toPos = fromPos + 4;
   unsigned char prevButtons = 0, newButtons = 0;
   
   while(true){
     display.clearDisplay();
     
-    //if(prevButtons != newButtons){
-      //prevButtons = newButtons;
-      if(IS_PRESSED(newButtons, BUTTON_ENTER)) return menuPosition;
-      if(IS_PRESSED(newButtons, BUTTON_LEFT)) return -1;
-      if(menuPosition>0 && IS_PRESSED(newButtons, BUTTON_UP)) menuPosition--;
-      if(menuPosition<NUMBER_OF_STRING-1 && IS_PRESSED(newButtons, BUTTON_DOWN)) menuPosition++;
-    //}
-
-    for(int i=0; i<NUMBER_OF_STRING; i++){
-        if(menuPosition == i){
+    if(IS_PRESSED(newButtons, BUTTON_ENTER)) return pos;
+    if(IS_PRESSED(newButtons, BUTTON_LEFT)) return -1;
+    if(pos>fromPos && IS_PRESSED(newButtons, BUTTON_UP)) pos--;
+    if(pos<toPos-1 && IS_PRESSED(newButtons, BUTTON_DOWN)) pos++;
+    for(int i=fromPos, j=0; i<toPos; i++, j++){
+        if(pos == i){
           display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); 
         }
   
-        display.setCursor(0,i*8);
-        display.println(menu[i]);
+        display.setCursor(0,j*8);
+        display.println(menuTreeText[i]);
         
-        if(menuPosition == i){
+        if(pos == i){
           display.setTextColor(SSD1306_WHITE); 
         }
       }
@@ -124,29 +140,27 @@ void setup() {
   delay(2000);
 }
 
+void enterCurrentOption(int newMenuPosition){
+  menuPosition = (newMenuPosition + 1) * 4;
+}
+
+void exitCurrentMenu(){
+  int modulo = menuPosition % 4;
+  menuPosition = (menuPosition) / 4 - modulo;
+}
+
 void loop() {
 
-  //Serial.println(F("waiting..."));
-  int selectedMainMenuOption = drawMenu(mainMenuText);
-  switch(selectedMainMenuOption){
-    //case -1:break;
-    case 0: {
-      
-      int selectedEditMenuOption = drawMenu(editMenuText);
-      switch(selectedEditMenuOption){
-        case -1:break;
-        case 0:break;
-        case 1:break;
-        case 2:break;
-        case 3:break;
-        default: break;
-      }
-      break;
-    }
-    case 1: break;
-    case 2: break;
-    case 3: break;
+  int newMenuPosition = enterMenu(menuPosition);
+
+  switch(newMenuPosition){
+    case -1: exitCurrentMenu(); break;
+    case 0: enterCurrentOption(newMenuPosition); break;
+    case 1: enterCurrentOption(newMenuPosition); break;
+    case 2: enterCurrentOption(newMenuPosition); break;
+    case 3: enterCurrentOption(newMenuPosition); break;
     default:break;
   }
+Serial.println(menuPosition);
   
 }

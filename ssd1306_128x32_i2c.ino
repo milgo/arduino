@@ -29,8 +29,8 @@ PCF8574 pcf20(0x20);
 #define BUTTON_ENTER 4
 #define IS_PRESSED(BUTTONS, BUTTON) (((BUTTONS) & (1<<(BUTTON))) == (1<<(BUTTON)))
 
-unsigned char menuPosition = 0;
-
+int menuPosition = 0;
+int selectedPosition = 0;
 char menuTreeText[NUMBER_OF_OPTIONS][MAX_STRING_SIZE] = 
 {
   //Main Menu
@@ -81,10 +81,10 @@ unsigned char getButtons(){
   return 0x0;
 }
 
-unsigned int enterMenu(int fromPos){
+unsigned int enterMenu(int fromPos, int selectedPos){
   display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE); 
-  int pos = fromPos;
+  int pos = selectedPos;
   int toPos = fromPos + 4;
   unsigned char prevButtons = 0, newButtons = 0;
   
@@ -142,25 +142,34 @@ void setup() {
 
 void enterCurrentOption(int newMenuPosition){
   menuPosition = (newMenuPosition + 1) * 4;
+  selectedPosition = menuPosition;
+  Serial.println(menuPosition);
 }
 
-void exitCurrentMenu(){
+void exitCurrentMenu(int currentMenuPos){
+  
+  menuPosition = (currentMenuPos) / 4 - 1;// / 4 - modulo;
   int modulo = menuPosition % 4;
-  menuPosition = (menuPosition) / 4 - modulo;
+  menuPosition -= modulo;
+  if(menuPosition<0)menuPosition=0;
+  if(modulo<0)modulo=0;
+  selectedPosition = menuPosition + modulo;
+  //menuPosition = menuPosition * 4;
+  Serial.println(modulo);
 }
 
 void loop() {
 
-  int newMenuPosition = enterMenu(menuPosition);
+  int newMenuPosition = enterMenu(menuPosition, selectedPosition);
 
   switch(newMenuPosition){
-    case -1: exitCurrentMenu(); break;
+    case -1: exitCurrentMenu(menuPosition); break;
     case 0: enterCurrentOption(newMenuPosition); break;
     case 1: enterCurrentOption(newMenuPosition); break;
     case 2: enterCurrentOption(newMenuPosition); break;
     case 3: enterCurrentOption(newMenuPosition); break;
     default:break;
   }
-Serial.println(menuPosition);
+
   
 }

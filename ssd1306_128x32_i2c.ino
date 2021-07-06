@@ -31,6 +31,39 @@ PCF8574 pcf20(0x20);
 
 int menuPosition = 0;
 int selectedPosition = 0;
+
+#define IO_TYPE_BYTE 0
+#define IO_TYPE_INT 1
+
+#define IO_NONE -1
+#define IO_KIND_FUNC 0
+#define IO_KIND_MEM_ADDR 1
+#define IO_KIND_IN 2
+#define IO_KIND_OUT 3
+#define IO_KIND_CONST 4
+
+#define MAX_PROG_LEN 16
+#define MAX_DATA_LEN 16
+
+struct IO{
+  char type;
+  char kind;
+  char index;
+  char neg;
+  int value;
+};
+
+struct FUNC{
+  IO io[8];
+  uint8_t in_len;
+  uint8_t out_len;
+  char symbol;
+  int ret;
+};
+
+FUNC func[MAX_PROG_LEN];
+IO data[MAX_DATA_LEN];
+
 char menuTreeText[NUMBER_OF_OPTIONS][MAX_STRING_SIZE] = 
 {
   //Main Menu
@@ -114,6 +147,11 @@ unsigned int enterMenu(int fromPos, int selectedPos){
   }
 }
 
+void setupFunctions(){
+  func[0].symbol = '&';
+  
+}
+
 void setup() {
   Serial.begin(9600);
 
@@ -134,12 +172,162 @@ void setup() {
   // Draw a single pixel in white
   //display.drawPixel(10, 10, SSD1306_WHITE);
 
+  setupFunctions();
+
   // Show the display buffer on the screen. You MUST call display() after
   // drawing commands to make them visible on screen!
   display.display();
+  drawFunctionBlock(func[0]);
   delay(2000);
 }
 
+void drawFunctionBlock(FUNC f){
+
+  int pos = 0;
+  unsigned char prevButtons = 0, newButtons = 0;
+  char row=0, col=0;
+
+  while(true){
+
+    if(IS_PRESSED(newButtons, BUTTON_RIGHT) && col<4) col++;
+    if(IS_PRESSED(newButtons, BUTTON_LEFT) && col>0) col--;
+    if(IS_PRESSED(newButtons, BUTTON_DOWN) && row<3) row++;
+    if(IS_PRESSED(newButtons, BUTTON_UP) && row>0) row--;
+    
+    display.clearDisplay();
+    display.setTextSize(1);      // Normal 1:1 pixel scale
+    display.setTextColor(SSD1306_WHITE); // Draw white text
+    
+    display.cp437(true);  
+    display.setCursor(47, 0); 
+    //display.write((uint8_t)1);
+    display.write((uint8_t)4);
+    display.write((uint8_t)4);
+    display.write((uint8_t)4);
+    display.write((uint8_t)4);
+    display.write((uint8_t)4);
+    display.write((uint8_t)4);
+    //display.write((uint8_t)7);
+    
+    /*display.setCursor(42, 8); 
+    //display.write((uint8_t)2);
+    display.write((uint8_t)0);
+    display.write((uint8_t)0);
+    display.write((uint8_t)0);
+    display.write((uint8_t)0);
+    display.write((uint8_t)0);
+    display.write((uint8_t)0);
+    //display.write((uint8_t)8);  
+    
+    display.setCursor(42, 16); 
+    //display.write((uint8_t)1);
+    display.write((uint8_t)0);
+    display.write((uint8_t)0);
+    display.write((uint8_t)0);
+    display.write((uint8_t)0);
+    display.write((uint8_t)0);
+    display.write((uint8_t)0);
+    //display.write((uint8_t)7);*/
+
+    display.setCursor(47, 24); 
+    //display.write((uint8_t)2);
+    display.write((uint8_t)5);
+    display.write((uint8_t)5);
+    display.write((uint8_t)5);
+    display.write((uint8_t)5);
+    display.write((uint8_t)5);
+    display.write((uint8_t)5);
+    //display.write((uint8_t)8);
+
+    //inputs
+    for(int i=0; i<4; i++){
+      if(col == 0 && row == i){
+        display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); 
+      }
+      display.setCursor(0, i*8);
+      display.write("...");
+      if(col == 0 && row == i){
+          display.setTextColor(SSD1306_WHITE); 
+      }
+    }
+
+    //input negations
+    for(int i=0; i<4; i++){
+      if(col == 1 && row == i){
+        display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); 
+      }
+      display.setCursor(42, i*8);
+      display.write((uint8_t)2);//negation?
+      if(col == 1 && row == i){
+          display.setTextColor(SSD1306_WHITE); 
+      }
+    }    
+
+    //symbol
+    if(col == 2){
+        display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); 
+    }
+
+    display.setCursor(64, 12); 
+    display.write(f.symbol);
+
+    if(col == 2){
+          display.setTextColor(SSD1306_WHITE); 
+      }
+
+    //outputs
+    for(int i=0; i<4; i++){
+
+      if(col == 4 && row == i){
+        display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); 
+      }
+          
+      display.setCursor(108, i*8);
+      display.write("...");
+
+      if(col == 4 && row == i){
+          display.setTextColor(SSD1306_WHITE); 
+      }
+    }
+
+    //output negations
+    for(int i=0; i<4; i++){
+      if(col == 3 && row == i){
+        display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); 
+      }
+      display.setCursor(82, i*8);
+      display.write((uint8_t)7);//negation?
+      if(col == 3 && row == i){
+          display.setTextColor(SSD1306_WHITE); 
+      }
+    }  
+    
+    display.display();
+    newButtons = getButtons();
+    delay(200);
+  }
+
+  
+}
+
+void testdrawchar(void) {
+  display.clearDisplay();
+
+  display.setTextSize(1);      // Normal 1:1 pixel scale
+  display.setTextColor(SSD1306_WHITE); // Draw white text
+  display.setCursor(0, 0);     // Start at top-left corner
+  display.cp437(true);         // Use full 256 char 'Code Page 437' font
+
+  // Not all the characters will fit on the display. This is normal.
+  // Library will draw what it can and the rest will be clipped.
+  for(int16_t i=0; i<256; i++) {
+    if(i == '\n') display.write(' ');
+    else          display.write(i);
+  }
+
+  display.display();
+  delay(20000);
+}
 void enterCurrentOption(int newMenuPosition){
   menuPosition = (newMenuPosition + 1) * 4;
   selectedPosition = menuPosition;
@@ -170,6 +358,4 @@ void loop() {
     case 3: enterCurrentOption(newMenuPosition); break;
     default:break;
   }
-
-  
 }

@@ -19,8 +19,11 @@
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 PCF8574 pcf20(0x20);
 
-#define NUMBER_OF_OPTIONS 20
+#define NUMBER_OF_OPTIONS 4
 #define MAX_STRING_SIZE 20
+
+#define FUNC_BIT_POS 40
+#define FUNC_PARAM_MASK 0xFFFFFFFFFFULL
 
 #define BUTTON_DOWN 0
 #define BUTTON_LEFT 2
@@ -32,71 +35,45 @@ PCF8574 pcf20(0x20);
 int menuPosition = 0;
 int selectedPosition = 0;
 
-#define IO_TYPE_BYTE 0
-#define IO_TYPE_INT 1
+#define MAX_PROG_LEN 9
+//#define MAX_DATA_LEN 16
 
-#define IO_NONE -1
-#define IO_KIND_FUNC 0
-#define IO_KIND_MEM_ADDR 1
-#define IO_KIND_IN 2
-#define IO_KIND_OUT 3
-#define IO_KIND_CONST 4
+#define A 1ULL
+#define O 2ULL
+#define ASGN 3ULL
 
-#define MAX_PROG_LEN 16
-#define MAX_DATA_LEN 16
+#define Q0 1ULL
+#define M0 2ULL
+#define M1 3ULL
 
-struct IO{
-  char type;
-  char kind;
-  char index;
-  char neg;
-  int value;
+#define s_stll(a1, a2, a3) ((a1<<40ULL) | ((a2) << (32ULL)) | (a3))
+
+uint64_t program[] = {
+    s_stll(A, M0, 0),
+    s_stll(A, M1, 0),
+    s_stll(ASGN, M1, 1),
+    s_stll(A, M0, 2),
+    s_stll(A, M1, 4),
+    s_stll(ASGN, M1, 1),
+    s_stll(O, M0, 2),
+    s_stll(O, M1, 4),
+    s_stll(ASGN, M1, 1)
 };
-
-struct FUNC{
-  IO io[8];
-  uint8_t in_len;
-  uint8_t out_len;
-  char symbol;
-  int ret;
-};
-
-FUNC func[MAX_PROG_LEN];
-IO data[MAX_DATA_LEN];
 
 char menuTreeText[NUMBER_OF_OPTIONS][MAX_STRING_SIZE] = 
 {
   //Main Menu
-  "Program",
-  "Card",
-  "Setup",
-  "Start",
-
-  //Program
+  "Run",
   "Edit",
-  "Clear Prg",
-  "Password",
-  "Msg Config",
-
-  //Card
-  "Card1",
-  "Card2",
-  "Card3",
-  "Card4",
-
-  //Setup
-  "Setup1",
-  "Setup2",
-  "Setup3",
-  "Setup4",
-
-  //Clock
-  "Start1",
-  "Start2",
-  "Start3",
-  "Start4"
-  
+  "Clear",
+  "Setup",
 };
+
+const char* comStr[] = {"xxx", "A  ", "O  ", "=  "};
+const byte comCodes[] = {0x0, 0x1, 0x2, 0x3, 0x4};
+
+const char* memStr[] = {"xx", "Q0", "M0", "M1"};
+const byte memCodes[] = {0x0, 0x1, 0x2, 0x3};
 
 unsigned char getButtons(){
   while(true){
@@ -147,11 +124,6 @@ unsigned int enterMenu(int fromPos, int selectedPos){
   }
 }
 
-void setupFunctions(){
-  func[0].symbol = '&';
-  
-}
-
 void setup() {
   Serial.begin(9600);
 
@@ -172,142 +144,13 @@ void setup() {
   // Draw a single pixel in white
   //display.drawPixel(10, 10, SSD1306_WHITE);
 
-  setupFunctions();
+  //setupFunctions();
 
   // Show the display buffer on the screen. You MUST call display() after
   // drawing commands to make them visible on screen!
   display.display();
-  drawFunctionBlock(func[0]);
+  //drawFunctionBlock(func[0]);
   delay(2000);
-}
-
-void drawFunctionBlock(FUNC f){
-
-  int pos = 0;
-  unsigned char prevButtons = 0, newButtons = 0;
-  char row=0, col=0;
-
-  while(true){
-
-    if(IS_PRESSED(newButtons, BUTTON_RIGHT) && col<4) col++;
-    if(IS_PRESSED(newButtons, BUTTON_LEFT) && col>0) col--;
-    if(IS_PRESSED(newButtons, BUTTON_DOWN) && row<3) row++;
-    if(IS_PRESSED(newButtons, BUTTON_UP) && row>0) row--;
-    
-    display.clearDisplay();
-    display.setTextSize(1);      // Normal 1:1 pixel scale
-    display.setTextColor(SSD1306_WHITE); // Draw white text
-    
-    display.cp437(true);  
-    display.setCursor(47, 0); 
-    //display.write((uint8_t)1);
-    display.write((uint8_t)4);
-    display.write((uint8_t)4);
-    display.write((uint8_t)4);
-    display.write((uint8_t)4);
-    display.write((uint8_t)4);
-    display.write((uint8_t)4);
-    //display.write((uint8_t)7);
-    
-    /*display.setCursor(42, 8); 
-    //display.write((uint8_t)2);
-    display.write((uint8_t)0);
-    display.write((uint8_t)0);
-    display.write((uint8_t)0);
-    display.write((uint8_t)0);
-    display.write((uint8_t)0);
-    display.write((uint8_t)0);
-    //display.write((uint8_t)8);  
-    
-    display.setCursor(42, 16); 
-    //display.write((uint8_t)1);
-    display.write((uint8_t)0);
-    display.write((uint8_t)0);
-    display.write((uint8_t)0);
-    display.write((uint8_t)0);
-    display.write((uint8_t)0);
-    display.write((uint8_t)0);
-    //display.write((uint8_t)7);*/
-
-    display.setCursor(47, 24); 
-    //display.write((uint8_t)2);
-    display.write((uint8_t)5);
-    display.write((uint8_t)5);
-    display.write((uint8_t)5);
-    display.write((uint8_t)5);
-    display.write((uint8_t)5);
-    display.write((uint8_t)5);
-    //display.write((uint8_t)8);
-
-    //inputs
-    for(int i=0; i<4; i++){
-      if(col == 0 && row == i){
-        display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); 
-      }
-      display.setCursor(0, i*8);
-      display.write("...");
-      if(col == 0 && row == i){
-          display.setTextColor(SSD1306_WHITE); 
-      }
-    }
-
-    //input negations
-    for(int i=0; i<4; i++){
-      if(col == 1 && row == i){
-        display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); 
-      }
-      display.setCursor(42, i*8);
-      display.write((uint8_t)2);//negation?
-      if(col == 1 && row == i){
-          display.setTextColor(SSD1306_WHITE); 
-      }
-    }    
-
-    //symbol
-    if(col == 2){
-        display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); 
-    }
-
-    display.setCursor(64, 12); 
-    display.write(f.symbol);
-
-    if(col == 2){
-          display.setTextColor(SSD1306_WHITE); 
-      }
-
-    //outputs
-    for(int i=0; i<4; i++){
-
-      if(col == 4 && row == i){
-        display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); 
-      }
-          
-      display.setCursor(108, i*8);
-      display.write("...");
-
-      if(col == 4 && row == i){
-          display.setTextColor(SSD1306_WHITE); 
-      }
-    }
-
-    //output negations
-    for(int i=0; i<4; i++){
-      if(col == 3 && row == i){
-        display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); 
-      }
-      display.setCursor(82, i*8);
-      display.write((uint8_t)7);//negation?
-      if(col == 3 && row == i){
-          display.setTextColor(SSD1306_WHITE); 
-      }
-    }  
-    
-    display.display();
-    newButtons = getButtons();
-    delay(200);
-  }
-
-  
 }
 
 void testdrawchar(void) {
@@ -346,6 +189,33 @@ void exitCurrentMenu(int currentMenuPos){
   Serial.println(modulo);
 }
 
+void editProgram(){
+  int pl = 0; int j=0;
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE); 
+  
+  while(true){
+    display.clearDisplay();
+    for(int i=pl; i<pl+4; i++){
+      display.setCursor(0, (i-pl)*8);
+      uint8_t func_id = program[i] >> FUNC_BIT_POS;
+      uint64_t param = program[i] & FUNC_PARAM_MASK;
+      int mem_pos = param >> 32;
+      int bit_pos = param & 0x7;
+
+      display.print(i);display.print(": ");
+      display.print(comStr[func_id]);display.print(" ");
+      display.print(memStr[mem_pos]);display.print(" ");
+      display.print(bit_pos);
+      //display.print("x");
+    }
+    display.display();
+    delay(2000);
+    pl++;
+    if(pl>5)pl=0;
+  }
+}
+
 void loop() {
 
   int newMenuPosition = enterMenu(menuPosition, selectedPosition);
@@ -353,7 +223,7 @@ void loop() {
   switch(newMenuPosition){
     case -1: exitCurrentMenu(menuPosition); break;
     case 0: enterCurrentOption(newMenuPosition); break;
-    case 1: enterCurrentOption(newMenuPosition); break;
+    case 1: editProgram(); break;
     case 2: enterCurrentOption(newMenuPosition); break;
     case 3: enterCurrentOption(newMenuPosition); break;
     default:break;

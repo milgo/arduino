@@ -69,10 +69,10 @@ char menuTreeText[NUMBER_OF_OPTIONS][MAX_STRING_SIZE] =
   "Setup",
 };
 
-const char* comStr[] = {"xxx", "A  ", "O  ", "=  "};
+const char* comStr[] = {"   ", "A  ", "O  ", "=  "};
 const byte comCodes[] = {0x0, 0x1, 0x2, 0x3, 0x4};
 
-const char* memStr[] = {"xx", "Q0", "M0", "M1"};
+const char* memStr[] = {"  ", "Q0", "M0", "M1"};
 const byte memCodes[] = {0x0, 0x1, 0x2, 0x3};
 
 unsigned char getButtons(){
@@ -96,7 +96,7 @@ unsigned int enterMenu(int fromPos, int selectedPos){
   display.setTextColor(SSD1306_WHITE); 
   int pos = selectedPos;
   int toPos = fromPos + 4;
-  unsigned char prevButtons = 0, newButtons = 0;
+  unsigned char newButtons = 0;
   
   while(true){
     display.clearDisplay();
@@ -189,10 +189,92 @@ void exitCurrentMenu(int currentMenuPos){
   Serial.println(modulo);
 }
 
+void selectCommand(){
+  
+}
+
+void selectMemmory(){
+  
+}
+
+long int enterValue(long int curVal){
+  unsigned char newButtons = 0;
+  long int retVal = 0;
+  byte v[10];
+
+  //get sign
+  if(curVal>0L){
+    v[0]=0;
+  }else{
+    v[0]=1;
+    curVal*=-1;
+  }
+
+  //convert to array
+  long int tmp = curVal;
+  for(int j=9;j>0;j--){
+    v[j]=tmp%10;
+    tmp/=10;
+  }
+
+  //edit
+  int pos = 0;
+  int maxVal = 1;
+  while(true){
+    display.clearDisplay();
+    display.setCursor(0, 0);
+    display.println("Enter value:");
+    if(pos>0 && IS_PRESSED(newButtons, BUTTON_LEFT)) pos--;
+    if(pos<maxVal && IS_PRESSED(newButtons, BUTTON_RIGHT)) pos++;
+
+    if(pos>0)maxVal = 9;
+    else maxVal = 1;
+
+    if(IS_PRESSED(newButtons, BUTTON_UP)){ if(v[pos]<maxVal)v[pos]++; }
+    if(IS_PRESSED(newButtons, BUTTON_DOWN)){ if(v[pos]>0)v[pos]--; }
+    if(IS_PRESSED(newButtons, BUTTON_ENTER)){ break; }
+    
+    for(int i=0; i<10; i++){
+      
+      if(pos==i){
+        display.setCursor(i*6, 16);//display.print("[");
+        display.print("^ ");
+        //display.print("]");
+      }
+
+      display.setCursor(i*6, 8);
+      if(i==0){
+        if(v[0]==0)display.print("+");
+        else display.print("-");
+      }else{
+        display.print(v[i]);
+      }
+    }
+
+    display.display();
+    newButtons = getButtons();
+    delay(100);
+  }
+
+  //convert from array
+  for(int j=1;j<10;j++){
+    retVal *= 10;
+    retVal += v[j];
+  }
+
+  //set sign
+  if(v[0]>0)retVal*=-1;
+
+  //Serial.print("retVal=");
+  //Serial.println(retVal);
+
+  return retVal;
+}
+
 void editProgram(){
   int pl = 0; int j=0;
   int pos = 0;
-  unsigned char prevButtons = 0, newButtons = 0;
+  unsigned char newButtons = 0;
   
   display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE); 
@@ -201,14 +283,14 @@ void editProgram(){
     display.clearDisplay();
 
     //if(IS_PRESSED(newButtons, BUTTON_ENTER)) return pos;
-    //if(IS_PRESSED(newButtons, BUTTON_LEFT)) return -1;
+    if(IS_PRESSED(newButtons, BUTTON_LEFT)) return;
     if(pos>0 && IS_PRESSED(newButtons, BUTTON_UP)) pos--;
-    if(pos<MAX_PROG_LEN-1 && IS_PRESSED(newButtons, BUTTON_DOWN))pos++;
+    if(pos<MAX_PROG_LEN && IS_PRESSED(newButtons, BUTTON_DOWN))pos++;
 
     if(pos<pl && pl>0)pl--;
-    else if(pos>pl+3 && pl<MAX_PROG_LEN-4)pl++;
+    else if(pos>pl+3 && pl<MAX_PROG_LEN-3)pl++;
 
-    //Serial.print(pos); Serial.print(", "); Serial.println(pl);
+    Serial.print(pos); Serial.print(", "); Serial.println(pl);
     
     for(int i=pl; i<pl+4; i++){
       display.setCursor(0, (i-pl)*8);
@@ -221,11 +303,15 @@ void editProgram(){
           display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); 
         }
 
-      display.print(i);display.print(": ");
-      display.print(comStr[func_id]);display.print(" ");
-      display.print(memStr[mem_pos]);display.print(" ");
-      display.print(bit_pos);
-      //display.print("x");
+      if(i<MAX_PROG_LEN){
+        display.print(i);display.print(": ");
+        display.print(comStr[func_id]);display.print(" ");
+        display.print(memStr[mem_pos]);display.print(" ");
+        display.print(bit_pos);
+        //display.print("x");
+      }else{
+        display.print("[+]");
+      }
 
       if(pos == i){
           display.setTextColor(SSD1306_WHITE); 
@@ -243,11 +329,11 @@ void editProgram(){
 void loop() {
 
   int newMenuPosition = enterMenu(menuPosition, selectedPosition);
-
+  long int k = -123456789;
   switch(newMenuPosition){
     case -1: exitCurrentMenu(menuPosition); break;
     case 0: enterCurrentOption(newMenuPosition); break;
-    case 1: editProgram(); break;
+    case 1: /*enterValue(k);break;*/editProgram(); break;
     case 2: enterCurrentOption(newMenuPosition); break;
     case 3: enterCurrentOption(newMenuPosition); break;
     default:break;

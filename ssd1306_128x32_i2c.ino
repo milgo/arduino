@@ -191,11 +191,25 @@ void exitCurrentMenu(int currentMenuPos){
 
 void editProgram(){
   int pl = 0; int j=0;
+  int pos = 0;
+  unsigned char prevButtons = 0, newButtons = 0;
+  
   display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE); 
   
   while(true){
     display.clearDisplay();
+
+    //if(IS_PRESSED(newButtons, BUTTON_ENTER)) return pos;
+    //if(IS_PRESSED(newButtons, BUTTON_LEFT)) return -1;
+    if(pos>0 && IS_PRESSED(newButtons, BUTTON_UP)) pos--;
+    if(pos<MAX_PROG_LEN-1 && IS_PRESSED(newButtons, BUTTON_DOWN))pos++;
+
+    if(pos<pl && pl>0)pl--;
+    else if(pos>pl+3 && pl<MAX_PROG_LEN-4)pl++;
+
+    //Serial.print(pos); Serial.print(", "); Serial.println(pl);
+    
     for(int i=pl; i<pl+4; i++){
       display.setCursor(0, (i-pl)*8);
       uint8_t func_id = program[i] >> FUNC_BIT_POS;
@@ -203,16 +217,26 @@ void editProgram(){
       int mem_pos = param >> 32;
       int bit_pos = param & 0x7;
 
+      if(pos == i){
+          display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); 
+        }
+
       display.print(i);display.print(": ");
       display.print(comStr[func_id]);display.print(" ");
       display.print(memStr[mem_pos]);display.print(" ");
       display.print(bit_pos);
       //display.print("x");
+
+      if(pos == i){
+          display.setTextColor(SSD1306_WHITE); 
+        }
     }
+
     display.display();
-    delay(2000);
-    pl++;
-    if(pl>5)pl=0;
+    newButtons = getButtons();
+    delay(100);
+    //pl++;
+    //if(pl>5)pl=0;
   }
 }
 

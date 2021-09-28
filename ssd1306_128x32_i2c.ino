@@ -197,47 +197,49 @@ void selectMemmory(){
   
 }
 
-long int enterValue(long int curVal){
+long int enterValue(const char* msg, long int curVal, bool isSigned, int len, int maxDigit){
   unsigned char newButtons = 0;
   long int retVal = 0;
   byte v[10];
 
   //get sign
-  if(curVal>0L){
-    v[0]=0;
-  }else{
-    v[0]=1;
+  v[0]=0;
+  if(curVal<0L){
+    if(isSigned)v[0]=1;
     curVal*=-1;
   }
 
   //convert to array
   long int tmp = curVal;
-  for(int j=9;j>0;j--){
+  for(int j=len;j>0;j--){
     v[j]=tmp%10;
     tmp/=10;
   }
 
   //edit
-  int pos = 0;
+  int pos = len;
   int maxVal = 1;
   while(true){
     display.clearDisplay();
     display.setCursor(0, 0);
-    display.println("Enter value:");
+    display.println(msg);
     if(pos>0 && IS_PRESSED(newButtons, BUTTON_LEFT)) pos--;
-    if(pos<maxVal && IS_PRESSED(newButtons, BUTTON_RIGHT)) pos++;
+    if(pos<len && IS_PRESSED(newButtons, BUTTON_RIGHT)) pos++;
 
-    if(pos>0)maxVal = 9;
-    else maxVal = 1;
+    if(pos>0){maxVal = maxDigit;}
+    else {
+      if(isSigned)maxVal = 1;
+      else maxVal = 0;
+    }
 
     if(IS_PRESSED(newButtons, BUTTON_UP)){ if(v[pos]<maxVal)v[pos]++; }
     if(IS_PRESSED(newButtons, BUTTON_DOWN)){ if(v[pos]>0)v[pos]--; }
     if(IS_PRESSED(newButtons, BUTTON_ENTER)){ break; }
     
-    for(int i=0; i<10; i++){
+    for(int i=0; i<len+1; i++){
       
       if(pos==i){
-        display.setCursor(i*6, 16);//display.print("[");
+        display.setCursor(i*6, 16);
         display.print("^ ");
         //display.print("]");
       }
@@ -257,7 +259,7 @@ long int enterValue(long int curVal){
   }
 
   //convert from array
-  for(int j=1;j<10;j++){
+  for(int j=1;j<len+1;j++){
     retVal *= 10;
     retVal += v[j];
   }
@@ -333,7 +335,7 @@ void loop() {
   switch(newMenuPosition){
     case -1: exitCurrentMenu(menuPosition); break;
     case 0: enterCurrentOption(newMenuPosition); break;
-    case 1: /*enterValue(k);break;*/editProgram(); break;
+    case 1: enterValue("Enter value:", k, true, 9, 9);break;/*editProgram(); break;*/
     case 2: enterCurrentOption(newMenuPosition); break;
     case 3: enterCurrentOption(newMenuPosition); break;
     default:break;

@@ -20,8 +20,8 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 PCF8574 pcf20(0x20);
 
 #define MAIN_MENU_OPTS 4
-#define COMM_MENU_OPTS 5
-#define MAX_STRING_SIZE 12
+#define COMM_MENU_OPTS 6
+#define MAX_STRING_SIZE 10
 
 #define FUNC_BIT_POS 40
 #define FUNC_PARAM_MASK 0xFFFFFFFFFFULL
@@ -61,8 +61,10 @@ uint64_t program[] = {
     s_stll(ASGN, M1, 1)
 };
 
-char commandMenu[COMM_MENU_OPTS][MAX_STRING_SIZE] = {
+char commandMenu[COMM_MENU_OPTS][MAX_STRING_SIZE] = 
+{
   "Basic",
+  "Move",
   "Aritmetic",
   "Compare",
   "Timers",
@@ -78,13 +80,14 @@ char mainMenu[MAIN_MENU_OPTS][MAX_STRING_SIZE] =
   "Setup",
 };
 
-char comStr[53][MAX_STRING_SIZE] = {" ", "A", "O", "=", "S", "R", "FP", "FN", "L", "T",
+char comStr[53][MAX_STRING_SIZE] = {" ", "A", "O", "=", "S", "R", "FP", "FN", 
+                        "L", "T",
                         "+I", "-I", "*I", "/I", "+D", "-D", "*D", "/D", "+R", "-R", "*R", "/R", "MOD",
                         "==I", "<>I", ">I", "<I", ">=I", "<=I", "==D", "<>D", ">D", "<D", ">=D", "<=D", "==R", "<>R", ">R", "<R", ">=R", "<=R",
                         "SP", "SE", "SD", "SS", "SF", "R",
                         "CU", "CD", "S", "R", "L", "LC"};
 
-char comGroups[] = { 1, 10, 23, 41, 47, 53};
+char comGroups[] = { 1, 8, 10, 23, 41, 47, 53};
                         
 const char* memStr[] = {" ", "Q0", "M0", "M1"};
 

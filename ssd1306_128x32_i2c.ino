@@ -64,7 +64,7 @@ uint64_t program[] = {
 char commandMenu[COMM_MENU_OPTS][MAX_STRING_SIZE] = {
   "Basic",
   "Aritmetic",
-  "Comparators",
+  "Compare",
   "Timers",
   "Counters"
 };
@@ -78,11 +78,13 @@ char mainMenu[MAIN_MENU_OPTS][MAX_STRING_SIZE] =
   "Setup",
 };
 
-const char* comStr[] = {" ", "A", "O", "=", "S", "R", "FP", "FN", "L", "T",
+char comStr[53][MAX_STRING_SIZE] = {" ", "A", "O", "=", "S", "R", "FP", "FN", "L", "T",
                         "+I", "-I", "*I", "/I", "+D", "-D", "*D", "/D", "+R", "-R", "*R", "/R", "MOD",
                         "==I", "<>I", ">I", "<I", ">=I", "<=I", "==D", "<>D", ">D", "<D", ">=D", "<=D", "==R", "<>R", ">R", "<R", ">=R", "<=R",
                         "SP", "SE", "SD", "SS", "SF", "R",
-                        "CU", "CD", "S", "R", "L", "LC",};
+                        "CU", "CD", "S", "R", "L", "LC"};
+
+char comGroups[] = { 1, 10, 23, 41, 47, 53};
                         
 const char* memStr[] = {" ", "Q0", "M0", "M1"};
 
@@ -171,8 +173,8 @@ void selectMemmory(){
   
 }
 
-int showMenu(char menu[][MAX_STRING_SIZE] , int len){
-  int pos = 0, start = 0;
+int showMenu(char menu[][MAX_STRING_SIZE], int from, int to){
+  int pos = 0, start = 0; int len = to - from;
   unsigned char newButtons = 0;
   while(true){
     display.clearDisplay();
@@ -187,13 +189,15 @@ int showMenu(char menu[][MAX_STRING_SIZE] , int len){
     else if(pos>start+3 && start<len-4)start++;
 
     for(int i=start; i<start+4; i++){
+
+      if(from+i>to-1)break;
       
       if(pos == i){
           display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); 
       }
   
       display.setCursor(0, (i-start)*8);
-      display.println(menu[i]);
+      display.println(menu[from+i]);
         
       if(pos == i){
         display.setTextColor(SSD1306_WHITE); 
@@ -293,7 +297,10 @@ void editProgram(){
   while(true){
     display.clearDisplay();
 
-    if(IS_PRESSED(newButtons, BUTTON_ENTER) && pos == MAX_PROG_LEN) showMenu(commandMenu, COMM_MENU_OPTS);
+    if(IS_PRESSED(newButtons, BUTTON_ENTER) && pos == MAX_PROG_LEN) {
+      int comGroup = showMenu(commandMenu, 0, COMM_MENU_OPTS);
+      showMenu(comStr, comGroups[comGroup], comGroups[comGroup+1]);
+    }
     if(IS_PRESSED(newButtons, BUTTON_LEFT)) return;
     if(pos>0 && IS_PRESSED(newButtons, BUTTON_UP)) pos--;
     if(pos<MAX_PROG_LEN && IS_PRESSED(newButtons, BUTTON_DOWN))pos++;
@@ -339,7 +346,7 @@ void editProgram(){
 
 void loop() {
 
-  int newMenuPosition = showMenu(mainMenu, MAIN_MENU_OPTS);
+  int newMenuPosition = showMenu(mainMenu, 0, MAIN_MENU_OPTS);
   long int k = -123456789;
   switch(newMenuPosition){
     case -1: exitCurrentMenu(menuPosition); break;

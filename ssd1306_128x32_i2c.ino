@@ -63,10 +63,6 @@ uint64_t program[] = {
     s_stll(ASGN, M1, 1)
 };
 
-
-                        
-const char* memStr[] = {" ", "Q0", "I0", "M0", "M1", "M2", "M3", "MB", "MW", "MD", "C", "T", "#"};
-
 unsigned char getButtons(){
   while(true){
     for(int i=0; i<8; i++){

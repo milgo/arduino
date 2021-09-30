@@ -68,6 +68,20 @@ const char comCounterRStr[] PROGMEM = "R";
 const char comCounterLStr[] PROGMEM = "L";
 const char comCounterLCStr[] PROGMEM = "LC";
 
+const char memNULLStr[] PROGMEM = "";
+const char memQ0Str[] PROGMEM = "Q0";
+const char memI0Str[] PROGMEM = "I0";
+const char memM0Str[] PROGMEM = "M0";
+const char memM1Str[] PROGMEM = "M1";
+const char memM2Str[] PROGMEM = "M2";
+const char memM3Str[] PROGMEM = "M3";
+const char memMBStr[] PROGMEM = "MB";
+const char memMWStr[] PROGMEM = "MW";
+const char memMDStr[] PROGMEM = "MD";
+const char memCStr[] PROGMEM = "C";
+const char memTStr[] PROGMEM = "T";
+const char memConstStr[] PROGMEM = "#";
+
 const char *const mainMenu[] PROGMEM = {
   mainMenuRunStr, 
   mainMenuEditStr, 
@@ -140,5 +154,23 @@ const char *const comStr[] PROGMEM = {
   };
 
 char comGroups[] = { 1, 8, 10, 22, 40, 46, 52};
+
+const char *const memStr[] PROGMEM = {
+  memNULLStr,
+  memQ0Str,
+  memI0Str,
+  memM0Str,
+  memM1Str,
+  memM2Str,
+  memM3Str,
+  memMBStr,
+  memMWStr,
+  memMDStr,
+  memCStr,
+  memTStr,
+  memConstStr
+};
+
+char memGroups[] = {};
 
 char bufferStr[30];

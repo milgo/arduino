@@ -1,6 +1,11 @@
 
 #include <avr/pgmspace.h>
 
+#define _FROM_0_TO_7 0x1
+#define _POSITIVE_I 0x2
+#define _NEGATIVE_POSITIVE_I 0x3;
+#define _POSITIVE
+
 const char mainMenuRunStr[] PROGMEM = "Run";
 const char mainMenuEditStr[] PROGMEM = "Edit";
 const char mainMenuClearStr[] PROGMEM = "Clear";

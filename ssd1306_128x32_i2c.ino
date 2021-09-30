@@ -156,7 +156,7 @@ int showMenu(const char * const *menu, int from, int to){
     display.setCursor(0, 0);
 
     if(IS_PRESSED(newButtons, BUTTON_LEFT)) return -1;
-    if(IS_PRESSED(newButtons, BUTTON_ENTER)) return pos;
+    if(IS_PRESSED(newButtons, BUTTON_ENTER)) return from+pos;
     if(pos>0 && IS_PRESSED(newButtons, BUTTON_UP)) pos--;
     if(pos<len-1 && IS_PRESSED(newButtons, BUTTON_DOWN)) pos++;
 
@@ -279,7 +279,18 @@ void editProgram(){
       if(comGroup>=0){
         int command = showMenu(comStr, comGroups[comGroup*2], comGroups[comGroup*2+1]);
         if(command>=0){
-          int memGroup = showMenu(memStr, memGroups[comGroup*2], memGroups[comGroup*2+1]);
+          int mem = showMenu(memStr, memGroups[comGroup*2], memGroups[comGroup*2+1]);
+          //Serial.println(mem);
+          if(mem < 7){
+            //Serial.print("0..7");
+          }else if(mem >= 7 && mem < 10){
+            //Serial.print("0..99");
+          }else if(mem == 10){
+            //Serial.print("-999999999..999999999");
+          }else if(mem > 10){
+            //Serial.print("0..9");
+          }
+
         }
       } 
     }
@@ -305,10 +316,15 @@ void editProgram(){
 
       if(i<MAX_PROG_LEN){
         display.print(i);display.print(": ");
-        display.print(comStr[func_id]);display.print(" ");
-        display.print(memStr[mem_pos]);display.print(" ");
-        display.print(bit_pos);
-        //display.print("x");
+
+      strcpy_P(bufferStr, (char*)pgm_read_word(&(comStr[func_id])));
+      display.print(bufferStr);display.print(" ");
+
+      strcpy_P(bufferStr, (char*)pgm_read_word(&(memStr[mem_pos])));
+      display.print(bufferStr);display.print(" ");
+        
+      display.print(bit_pos);display.print(" ");
+
       }else{
         display.print("[+]");
       }

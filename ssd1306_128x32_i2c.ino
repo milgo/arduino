@@ -165,7 +165,7 @@ int showMenu(const char * const *menu, int from, int to){
 
     for(int i=start; i<start+4; i++){
 
-      if(from+i>to-1)break;
+      if(from+i>=to)break;
       
       if(pos == i){
           display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); 
@@ -275,8 +275,13 @@ void editProgram(){
     display.clearDisplay();
 
     if(IS_PRESSED(newButtons, BUTTON_ENTER) && pos == MAX_PROG_LEN) {
-      int comGroup = showMenu(commandMenu, 0, COMM_MENU_OPTS);
-      showMenu(comStr, comGroups[comGroup], comGroups[comGroup+1]);
+      int comGroup = showMenu(commandGroupMenu, 0, 6);
+      if(comGroup>=0){
+        int command = showMenu(comStr, comGroups[comGroup*2], comGroups[comGroup*2+1]);
+        if(command>=0){
+          int memGroup = showMenu(memStr, memGroups[comGroup*2], memGroups[comGroup*2+1]);
+        }
+      } 
     }
     if(IS_PRESSED(newButtons, BUTTON_LEFT)) return;
     if(pos>0 && IS_PRESSED(newButtons, BUTTON_UP)) pos--;

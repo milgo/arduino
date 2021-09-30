@@ -89,13 +89,13 @@ const char *const mainMenu[] PROGMEM = {
   mainMenuSetupStr
   };
 
-const char *const commandMenu[] PROGMEM = {
+const char *const commandGroupMenu[] PROGMEM = {
   comMenuBasicStr, 
   comMenuMoveStr, 
-  comMenuAritmeticStr, 
-  comMenuCompareStr, 
   comMenuTimersStr, 
-  comMenuCounterStr
+  comMenuCounterStr,
+  comMenuAritmeticStr, 
+  comMenuCompareStr
   };
 
 const char *const comStr[] PROGMEM = {
@@ -109,6 +109,18 @@ const char *const comStr[] PROGMEM = {
   comBasicFNStr,
   comMoveLStr,
   comMoveTStr,
+  comTimerSPStr,
+  comTimerSEStr,
+  comTimerSDStr,
+  comTimerSSStr,
+  comTimerSFStr,
+  comTimerRStr,
+  comCounterCUStr,
+  comCounterCDStr,
+  comCounterStr,
+  comCounterRStr,
+  comCounterLStr,
+  comCounterLCStr,
   comAritAddIStr,
   comAritSubIStr,
   comAritMulIStr,
@@ -139,21 +151,9 @@ const char *const comStr[] PROGMEM = {
   comCompLtRStr,
   comCompGtEqRStr,
   comCompLtEqRStr,
-  comTimerSPStr,
-  comTimerSEStr,
-  comTimerSDStr,
-  comTimerSSStr,
-  comTimerSFStr,
-  comTimerRStr,
-  comCounterCUStr,
-  comCounterCDStr,
-  comCounterStr,
-  comCounterRStr,
-  comCounterLStr,
-  comCounterLCStr
   };
 
-char comGroups[] = { 1, 8, 10, 22, 40, 46, 52};
+char comGroups[] = { 1, 8, 8, 10, 10, 16, 16, 22, 22, 34, 34, 52};
 
 const char *const memStr[] PROGMEM = {
   memNULLStr,
@@ -166,11 +166,11 @@ const char *const memStr[] PROGMEM = {
   memMBStr,
   memMWStr,
   memMDStr,
+  memConstStr,
   memCStr,
   memTStr,
-  memConstStr
 };
 
-char memGroups[] = {};
+char memGroups[] = {1, 7, 7, 11, 12, 12, 11, 11, 0, 0, 0, 0};
 
 char bufferStr[30];

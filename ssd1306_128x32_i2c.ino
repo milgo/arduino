@@ -5,6 +5,8 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
+#include "inc.h"
+
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 32 // OLED display height, in pixels
 
@@ -61,35 +63,9 @@ uint64_t program[] = {
     s_stll(ASGN, M1, 1)
 };
 
-char commandMenu[COMM_MENU_OPTS][MAX_STRING_SIZE] = 
-{
-  "Basic",
-  "Move",
-  "Aritmetic",
-  "Compare",
-  "Timers",
-  "Counters"
-};
 
-char mainMenu[MAIN_MENU_OPTS][MAX_STRING_SIZE] = 
-{
-  //Main Menu
-  "Run",
-  "Edit",
-  "Clear",
-  "Setup",
-};
-
-char comStr[53][MAX_STRING_SIZE] = {" ", "A", "O", "=", "S", "R", "FP", "FN", 
-                        "L", "T",
-                        "+I", "-I", "*I", "/I", "+D", "-D", "*D", "/D", "+R", "-R", "*R", "/R", "MOD",
-                        "==I", "<>I", ">I", "<I", ">=I", "<=I", "==D", "<>D", ">D", "<D", ">=D", "<=D", "==R", "<>R", ">R", "<R", ">=R", "<=R",
-                        "SP", "SE", "SD", "SS", "SF", "R",
-                        "CU", "CD", "S", "R", "L", "LC"};
-
-char comGroups[] = { 1, 8, 10, 23, 41, 47, 53};
                         
-const char* memStr[] = {" ", "Q0", "M0", "M1"};
+const char* memStr[] = {" ", "Q0", "I0", "M0", "M1", "M2", "M3", "MB", "MW", "MD", "C", "T", "#"};
 
 unsigned char getButtons(){
   while(true){
@@ -176,7 +152,7 @@ void selectMemmory(){
   
 }
 
-int showMenu(char menu[][MAX_STRING_SIZE], int from, int to){
+int showMenu(const char * const *menu, int from, int to){
   int pos = 0, start = 0; int len = to - from;
   unsigned char newButtons = 0;
   while(true){
@@ -200,7 +176,9 @@ int showMenu(char menu[][MAX_STRING_SIZE], int from, int to){
       }
   
       display.setCursor(0, (i-start)*8);
-      display.println(menu[from+i]);
+
+      strcpy_P(bufferStr, (char*)pgm_read_word(&(menu[from+i])));
+      display.println(bufferStr);
         
       if(pos == i){
         display.setTextColor(SSD1306_WHITE); 

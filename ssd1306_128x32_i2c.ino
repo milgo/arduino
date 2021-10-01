@@ -272,10 +272,72 @@ long int enterValue(int msg, long int curVal, bool isSigned, int len, int maxDig
   return retVal;
 }
 
+void printMessage(int msg){
+  unsigned char newButtons = 0;
+  while(true){
+    display.clearDisplay();
+    strcpy_P(bufferStr, (char*)pgm_read_word(&(message[msg])));
+    display.print(bufferStr);
+    display.display();
+    newButtons = getButtons();
+    if(IS_PRESSED(newButtons, BUTTON_ENTER))
+      break;
+  }
+  display.clearDisplay();
+}
+
+void insertProgramLine(int number, bool edit){
+  Serial.print("removing ");Serial.print(number); Serial.print("line");
+  uint64_t command = 0, mem = 0;
+  uint64_t value = 0;
+  int comGroup = showMenu(commandGroupMenu, 0, 6);
+  if(comGroup>=0){
+    command = showMenu(comStr, comGroups[comGroup*2], comGroups[comGroup*2+1]);
+    if(command>=0 && memGroups[comGroup*2]>0){
+      mem = showMenu(memStr, memGroups[comGroup*2], memGroups[comGroup*2+1]);
+      if(mem < 7 && mem > 0){
+        value = enterValue(ENTER_BIT_NR_MSG, 0, false, 1, 7);
+      }else if(mem >= 7 && mem < 10){
+        value = enterValue(ENTER_VALUE_MSG, 0, false, 2, 9);
+      }else if(mem == 10){
+        value = enterValue(ENTER_VALUE_MSG, 0, true, 9, 9);
+      }else if(mem > 10){
+        value = enterValue(ENTER_VALUE_MSG, 0, false, 1, 9);
+      }
+    }
+    if(mem >= 0){
+        if(PC>=MAX_PROGRAM_SIZE){
+          printMessage(LIMIT_MSG);
+        }else {
+          if(!edit){
+            if(number < PC){        
+              for(int i=number;i<PC;i++){
+                program[PC-i+1] = program[PC-i];
+              }
+            }
+          //Serial.print((long)command);Serial.print(" ");Serial.print((long)mem);Serial.print(" ");Serial.print((long)value);Serial.print(" ");
+            program[number] = s_stll(command, mem, value);
+            if(PC<MAX_PROGRAM_SIZE)PC++;
+          }else{
+            program[number] = s_stll(command, mem, value);
+          }
+        }
+      }
+  } 
+}
+
+void removeProgramLine(int number){
+  Serial.print("removing ");Serial.print(number); Serial.print("line");
+  for(int i=number;i<PC;i++){
+    program[i] = program[i+1];
+  }
+  PC--;
+}
+
 void editProgram(){
   int pl = 0; int j=0;
   int pos = 0; 
-  uint64_t value = 0;
+  
   unsigned char newButtons = 0;
   
   display.setTextSize(1);
@@ -284,32 +346,18 @@ void editProgram(){
   while(true){
     display.clearDisplay();
 
-    if(IS_PRESSED(newButtons, BUTTON_ENTER) && pos == PC && PC<MAX_PROGRAM_SIZE) {
-      
-      int comGroup = showMenu(commandGroupMenu, 0, 6);
-      if(comGroup>=0){
-        uint64_t command = showMenu(comStr, comGroups[comGroup*2], comGroups[comGroup*2+1]);
-        if(command>=0){
-          uint64_t mem = showMenu(memStr, memGroups[comGroup*2], memGroups[comGroup*2+1]);
-          if(mem < 7){
-            value = enterValue(ENTER_BIT_NR_MSG, 0, false, 1, 7);
-          }else if(mem >= 7 && mem < 10){
-            value = enterValue(ENTER_VALUE_MSG, 0, false, 2, 9);
-          }else if(mem == 10){
-            value = enterValue(ENTER_VALUE_MSG, 0, true, 9, 9);
-          }else if(mem > 10){
-            value = enterValue(ENTER_VALUE_MSG, 0, false, 1, 9);
-          }
-          Serial.print((long)command);Serial.print(" ");Serial.print((long)mem);Serial.print(" ");Serial.print((long)value);Serial.print(" ");
-          program[PC] = s_stll(command, mem, value);
-          if(PC<MAX_PROGRAM_SIZE)
-            PC++;
-        }
-      } 
-    }
+    
 
     if(IS_PRESSED(newButtons, BUTTON_ENTER) && pos < PC) {
       int res = showMenu(editMenu, 0, 3);
+      switch(res){
+        case 0: insertProgramLine(pos, false);break;
+        case 1: insertProgramLine(pos, true);break;
+        case 2: removeProgramLine(pos);if(pos>0)pos--;if(pl>0)pl--;break;
+        default: break;
+      }
+    }else if(IS_PRESSED(newButtons, BUTTON_ENTER) && pos == PC && PC<MAX_PROGRAM_SIZE) {
+      insertProgramLine(pos, false);
     }
     
     if(IS_PRESSED(newButtons, BUTTON_LEFT)) return;
@@ -321,7 +369,7 @@ void editProgram(){
 
     //Serial.print(pos); Serial.print(", "); Serial.println(pl);
     
-    for(int i=pl; i<pl+4; i++){
+    for(int i=pl; i<pl+4 && i<=PC; i++){
       display.setCursor(0, (i-pl)*8);
       uint8_t func_id = program[i] >> FUNC_BIT_POS;
       uint64_t param = program[i] & FUNC_PARAM_MASK;
@@ -335,14 +383,14 @@ void editProgram(){
       if(i<PC){
         display.print(i);display.print(": ");
 
-      strcpy_P(bufferStr, (char*)pgm_read_word(&(comStr[func_id])));
-      display.print(bufferStr);display.print(" ");
+        strcpy_P(bufferStr, (char*)pgm_read_word(&(comStr[func_id])));
+        display.print(bufferStr);display.print(" ");
 
-      strcpy_P(bufferStr, (char*)pgm_read_word(&(memStr[mem_pos])));
-      display.print(bufferStr);display.print(" ");
-        
-      display.print((long)bit_pos);display.print(" ");
-
+        if(mem_pos>0){
+          strcpy_P(bufferStr, (char*)pgm_read_word(&(memStr[mem_pos])));
+          display.print(bufferStr);display.print(" ");
+          display.print((long)bit_pos);display.print(" ");
+        }
       }else {
         if(PC<MAX_PROGRAM_SIZE)
           display.print("[+]");

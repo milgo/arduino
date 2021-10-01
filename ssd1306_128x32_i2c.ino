@@ -24,6 +24,7 @@ PCF8574 pcf20(0x20);
 #define MAIN_MENU_OPTS 4
 #define COMM_MENU_OPTS 6
 #define MAX_STRING_SIZE 10
+#define MAX_PROGRAM_SIZE 20
 
 #define FUNC_BIT_POS 40
 #define FUNC_PARAM_MASK 0xFFFFFFFFFFULL
@@ -38,7 +39,7 @@ PCF8574 pcf20(0x20);
 int menuPosition = 0;
 int selectedPosition = 0;
 
-#define MAX_PROG_LEN 9
+//#define MAX_PROG_LEN 9
 //#define MAX_DATA_LEN 16
 
 #define A 1ULL
@@ -51,17 +52,8 @@ int selectedPosition = 0;
 
 #define s_stll(a1, a2, a3) ((a1<<40ULL) | ((a2) << (32ULL)) | (a3))
 
-uint64_t program[] = {
-    s_stll(A, M0, 0),
-    s_stll(A, M1, 0),
-    s_stll(ASGN, M1, 1),
-    s_stll(A, M0, 2),
-    s_stll(A, M1, 4),
-    s_stll(ASGN, M1, 1),
-    s_stll(O, M0, 2),
-    s_stll(O, M1, 4),
-    s_stll(ASGN, M1, 1)
-};
+uint64_t program[MAX_PROGRAM_SIZE];
+char PC = 0;
 
 unsigned char getButtons(){
   while(true){
@@ -100,6 +92,17 @@ void setup() {
   //display.drawPixel(10, 10, SSD1306_WHITE);
 
   //setupFunctions();
+  program[0] = s_stll(A, M0, 0);
+  program[1] = s_stll(A, M1, 0);
+  program[2] = s_stll(ASGN, M1, 1);
+  program[3] = s_stll(A, M0, 2);
+  program[4] = s_stll(A, M1, 4);
+  program[5] = s_stll(ASGN, M1, 1);
+  program[6] = s_stll(O, M0, 2);
+  program[7] = s_stll(O, M1, 4);
+  program[8] = s_stll(ASGN, M1, 1);
+
+  PC = 9;
 
   // Show the display buffer on the screen. You MUST call display() after
   // drawing commands to make them visible on screen!
@@ -271,7 +274,8 @@ long int enterValue(int msg, long int curVal, bool isSigned, int len, int maxDig
 
 void editProgram(){
   int pl = 0; int j=0;
-  int pos = 0;
+  int pos = 0; 
+  uint64_t value = 0;
   unsigned char newButtons = 0;
   
   display.setTextSize(1);
@@ -280,31 +284,34 @@ void editProgram(){
   while(true){
     display.clearDisplay();
 
-    if(IS_PRESSED(newButtons, BUTTON_ENTER) && pos == MAX_PROG_LEN) {
+    if(IS_PRESSED(newButtons, BUTTON_ENTER) && pos == PC) {
+      
       int comGroup = showMenu(commandGroupMenu, 0, 6);
       if(comGroup>=0){
-        int command = showMenu(comStr, comGroups[comGroup*2], comGroups[comGroup*2+1]);
+        uint64_t command = showMenu(comStr, comGroups[comGroup*2], comGroups[comGroup*2+1]);
         if(command>=0){
-          int mem = showMenu(memStr, memGroups[comGroup*2], memGroups[comGroup*2+1]);
+          uint64_t mem = showMenu(memStr, memGroups[comGroup*2], memGroups[comGroup*2+1]);
           if(mem < 7){
-            enterValue(ENTER_BIT_NR_MSG, 0, false, 1, 7);
+            value = enterValue(ENTER_BIT_NR_MSG, 0, false, 1, 7);
           }else if(mem >= 7 && mem < 10){
-            enterValue(ENTER_VALUE_MSG, 0, false, 2, 9);
+            value = enterValue(ENTER_VALUE_MSG, 0, false, 2, 9);
           }else if(mem == 10){
-            enterValue(ENTER_VALUE_MSG, 0, true, 9, 9);
+            value = enterValue(ENTER_VALUE_MSG, 0, true, 9, 9);
           }else if(mem > 10){
-            enterValue(ENTER_VALUE_MSG, 0, false, 1, 9);
+            value = enterValue(ENTER_VALUE_MSG, 0, false, 1, 9);
           }
-
+          program[PC] = s_stll(command, mem, value);
+          if(PC<MAX_PROGRAM_SIZE)
+            PC++;
         }
       } 
     }
     if(IS_PRESSED(newButtons, BUTTON_LEFT)) return;
     if(pos>0 && IS_PRESSED(newButtons, BUTTON_UP)) pos--;
-    if(pos<MAX_PROG_LEN && IS_PRESSED(newButtons, BUTTON_DOWN))pos++;
+    if(pos<PC && IS_PRESSED(newButtons, BUTTON_DOWN))pos++;
 
     if(pos<pl && pl>0)pl--;
-    else if(pos>pl+3 && pl<MAX_PROG_LEN-3)pl++;
+    else if(pos>pl+3 && pl<PC-3)pl++;
 
     //Serial.print(pos); Serial.print(", "); Serial.println(pl);
     
@@ -319,7 +326,7 @@ void editProgram(){
           display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); 
         }
 
-      if(i<MAX_PROG_LEN){
+      if(i<PC){
         display.print(i);display.print(": ");
 
       strcpy_P(bufferStr, (char*)pgm_read_word(&(comStr[func_id])));

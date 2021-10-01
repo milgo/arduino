@@ -6,6 +6,17 @@
 #define _NEGATIVE_POSITIVE_I 0x3;
 #define _POSITIVE
 
+#define ENTER_BIT_NR_MSG 0
+#define ENTER_VALUE_MSG 1
+
+const char enterValueBitNumberMsgStr[] PROGMEM = "Enter bit number:";
+const char enterValueMsgStr[] PROGMEM = "Enter value:";
+
+const char *const message[] PROGMEM = {
+  enterValueBitNumberMsgStr, 
+  enterValueMsgStr
+  };
+
 const char mainMenuRunStr[] PROGMEM = "Run";
 const char mainMenuEditStr[] PROGMEM = "Edit";
 const char mainMenuClearStr[] PROGMEM = "Clear";
@@ -176,6 +187,6 @@ const char *const memStr[] PROGMEM = {
   memTStr,
 };
 
-char memGroups[] = {1, 7, 7, 11, 12, 12, 11, 11, 0, 0, 0, 0};
+char memGroups[] = {1, 7, 7, 11, 12, 13, 11, 12, 0, 0, 0, 0};
 
 char bufferStr[30];

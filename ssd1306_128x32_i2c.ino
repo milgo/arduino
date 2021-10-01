@@ -187,7 +187,7 @@ int showMenu(const char * const *menu, int from, int to){
   }
 }
 
-long int enterValue(const char* msg, long int curVal, bool isSigned, int len, int maxDigit){
+long int enterValue(int msg, long int curVal, bool isSigned, int len, int maxDigit){
   unsigned char newButtons = 0;
   long int retVal = 0;
   byte v[10];
@@ -212,7 +212,10 @@ long int enterValue(const char* msg, long int curVal, bool isSigned, int len, in
   while(true){
     display.clearDisplay();
     display.setCursor(0, 0);
-    display.println(msg);
+
+    strcpy_P(bufferStr, (char*)pgm_read_word(&(message[msg])));
+    display.print(bufferStr);
+    
     if(pos>0 && IS_PRESSED(newButtons, BUTTON_LEFT)) pos--;
     if(pos<len && IS_PRESSED(newButtons, BUTTON_RIGHT)) pos++;
 
@@ -248,6 +251,9 @@ long int enterValue(const char* msg, long int curVal, bool isSigned, int len, in
     delay(100);
   }
 
+  display.clearDisplay();
+  display.setCursor(0, 0);
+
   //convert from array
   for(int j=1;j<len+1;j++){
     retVal *= 10;
@@ -280,15 +286,14 @@ void editProgram(){
         int command = showMenu(comStr, comGroups[comGroup*2], comGroups[comGroup*2+1]);
         if(command>=0){
           int mem = showMenu(memStr, memGroups[comGroup*2], memGroups[comGroup*2+1]);
-          //Serial.println(mem);
           if(mem < 7){
-            //Serial.print("0..7");
+            enterValue(ENTER_BIT_NR_MSG, 0, false, 1, 7);
           }else if(mem >= 7 && mem < 10){
-            //Serial.print("0..99");
+            enterValue(ENTER_VALUE_MSG, 0, false, 2, 9);
           }else if(mem == 10){
-            //Serial.print("-999999999..999999999");
+            enterValue(ENTER_VALUE_MSG, 0, true, 9, 9);
           }else if(mem > 10){
-            //Serial.print("0..9");
+            enterValue(ENTER_VALUE_MSG, 0, false, 1, 9);
           }
 
         }

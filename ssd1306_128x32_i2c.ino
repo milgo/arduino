@@ -24,7 +24,7 @@ PCF8574 pcf20(0x20);
 #define MAIN_MENU_OPTS 4
 #define COMM_MENU_OPTS 6
 #define MAX_STRING_SIZE 10
-#define MAX_PROGRAM_SIZE 20
+#define MAX_PROGRAM_SIZE 10
 
 #define FUNC_BIT_POS 40
 #define FUNC_PARAM_MASK 0xFFFFFFFFFFULL
@@ -284,7 +284,7 @@ void editProgram(){
   while(true){
     display.clearDisplay();
 
-    if(IS_PRESSED(newButtons, BUTTON_ENTER) && pos == PC) {
+    if(IS_PRESSED(newButtons, BUTTON_ENTER) && pos == PC && PC<MAX_PROGRAM_SIZE) {
       
       int comGroup = showMenu(commandGroupMenu, 0, 6);
       if(comGroup>=0){
@@ -300,12 +300,18 @@ void editProgram(){
           }else if(mem > 10){
             value = enterValue(ENTER_VALUE_MSG, 0, false, 1, 9);
           }
+          Serial.print((long)command);Serial.print(" ");Serial.print((long)mem);Serial.print(" ");Serial.print((long)value);Serial.print(" ");
           program[PC] = s_stll(command, mem, value);
           if(PC<MAX_PROGRAM_SIZE)
             PC++;
         }
       } 
     }
+
+    if(IS_PRESSED(newButtons, BUTTON_ENTER) && pos < PC) {
+      int res = showMenu(editMenu, 0, 3);
+    }
+    
     if(IS_PRESSED(newButtons, BUTTON_LEFT)) return;
     if(pos>0 && IS_PRESSED(newButtons, BUTTON_UP)) pos--;
     if(pos<PC && IS_PRESSED(newButtons, BUTTON_DOWN))pos++;
@@ -319,8 +325,8 @@ void editProgram(){
       display.setCursor(0, (i-pl)*8);
       uint8_t func_id = program[i] >> FUNC_BIT_POS;
       uint64_t param = program[i] & FUNC_PARAM_MASK;
-      int mem_pos = param >> 32;
-      int bit_pos = param & 0x7;
+      uint64_t mem_pos = param >> 32;
+      uint64_t bit_pos = param & 0xFFFFFFFF;
 
       if(pos == i){
           display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); 
@@ -335,10 +341,13 @@ void editProgram(){
       strcpy_P(bufferStr, (char*)pgm_read_word(&(memStr[mem_pos])));
       display.print(bufferStr);display.print(" ");
         
-      display.print(bit_pos);display.print(" ");
+      display.print((long)bit_pos);display.print(" ");
 
-      }else{
-        display.print("[+]");
+      }else {
+        if(PC<MAX_PROGRAM_SIZE)
+          display.print("[+]");
+        else
+          display.print("LIMIT");
       }
 
       if(pos == i){

@@ -29,6 +29,10 @@ const char comMenuCompareStr[] PROGMEM = "Compare";
 const char comMenuTimersStr[] PROGMEM = "Timers";
 const char comMenuCounterStr[] PROGMEM = "Counters";
 
+const char editMenuInsertStr[] PROGMEM = "Insert";
+const char editMenuEditStr[] PROGMEM = "Edit";
+const char editMenuRemoveStr[] PROGMEM = "Remove";
+
 const char comNOPStr[] PROGMEM = "";
 const char comBasicAStr[] PROGMEM = "A";
 const char comBasicOStr[] PROGMEM = "O";
@@ -113,6 +117,12 @@ const char *const commandGroupMenu[] PROGMEM = {
   comMenuAritmeticStr, 
   comMenuCompareStr
   };
+  
+const char *const editMenu[] PROGMEM = {
+  editMenuInsertStr,
+  editMenuEditStr,
+  editMenuRemoveStr
+};
 
 const char *const comStr[] PROGMEM = {
   comNOPStr,

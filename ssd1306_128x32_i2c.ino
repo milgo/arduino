@@ -287,9 +287,9 @@ void printMessage(int msg){
 }
 
 void insertProgramLine(int number, bool edit){
-  Serial.print("removing ");Serial.print(number); Serial.print("line");
-  uint64_t command = 0, mem = 0;
-  uint64_t value = 0;
+  //Serial.print("removing ");Serial.print(number); Serial.print("line");
+  int64_t command = 0, mem = 0;
+  int64_t value = 0;
   int comGroup = showMenu(commandGroupMenu, 0, 6);
   if(comGroup>=0){
     command = showMenu(comStr, comGroups[comGroup*2], comGroups[comGroup*2+1]);
@@ -304,8 +304,7 @@ void insertProgramLine(int number, bool edit){
       }else if(mem > 10){
         value = enterValue(ENTER_VALUE_MSG, 0, false, 1, 9);
       }
-    }
-    if(mem >= 0){
+      if(mem >= 0){
         if(PC>=MAX_PROGRAM_SIZE){
           printMessage(LIMIT_MSG);
         }else {
@@ -315,7 +314,7 @@ void insertProgramLine(int number, bool edit){
                 program[PC-i+1] = program[PC-i];
               }
             }
-          //Serial.print((long)command);Serial.print(" ");Serial.print((long)mem);Serial.print(" ");Serial.print((long)value);Serial.print(" ");
+          Serial.print((long)command);Serial.print(" ");Serial.print((long)mem);Serial.print(" ");Serial.print((long)value);Serial.print(" ");
             program[number] = s_stll(command, mem, value);
             if(PC<MAX_PROGRAM_SIZE)PC++;
           }else{
@@ -323,6 +322,7 @@ void insertProgramLine(int number, bool edit){
           }
         }
       }
+    }
   } 
 }
 

@@ -1,3 +1,5 @@
+#ifndef _MESSAGES_H
+#define _MESSAGES_H
 
 #include <avr/pgmspace.h>
 
@@ -9,15 +11,18 @@
 #define ENTER_BIT_NR_MSG 0
 #define ENTER_VALUE_MSG 1
 #define LIMIT_MSG 2
+#define ADD_LINE_MSG 3
 
 const char enterValueBitNumberMsgStr[] PROGMEM = "Enter bit number:";
 const char enterValueMsgStr[] PROGMEM = "Enter value:";
 const char limitMsgStr[] PROGMEM = "LIMIT";
+const char addLineMsgStr[] PROGMEM = "[+]";
 
 const char *const message[] PROGMEM = {
   enterValueBitNumberMsgStr, 
   enterValueMsgStr,
-  limitMsgStr
+  limitMsgStr,
+  addLineMsgStr
   };
 
 const char mainMenuRunStr[] PROGMEM = "Run";
@@ -182,7 +187,7 @@ const char *const comStr[] PROGMEM = {
   comCompLtEqRStr,
   };
 
-char comGroups[] = { 1, 8, 8, 10, 10, 16, 16, 22, 22, 34, 34, 52};
+const char comGroups[] = { 1, 8, 8, 10, 10, 16, 16, 22, 22, 34, 34, 52};
 
 const char *const memStr[] PROGMEM = {
   memNULLStr,
@@ -200,6 +205,6 @@ const char *const memStr[] PROGMEM = {
   memTStr,
 };
 
-char memGroups[] = {1, 7, 7, 11, 12, 13, 11, 12, 0, 0, 0, 0};
+const char memGroups[] = {1, 7, 7, 11, 12, 13, 11, 12, 0, 0, 0, 0};
 
-char bufferStr[30];
+#endif // _MESSAGES_H

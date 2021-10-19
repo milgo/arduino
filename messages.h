@@ -12,17 +12,20 @@
 #define ENTER_VALUE_MSG 1
 #define LIMIT_MSG 2
 #define ADD_LINE_MSG 3
+#define RUNNING_MSG 4
 
 const char enterValueBitNumberMsgStr[] PROGMEM = "Enter bit number:";
 const char enterValueMsgStr[] PROGMEM = "Enter value:";
 const char limitMsgStr[] PROGMEM = "LIMIT";
 const char addLineMsgStr[] PROGMEM = "[+]";
+const char runningMsgStr[] PROGMEM = "Running...";
 
 const char *const message[] PROGMEM = {
   enterValueBitNumberMsgStr, 
   enterValueMsgStr,
   limitMsgStr,
-  addLineMsgStr
+  addLineMsgStr,
+  runningMsgStr
   };
 
 const char mainMenuRunStr[] PROGMEM = "Run";

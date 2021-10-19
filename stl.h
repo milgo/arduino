@@ -14,8 +14,11 @@
 #define Q0 1ULL
 #define M0 2ULL
 #define M1 3ULL
+#define M2 4ULL
 
 #define s_stll(a1, a2, a3) ((a1<<40ULL) | ((a2) << (32ULL)) | (a3))
+#define set_b(m, p) *mem_p[m-1] |= _BV(p);
+#define reset_b(m, p) *mem_p[m-1] &= ~_BV(p);
 
 extern uint64_t program[MAX_PROGRAM_SIZE];
 extern uint8_t volatile PC;
@@ -23,5 +26,8 @@ extern uint8_t volatile PC;
 void _and(uint64_t param);
 void _or(uint64_t param);
 void _assign(uint64_t param);
+
+extern void setupMem();
+extern void executeCommand(int pl);
 
 #endif //_STL_H

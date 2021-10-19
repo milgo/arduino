@@ -150,7 +150,24 @@ void editProgram(){
 
 void runProgram(){
   //load
+  
+  unsigned char newButtons = 0;
+  setupMem();//!!!!!!!!!!!!!!!!!!!!
+  displayClear();
+  displaySetTextNormal();
+  printA(message, RUNNING_MSG);
+  displayDisplay();
   //run
+  while(true){
+    newButtons = getButtons();
+
+    if(IS_PRESSED(newButtons, BUTTON_LEFT))
+      break;
+    
+    executeCommand(PC++);
+    if(PC>=PS)
+      PC=0;
+  }
 }
 
 void loop() {

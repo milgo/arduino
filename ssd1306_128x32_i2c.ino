@@ -5,7 +5,8 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
-#include "inc.h"
+#include "messages.h"
+#include "stl.h"
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 32 // OLED display height, in pixels
@@ -24,10 +25,6 @@ PCF8574 pcf20(0x20);
 #define MAIN_MENU_OPTS 4
 #define COMM_MENU_OPTS 6
 #define MAX_STRING_SIZE 10
-#define MAX_PROGRAM_SIZE 10
-
-#define FUNC_BIT_POS 40
-#define FUNC_PARAM_MASK 0xFFFFFFFFFFULL
 
 #define BUTTON_DOWN 0
 #define BUTTON_LEFT 2
@@ -38,22 +35,6 @@ PCF8574 pcf20(0x20);
 
 int menuPosition = 0;
 int selectedPosition = 0;
-
-//#define MAX_PROG_LEN 9
-//#define MAX_DATA_LEN 16
-
-#define A 1ULL
-#define O 2ULL
-#define ASGN 3ULL
-
-#define Q0 1ULL
-#define M0 2ULL
-#define M1 3ULL
-
-#define s_stll(a1, a2, a3) ((a1<<40ULL) | ((a2) << (32ULL)) | (a3))
-
-uint64_t program[MAX_PROGRAM_SIZE];
-char PC = 0;
 
 unsigned char getButtons(){
   while(true){
@@ -111,24 +92,6 @@ void setup() {
   delay(2000);
 }
 
-void testdrawchar(void) {
-  display.clearDisplay();
-
-  display.setTextSize(1);      // Normal 1:1 pixel scale
-  display.setTextColor(SSD1306_WHITE); // Draw white text
-  display.setCursor(0, 0);     // Start at top-left corner
-  display.cp437(true);         // Use full 256 char 'Code Page 437' font
-
-  // Not all the characters will fit on the display. This is normal.
-  // Library will draw what it can and the rest will be clipped.
-  for(int16_t i=0; i<256; i++) {
-    if(i == '\n') display.write(' ');
-    else          display.write(i);
-  }
-
-  display.display();
-  delay(20000);
-}
 void enterCurrentOption(int newMenuPosition){
   menuPosition = (newMenuPosition + 1) * 4;
   selectedPosition = menuPosition;
@@ -145,10 +108,6 @@ void exitCurrentMenu(int currentMenuPos){
   selectedPosition = menuPosition + modulo;
   //menuPosition = menuPosition * 4;
   Serial.println(modulo);
-}
-
-void selectMemmory(){
-  
 }
 
 int showMenu(const char * const *menu, int from, int to){
@@ -346,8 +305,6 @@ void editProgram(){
   while(true){
     display.clearDisplay();
 
-    
-
     if(IS_PRESSED(newButtons, BUTTON_ENTER) && pos < PC) {
       int res = showMenu(editMenu, 0, 3);
       switch(res){
@@ -411,13 +368,17 @@ void editProgram(){
   }
 }
 
+void runProgram(){
+  //load
+  //run
+}
+
 void loop() {
 
   int newMenuPosition = showMenu(mainMenu, 0, MAIN_MENU_OPTS);
-  long int k = -123456789;
   switch(newMenuPosition){
     case -1: exitCurrentMenu(menuPosition); break;
-    case 0: enterCurrentOption(newMenuPosition); break;
+    case 0: /*enterCurrentOption(newMenuPosition);*/runProgram(); break;
     case 1: /*enterValue("Enter value:", k, true, 9, 9);break;*/editProgram(); break;
     case 2: enterCurrentOption(newMenuPosition); break;
     case 3: enterCurrentOption(newMenuPosition); break;

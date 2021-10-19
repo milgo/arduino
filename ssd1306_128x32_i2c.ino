@@ -3,6 +3,7 @@
 #include "stl.h"
 #include "gui.h"
 
+int PS = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -20,11 +21,8 @@ void setup() {
   program[7] = s_stll(O, M1, 4);
   program[8] = s_stll(ASGN, M1, 1);
 
-  PC = 9;
+  PS = 9;
 
-  // Show the display buffer on the screen. You MUST call display() after
-  // drawing commands to make them visible on screen!
-  //drawFunctionBlock(func[0]);
   delay(2000);
 }
 
@@ -47,18 +45,18 @@ void insertProgramLine(int number, bool edit){
         value = enterValue(ENTER_VALUE_MSG, 0, false, 1, 9);
       }
       if(mem >= 0){
-        if(PC>=MAX_PROGRAM_SIZE){
+        if(PS>=MAX_PROGRAM_SIZE){
           printMessageAndWaitForButton(LIMIT_MSG);
         }else {
           if(!edit){
-            if(number < PC){        
-              for(int i=number;i<PC;i++){
-                program[PC-i+1] = program[PC-i];
+            if(number < PS){        
+              for(int i=number;i<PS;i++){
+                program[PS-i+1] = program[PS-i];
               }
             }
           Serial.print((long)command);Serial.print(" ");Serial.print((long)mem);Serial.print(" ");Serial.print((long)value);Serial.print(" ");
             program[number] = s_stll(command, mem, value);
-            if(PC<MAX_PROGRAM_SIZE)PC++;
+            if(PS<MAX_PROGRAM_SIZE)PS++;
           }else{
             program[number] = s_stll(command, mem, value);
           }
@@ -70,10 +68,10 @@ void insertProgramLine(int number, bool edit){
 
 void removeProgramLine(int number){
   Serial.print("removing ");Serial.print(number); Serial.print("line");
-  for(int i=number;i<PC;i++){
+  for(int i=number;i<PS;i++){
     program[i] = program[i+1];
   }
-  PC--;
+  PS--;
 }
 
 void editProgram(){
@@ -81,14 +79,12 @@ void editProgram(){
   int pos = 0; 
   
   unsigned char newButtons = 0;
-  
-  //display.setTextSize(1);
   displaySetTextNormal();
   
   while(true){
     displayClear();
 
-    if(IS_PRESSED(newButtons, BUTTON_ENTER) && pos < PC) {
+    if(IS_PRESSED(newButtons, BUTTON_ENTER) && pos < PS) {
       int res = showMenu(editMenu, 0, 3);
       switch(res){
         case 0: insertProgramLine(pos, false);break;
@@ -96,20 +92,20 @@ void editProgram(){
         case 2: removeProgramLine(pos);if(pos>0)pos--;if(pl>0)pl--;break;
         default: break;
       }
-    }else if(IS_PRESSED(newButtons, BUTTON_ENTER) && pos == PC && PC<MAX_PROGRAM_SIZE) {
+    }else if(IS_PRESSED(newButtons, BUTTON_ENTER) && pos == PS && PS<MAX_PROGRAM_SIZE) {
       insertProgramLine(pos, false);
     }
     
     if(IS_PRESSED(newButtons, BUTTON_LEFT)) return;
     if(pos>0 && IS_PRESSED(newButtons, BUTTON_UP)) pos--;
-    if(pos<PC && IS_PRESSED(newButtons, BUTTON_DOWN))pos++;
+    if(pos<PS && IS_PRESSED(newButtons, BUTTON_DOWN))pos++;
 
     if(pos<pl && pl>0)pl--;
-    else if(pos>pl+3 && pl<PC-3)pl++;
+    else if(pos>pl+3 && pl<PS-3)pl++;
 
     //Serial.print(pos); Serial.print(", "); Serial.println(pl);
     
-    for(int i=pl; i<pl+4 && i<=PC; i++){
+    for(int i=pl; i<pl+4 && i<=PS; i++){
       displaySetCursor(0, (i-pl)*8);
       uint8_t func_id = program[i] >> FUNC_BIT_POS;
       uint64_t param = program[i] & FUNC_PARAM_MASK;
@@ -120,21 +116,18 @@ void editProgram(){
           displaySetTextInvert();
         }
 
-      if(i<PC){
+      if(i<PS){
         displayPrint(i);displayPrint(": ");
 
         //printCommand(func_id);
         printA(comStr, func_id);
 
         if(mem_pos>0){
-          //strcpy_P(bufferStr, (char*)pgm_read_word(&(memStr[mem_pos])));
-          //display.print(bufferStr);display.print(" ");
-
           printA(memStr, mem_pos);
           displayPrint((long)bit_pos);displayPrint(" ");
         }
       }else {
-        if(PC<MAX_PROGRAM_SIZE){
+        if(PS<MAX_PROGRAM_SIZE){
           printA(message, ADD_LINE_MSG);
         }
         else{

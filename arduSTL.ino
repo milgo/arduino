@@ -11,17 +11,29 @@ void setup() {
   setupGUI();
 
   //setupFunctions();
-  program[0] = s_stll(A, M0, 0);
-  program[1] = s_stll(A, M1, 0);
+  /*program[0] = s_stll(A, M0, 0);
+  program[1] = s_stll(A, M0, 1);
   program[2] = s_stll(ASGN, M1, 1);
   program[3] = s_stll(A, M0, 2);
-  program[4] = s_stll(A, M1, 4);
+  program[4] = s_stll(A, M0, 3);
   program[5] = s_stll(ASGN, M1, 1);
-  program[6] = s_stll(O, M0, 2);
-  program[7] = s_stll(O, M1, 4);
+  program[6] = s_stll(O, M0, 4);
+  program[7] = s_stll(O, M0, 5);
+  program[8] = s_stll(ASGN, M1, 1);*/
+
+  program[0] = s_stll(A, I0, 0);
+  program[1] = s_stll(A, I0, 1);
+  program[2] = s_stll(ASGN, Q0, 5);
+  program[3] = s_stll(A, I0, 3);
+  program[4] = s_stll(A, I0, 4);
+  program[5] = s_stll(A, I0, 5);
+  program[6] = s_stll(A, I0, 6);
+  program[7] = s_stll(A, I0, 7);
   program[8] = s_stll(ASGN, M1, 1);
 
   PS = 9;
+
+  DDRB = B00100000;//PORTB output pin 5
 
   delay(2000);
 }
@@ -141,7 +153,7 @@ void editProgram(){
     }
 
     displayDisplay();
-    newButtons = getButtons();
+    newButtons = getButtonsBlocking();
     delay(100);
     //pl++;
     //if(pl>5)pl=0;
@@ -150,21 +162,19 @@ void editProgram(){
 
 void runProgram(){
   //load
-  
-  unsigned char newButtons = 0;
-  setupMem();//!!!!!!!!!!!!!!!!!!!!
+
+  //setupMem();
   displayClear();
   displaySetTextNormal();
   printA(message, RUNNING_MSG);
   displayDisplay();
   //run
   while(true){
-    newButtons = getButtons();
 
-    if(IS_PRESSED(newButtons, BUTTON_LEFT))
-      break;
+    m[0].b[0] = ~getButtonsNoneBlocking();
+    delay(100);
     
-    executeCommand(PC++);
+    executeCommandAt(PC++);
     if(PC>=PS)
       PC=0;
   }

@@ -29,7 +29,8 @@ extern void setupGUI();
 extern int showMenu(const char * const *menu, int from, int to);
 extern long int enterValue(int msg, long int curVal, bool isSigned, int len, int maxDigit);
 extern void printA(const char *const* arr, int id);
-extern unsigned char getButtons();
+extern void printAtoBuf(const char *const* arr, int id, char* buf);
+
 extern void printMessageAndWaitForButton(int msg);
 extern void displaySetTextNormal();
 extern void displaySetTextInvert();
@@ -38,5 +39,8 @@ extern void displayDisplay();
 extern void displaySetCursor(uint8_t x, uint8_t y);
 extern void displayPrint(const char* msg);
 extern void displayPrint(long i);
+
+extern uint8_t getButtonsBlocking();
+extern uint8_t getButtonsNoneBlocking();
 
 #endif //_GUI_H

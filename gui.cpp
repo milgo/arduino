@@ -33,7 +33,7 @@ void setupGUI(){
   displayDisplay();
 }
 
-unsigned char getButtons(){
+uint8_t getButtonsBlocking(){
   while(true){
     for(int i=0; i<8; i++){
       int buttonStatus = pcf20.readButton(i);
@@ -47,6 +47,14 @@ unsigned char getButtons(){
     }
   }
   return 0x0;
+}
+
+uint8_t getButtonsNoneBlocking(){
+  uint8_t res = 0;
+  for(int i=0; i<8; i++){
+    res |= pcf20.readButton(i)<<i;
+  }
+  return res;
 }
 
 
@@ -102,7 +110,7 @@ int showMenu(const char * const *menu, int from, int to){
     }
 
     displayDisplay();
-    newButtons = getButtons();
+    newButtons = getButtonsBlocking();
     delay(100);
   }
 }
@@ -167,7 +175,7 @@ long int enterValue(int msg, long int curVal, bool isSigned, int len, int maxDig
     }
 
     displayDisplay();
-    newButtons = getButtons();
+    newButtons = getButtonsBlocking();
     delay(100);
   }
 
@@ -222,6 +230,10 @@ void printA(const char *const* arr, int id){
   display.print(bufferStr);display.print(" ");
 }
 
+void printAtoBuf(const char *const* arr, int id, char* buf){
+  strcpy_P(buf, (char*)pgm_read_word(&(arr[id])));
+}
+
 void printMessageAndWaitForButton(int msg){
   unsigned char newButtons = 0;
   while(true){
@@ -229,7 +241,7 @@ void printMessageAndWaitForButton(int msg){
     strcpy_P(bufferStr, (char*)pgm_read_word(&(message[msg])));
     display.print(bufferStr);
     displayDisplay();
-    newButtons = getButtons();
+    newButtons = getButtonsBlocking();
     if(IS_PRESSED(newButtons, BUTTON_ENTER))
       break;
   }

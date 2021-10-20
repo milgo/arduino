@@ -12,22 +12,30 @@
 #define ASGN 3ULL
 
 #define Q0 1ULL
-#define M0 2ULL
-#define M1 3ULL
-#define M2 4ULL
+#define I0 2ULL
+#define M0 3ULL
+#define M1 4ULL
 
 #define s_stll(a1, a2, a3) ((a1<<40ULL) | ((a2) << (32ULL)) | (a3))
-#define set_b(m, p) *mem_p[m-1] |= _BV(p);
-#define reset_b(m, p) *mem_p[m-1] &= ~_BV(p);
+#define set_b(m, p) *mem_p[m] |= _BV(p);
+#define reset_b(m, p) *mem_p[m] &= ~_BV(p);
+
+typedef union {
+  uint8_t b[4];
+  uint16_t w[2];
+  uint32_t dw;
+}mem_u;
 
 extern uint64_t program[MAX_PROGRAM_SIZE];
 extern uint8_t volatile PC;
+extern mem_u m[4];
 
 void _and(uint64_t param);
 void _or(uint64_t param);
 void _assign(uint64_t param);
 
 extern void setupMem();
-extern void executeCommand(int pl);
+extern void executeCommandAt(int pl);
+extern void executeCommand(uint64_t param);
 
 #endif //_STL_H

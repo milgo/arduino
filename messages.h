@@ -109,6 +109,7 @@ const char comCounterLCStr[] PROGMEM = "LC ";
 const char memNULLStr[] PROGMEM = "";
 const char memQ0Str[] PROGMEM = "Q0 ";
 const char memI0Str[] PROGMEM = "I0 ";
+const char memI1Str[] PROGMEM = "I1 ";
 const char memM0Str[] PROGMEM = "M0 ";
 const char memM1Str[] PROGMEM = "M1 ";
 const char memM2Str[] PROGMEM = "M2 ";
@@ -199,12 +200,13 @@ const char *const comStr[] PROGMEM = {
   comCompLtEqRStr,
   };
 
-const char comGroups[] = { 1, 11, 11, 13, 13, 19, 19, 25, 25, 37, 37, 55};
+const char comGroups[] = { 1, 10, 10, 12, 12, 18, 18, 24, 24, 36, 36, 54};
 
 const char *const memStr[] PROGMEM = {
   memNULLStr,
   memQ0Str,
   memI0Str,
+  memI1Str,
   memM0Str,
   memM1Str,
   memM2Str,
@@ -217,6 +219,6 @@ const char *const memStr[] PROGMEM = {
   memTStr,
 };
 
-const char memGroups[] = {1, 7, 7, 11, 12, 13, 11, 12, 0, 0, 0, 0};
+const char memGroups[] = {1, 8, 8, 12, 13, 14, 12, 13, 0, 0, 0, 0};
 
 #endif // _MESSAGES_H

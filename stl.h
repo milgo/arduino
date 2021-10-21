@@ -14,11 +14,14 @@
 #define ASGN 5ULL
 #define S 6ULL
 #define R 7ULL
+#define FP 8ULL
+#define FN 9ULL
 
 #define Q0 1ULL
 #define I0 2ULL
-#define M0 3ULL
-#define M1 4ULL
+#define I1 3ULL
+#define M0 4ULL
+#define M1 5ULL
 
 #define s_stll(a1, a2, a3) ((a1<<40ULL) | ((a2) << (32ULL)) | (a3))
 #define set_b(m, p) *mem_p[m] |= _BV(p);
@@ -42,6 +45,8 @@ void _not(uint64_t param);
 void _assign(uint64_t param);
 void _s(uint64_t param);
 void _r(uint64_t param);
+void _fp(uint64_t param);
+void _fn(uint64_t param);
 
 extern void setupMem();
 extern void executeCommandAt(int pl);

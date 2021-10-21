@@ -21,14 +21,15 @@ void setup() {
   program[7] = s_stll(O, M0, 5);
   program[8] = s_stll(ASGN, M1, 1);*/
 
-  program[0] = s_stll(ON, I0, 0);
-  program[1] = s_stll(A, I0, 1);
-  program[2] = s_stll(S, Q0, 5);
-  program[3] = s_stll(A, I0, 2);
-  program[4] = s_stll(R, Q0, 5);
-  PS = 5;
+  program[0] = s_stll(ON, I0, 2);
+  program[1] = s_stll(FN, M0, 0);
+  program[2] = s_stll(ASGN, Q0, 5);
+  //program[3] = s_stll(A, I1, 2);
+  //program[4] = s_stll(R, Q0, 5);
+  PS = 3;
 
   DDRB = B00100000;//PORTB output pin 5
+  PORTD = B11111100;//pullup on pin 2 
 
   delay(2000);
 
@@ -188,7 +189,7 @@ void runProgram(){
     while(true){
   
       m[0].b[0] = ~getButtonsNoneBlocking();
-      delay(100);
+      //delay(100);
       
       executeCommandAt(PC++);
       if(PC>=PS)
@@ -203,5 +204,5 @@ void runProgram(){
 
 void loop() {
   runProgram();
-
+  
 }

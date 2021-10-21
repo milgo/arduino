@@ -9,7 +9,11 @@
 #define MAX_PROGRAM_SIZE 10
 #define A 1ULL
 #define O 2ULL
-#define ASGN 3ULL
+#define AN 3ULL
+#define ON 4ULL
+#define ASGN 5ULL
+#define S 6ULL
+#define R 7ULL
 
 #define Q0 1ULL
 #define I0 2ULL
@@ -32,7 +36,12 @@ extern mem_u m[4];
 
 void _and(uint64_t param);
 void _or(uint64_t param);
+void _nand(uint64_t param);
+void _nor(uint64_t param);
+void _not(uint64_t param);
 void _assign(uint64_t param);
+void _s(uint64_t param);
+void _r(uint64_t param);
 
 extern void setupMem();
 extern void executeCommandAt(int pl);

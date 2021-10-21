@@ -13,19 +13,22 @@
 #define LIMIT_MSG 2
 #define ADD_LINE_MSG 3
 #define RUNNING_MSG 4
+#define NOPROGRAM_MSG 5
 
 const char enterValueBitNumberMsgStr[] PROGMEM = "Enter bit number:";
 const char enterValueMsgStr[] PROGMEM = "Enter value:";
 const char limitMsgStr[] PROGMEM = "LIMIT";
 const char addLineMsgStr[] PROGMEM = "[+]";
 const char runningMsgStr[] PROGMEM = "Running...";
+const char noProgramMsgStr[] PROGMEM = "No program";
 
 const char *const message[] PROGMEM = {
   enterValueBitNumberMsgStr, 
   enterValueMsgStr,
   limitMsgStr,
   addLineMsgStr,
-  runningMsgStr
+  runningMsgStr,
+  noProgramMsgStr
   };
 
 const char mainMenuRunStr[] PROGMEM = "Run";
@@ -47,6 +50,10 @@ const char editMenuRemoveStr[] PROGMEM = "Remove";
 const char comNOPStr[] PROGMEM = "";
 const char comBasicAStr[] PROGMEM = "A  ";
 const char comBasicOStr[] PROGMEM = "O  ";
+
+const char comBasicANStr[] PROGMEM = "AN ";
+const char comBasicONStr[] PROGMEM = "ON ";
+
 const char comBasicAssignStr[] PROGMEM = "=  ";
 const char comBasicSStr[] PROGMEM = "S  ";
 const char comBasicRStr[] PROGMEM = "R  ";
@@ -139,6 +146,8 @@ const char *const comStr[] PROGMEM = {
   comNOPStr,
   comBasicAStr,
   comBasicOStr,
+  comBasicANStr,
+  comBasicONStr,
   comBasicAssignStr,
   comBasicSStr,
   comBasicRStr,
@@ -190,7 +199,7 @@ const char *const comStr[] PROGMEM = {
   comCompLtEqRStr,
   };
 
-const char comGroups[] = { 1, 8, 8, 10, 10, 16, 16, 22, 22, 34, 34, 52};
+const char comGroups[] = { 1, 11, 11, 13, 13, 19, 19, 25, 25, 37, 37, 55};
 
 const char *const memStr[] PROGMEM = {
   memNULLStr,

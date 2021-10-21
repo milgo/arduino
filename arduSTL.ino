@@ -21,21 +21,36 @@ void setup() {
   program[7] = s_stll(O, M0, 5);
   program[8] = s_stll(ASGN, M1, 1);*/
 
-  program[0] = s_stll(A, I0, 0);
+  program[0] = s_stll(ON, I0, 0);
   program[1] = s_stll(A, I0, 1);
-  program[2] = s_stll(ASGN, Q0, 5);
-  program[3] = s_stll(A, I0, 3);
-  program[4] = s_stll(A, I0, 4);
-  program[5] = s_stll(A, I0, 5);
-  program[6] = s_stll(A, I0, 6);
-  program[7] = s_stll(A, I0, 7);
-  program[8] = s_stll(ASGN, M1, 1);
-
-  PS = 9;
+  program[2] = s_stll(S, Q0, 5);
+  program[3] = s_stll(A, I0, 2);
+  program[4] = s_stll(R, Q0, 5);
+  PS = 5;
 
   DDRB = B00100000;//PORTB output pin 5
 
   delay(2000);
+
+  if(!IS_PRESSED(getButtonsNoneBlocking(), BUTTON_ENTER)){
+    if(!IS_PRESSED(getButtonsBlocking(), BUTTON_ENTER))
+      delay(100);
+
+      boolean conf = true;
+      while(conf){
+        int newMenuPosition = showMenu(mainMenu, 0, MAIN_MENU_OPTS);
+        switch(newMenuPosition){
+          case -1: /*exitCurrentMenu(menuPosition);*/ break;
+          case 0: /*enterCurrentOption(newMenuPosition);*/conf = false; break;
+          case 1: /*enterValue("Enter value:", k, true, 9, 9);break;*/editProgram(); break;
+          case 2: /*enterCurrentOption(newMenuPosition);*/ break;
+          case 3: /*enterCurrentOption(newMenuPosition);*/ break;
+          default:break;
+        }
+      }
+
+  }
+  
 }
 
 void insertProgramLine(int number, bool edit){
@@ -162,33 +177,31 @@ void editProgram(){
 
 void runProgram(){
   //load
-
   //setupMem();
   displayClear();
   displaySetTextNormal();
-  printA(message, RUNNING_MSG);
-  displayDisplay();
+  
   //run
-  while(true){
-
-    m[0].b[0] = ~getButtonsNoneBlocking();
-    delay(100);
-    
-    executeCommandAt(PC++);
-    if(PC>=PS)
-      PC=0;
+  if(program[0]!=0x0){
+    printA(message, RUNNING_MSG);
+    displayDisplay();
+    while(true){
+  
+      m[0].b[0] = ~getButtonsNoneBlocking();
+      delay(100);
+      
+      executeCommandAt(PC++);
+      if(PC>=PS)
+        PC=0;
+    }
+  }else{
+    printA(message, NOPROGRAM_MSG);
+    displayDisplay();
+    delay(3000);
   }
 }
 
 void loop() {
+  runProgram();
 
-  int newMenuPosition = showMenu(mainMenu, 0, MAIN_MENU_OPTS);
-  switch(newMenuPosition){
-    case -1: /*exitCurrentMenu(menuPosition);*/ break;
-    case 0: /*enterCurrentOption(newMenuPosition);*/runProgram(); break;
-    case 1: /*enterValue("Enter value:", k, true, 9, 9);break;*/editProgram(); break;
-    case 2: /*enterCurrentOption(newMenuPosition);*/ break;
-    case 3: /*enterCurrentOption(newMenuPosition);*/ break;
-    default:break;
-  }
 }

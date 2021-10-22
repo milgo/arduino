@@ -4,19 +4,21 @@
 #include "gui.h"
 
 uint64_t program[MAX_PROGRAM_SIZE];
+uint64_t accumulator[2];
 uint8_t nullByte;
 
 void _nop(uint64_t param);
 
-void (*func_ptr[])(uint64_t) = {_nop, _and, _or, _nand, _nor, _assign, _s, _r, _fp, _fn};
-mem_u m[4];
+void (*func_ptr[])(uint64_t) = {_nop, _and, _or, _nand, _nor, _assign, _s, _r, _fp, _fn, _l, _t};
+uint8_t m[16];
 
-uint8_t volatile * const mem_p[] = {&nullByte, &PORTB, &PIND, &m[0].b[0], &m[0].b[1], &m[0].b[2], &m[0].b[3] };
+uint8_t volatile * const mem_p[] = {&nullByte, &PORTB, &PIND, &m[0], &m[1], &m[2], &m[3] };
+
 uint8_t volatile RLO = 0;
 uint8_t volatile cancel_RLO = true;
 uint8_t volatile PC = 0;
 
-uint8_t mem_pos, bit_pos, mask;
+uint8_t mem_pos, bit_pos, mask, var_pos;
 
 void print_binary(int number, uint8_t len){
   static int bits;
@@ -62,10 +64,15 @@ void executeCommandAt(int pl){
   executeCommand(program[pl]);
 }
 
+void pushToAcc(uint64_t param){
+  accumulator[1] = accumulator[0];
+  accumulator[0] = param;
+}
+
 void _nop(uint64_t param){}
 
 void _and(uint64_t param){
-  mem_pos = param >> 32;
+  mem_pos = param >> 32 & 0xFF;
   bit_pos = param & 0x7;
   if(cancel_RLO) RLO = (*mem_p[mem_pos]>>bit_pos) & 0x1;
   else RLO &= (*mem_p[mem_pos]>>bit_pos) & 0x1;
@@ -73,7 +80,7 @@ void _and(uint64_t param){
 }
 
 void _nand(uint64_t param){
-  mem_pos = param >> 32;
+  mem_pos = param >> 32 & 0xFF;
   bit_pos = param & 0x7;
   if(cancel_RLO) RLO = ~(*mem_p[mem_pos]>>bit_pos) & 0x1;
   else RLO &= ~(*mem_p[mem_pos]>>bit_pos) & 0x1;
@@ -81,7 +88,7 @@ void _nand(uint64_t param){
 }
 
 void _or(uint64_t param){
-  mem_pos = param >> 32;
+  mem_pos = param >> 32 & 0xFF;
   bit_pos = param & 0x7;
   if(cancel_RLO) RLO = (*mem_p[mem_pos]>>bit_pos) & 0x1;
   else RLO |= (*mem_p[mem_pos]>>bit_pos) & 0x1; 
@@ -89,7 +96,7 @@ void _or(uint64_t param){
 }
 
 void _nor(uint64_t param){
-  mem_pos = param >> 32;
+  mem_pos = param >> 32 & 0xFF;
   bit_pos = param & 0x7;
   if(cancel_RLO) RLO = ~(*mem_p[mem_pos]>>bit_pos) & 0x1;
   else RLO |= ~(*mem_p[mem_pos]>>bit_pos) & 0x1; 
@@ -97,7 +104,7 @@ void _nor(uint64_t param){
 }
 
 void _assign(uint64_t param){
-  mem_pos = param >> 32;
+  mem_pos = param >> 32 & 0xFF;
   bit_pos = param & 0x7;
   mask = 1 << bit_pos;
   *mem_p[mem_pos] = ((*mem_p[mem_pos] & ~mask) | RLO << bit_pos);
@@ -105,7 +112,7 @@ void _assign(uint64_t param){
 }
 
 void _s(uint64_t param){
-  mem_pos = param >> 32;
+  mem_pos = param >> 32 & 0xFF;
   bit_pos = param & 0x7;
   mask = 1 << bit_pos;
   if(RLO==0x1)
@@ -114,7 +121,7 @@ void _s(uint64_t param){
 }
 
 void _r(uint64_t param){
-  mem_pos = param >> 32;
+  mem_pos = param >> 32 & 0xFF;
   bit_pos = param & 0x7;
   mask = 1 << bit_pos;
   if(RLO==0x1)
@@ -123,7 +130,7 @@ void _r(uint64_t param){
 }
 
 void _fp(uint64_t param){
-  mem_pos = param >> 32;
+  mem_pos = param >> 32 & 0xFF;
   bit_pos = param & 0x7;
   mask = 1 << bit_pos;
   uint8_t m = (*mem_p[mem_pos]>>bit_pos) & 0x1;
@@ -136,7 +143,7 @@ void _fp(uint64_t param){
 }
 
 void _fn(uint64_t param){
-  mem_pos = param >> 32;
+  mem_pos = (param >> 32) & 0xFF;
   bit_pos = param & 0x7;
   mask = 1 << bit_pos;
   uint8_t m = (*mem_p[mem_pos]>>bit_pos) & 0x1;
@@ -146,4 +153,23 @@ void _fn(uint64_t param){
     *mem_p[mem_pos] = ((*mem_p[mem_pos] & ~mask));
   }else{RLO = 0x0;}  
   cancel_RLO = false;
+}
+
+void _l(uint64_t param){
+  mem_pos = (param >> 32 & 0xFF) - 8; // 8 because MB is 8th on select 
+                                      // and now we ignore mem_u and use m[] 
+                                      // with unions (we substract 8 to get 
+                                      // relative memory position)
+  var_pos = param & 0xF;
+
+
+  Serial.print(mem_pos);Serial.print(" ");Serial.print(var_pos);
+  //uint8_t 
+  
+  //pushToAcc(m[mem_pos].w[0]);
+}
+
+void _t(uint64_t param){
+  mem_pos = param >> 32 & 0xFF;
+  *mem_p[mem_pos] = accumulator[0];
 }

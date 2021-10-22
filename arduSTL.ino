@@ -21,7 +21,7 @@ void setup() {
   program[7] = s_stll(O, M0, 5);
   program[8] = s_stll(ASGN, M1, 1);*/
 
-  program[0] = s_stll(ON, I0, 2);
+  program[0] = s_stll(L, I0, 2);
   program[1] = s_stll(FN, M0, 0);
   program[2] = s_stll(ASGN, Q0, 5);
   //program[3] = s_stll(A, I1, 2);
@@ -64,13 +64,13 @@ void insertProgramLine(int number, bool edit){
     if(command>=0 && memGroups[comGroup*2]>0){
       mem = showMenu(memStr, memGroups[comGroup*2], memGroups[comGroup*2+1]);
       if(mem < 7 && mem > 0){
-        value = enterValue(ENTER_BIT_NR_MSG, 0, false, 1, 7);
+        value = enterValue(ENTER_BIT_NR_MSG, 0, false, 1, 7); //bits
       }else if(mem >= 7 && mem < 10){
-        value = enterValue(ENTER_VALUE_MSG, 0, false, 2, 9);
+        value = enterValue(ENTER_VALUE_MSG, 0, false, 2, 9); //bytes, words, dwords
       }else if(mem == 10){
-        value = enterValue(ENTER_VALUE_MSG, 0, true, 9, 9);
+        value = enterValue(ENTER_VALUE_MSG, 0, true, 9, 9); //const
       }else if(mem > 10){
-        value = enterValue(ENTER_VALUE_MSG, 0, false, 1, 9);
+        value = enterValue(ENTER_VALUE_MSG, 0, false, 1, 9); //counters, timers
       }
       if(mem >= 0){
         if(PS>=MAX_PROGRAM_SIZE){
@@ -188,7 +188,7 @@ void runProgram(){
     displayDisplay();
     while(true){
   
-      m[0].b[0] = ~getButtonsNoneBlocking();
+      m[0] = ~getButtonsNoneBlocking();
       //delay(100);
       
       executeCommandAt(PC++);

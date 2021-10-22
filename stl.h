@@ -16,6 +16,8 @@
 #define R 7ULL
 #define FP 8ULL
 #define FN 9ULL
+#define L 10ULL
+#define T 11ULL
 
 #define Q0 1ULL
 #define I0 2ULL
@@ -35,7 +37,7 @@ typedef union {
 
 extern uint64_t program[MAX_PROGRAM_SIZE];
 extern uint8_t volatile PC;
-extern mem_u m[4];
+extern uint8_t m[16];
 
 void _and(uint64_t param);
 void _or(uint64_t param);
@@ -47,6 +49,8 @@ void _s(uint64_t param);
 void _r(uint64_t param);
 void _fp(uint64_t param);
 void _fn(uint64_t param);
+void _l(uint64_t param);
+void _t(uint64_t param);
 
 extern void setupMem();
 extern void executeCommandAt(int pl);

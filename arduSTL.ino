@@ -67,9 +67,15 @@ void insertProgramLine(int number, bool edit){
       if(mem >= 0){
 
         value = enterValue(memPosAquireMsg[mem], 0, 
-                              memValidationRules[mem*3], 
-                              memValidationRules[mem*3+1], 
-                              memValidationRules[mem*3+2]);
+                              memValidationRules[mem*4], 
+                              memValidationRules[mem*4+1], 
+                              memValidationRules[mem*4+2]);
+
+        if(value > memValidationRules[mem*4+3]){
+          printMessageAndWaitForButton(MUST_BE_LESS_MSG, memValidationRules[mem*4+3]);
+          return;
+        }
+        
         if(mem != 7)
           var_pos = value;
 

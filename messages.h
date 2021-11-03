@@ -9,12 +9,13 @@
 #define _POSITIVE
 
 #define ENTER_VARIABLE_POS_MSG 0
-#define ENTER_BIT_POS_MSG 6
 #define ENTER_VALUE_MSG 1
 #define LIMIT_MSG 2
 #define ADD_LINE_MSG 3
 #define RUNNING_MSG 4
 #define NOPROGRAM_MSG 5
+#define ENTER_BIT_POS_MSG 6
+#define MUST_BE_LESS_MSG 7
 
 const char enterVariablePositionMsgStr[] PROGMEM = "Enter var position:";
 const char enterBitPositionMsgStr[] PROGMEM = "Enter bit position:";
@@ -23,6 +24,7 @@ const char limitMsgStr[] PROGMEM = "LIMIT";
 const char addLineMsgStr[] PROGMEM = "[+]";
 const char runningMsgStr[] PROGMEM = "Running...";
 const char noProgramMsgStr[] PROGMEM = "No program";
+const char mustBeLessThenStr[] PROGMEM = "Value must be less then: ";
 
 const char *const message[] PROGMEM = {
   enterVariablePositionMsgStr, 
@@ -31,7 +33,8 @@ const char *const message[] PROGMEM = {
   addLineMsgStr,
   runningMsgStr,
   noProgramMsgStr,
-  enterBitPositionMsgStr
+  enterBitPositionMsgStr,
+  mustBeLessThenStr
   };
 
 const char mainMenuRunStr[] PROGMEM = "Run";
@@ -221,16 +224,16 @@ const char memGroups[] = {1, 4,
                           0, 0, 
                           0, 0};
 
-const char memValidationRules[] = {0, 0, 0,
-                                  0, 1, 7,
-                                  0, 1, 7,
-                                  0, 1, 7,
-                                  0, 1, 7,
-                                  0, 1, 7,
-                                  0, 1, 7,
-                                  1, 9, 9,
-                                  0, 1, 9,
-                                  0, 1, 9};
+const char memValidationRules[] = {0, 0, 0, 0,
+                                  0, 1, 7, 7,
+                                  0, 1, 7, 7,
+                                  0, 2, 9, 63,
+                                  0, 2, 9, 63,
+                                  0, 2, 9, 31,
+                                  0, 2, 9, 16,
+                                  1, 9, 9, 9,
+                                  0, 1, 9, 9,
+                                  0, 1, 9, 9};
 
 const char memPosAquireMsg[] = {0, 0, 0, 0, 0, 0, 0, 1, 0, 0};
 

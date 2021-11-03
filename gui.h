@@ -32,6 +32,7 @@ extern void printA(const char *const* arr, int id);
 extern void printAtoBuf(const char *const* arr, int id, char* buf);
 
 extern void printMessageAndWaitForButton(int msg);
+extern void printMessageAndWaitForButton(int msg, int v);
 extern void displaySetTextNormal();
 extern void displaySetTextInvert();
 extern void displayClear();

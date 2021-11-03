@@ -234,16 +234,26 @@ void printAtoBuf(const char *const* arr, int id, char* buf){
   strcpy_P(buf, (char*)pgm_read_word(&(arr[id])));
 }
 
-void printMessageAndWaitForButton(int msg){
+void printMessageAndWaitForButton(int msg, bool showVal, int v){
   unsigned char newButtons = 0;
   while(true){
     displayClear();
     strcpy_P(bufferStr, (char*)pgm_read_word(&(message[msg])));
     display.print(bufferStr);
+    if(showVal)
+      display.print(v);
     displayDisplay();
     newButtons = getButtonsBlocking();
     if(IS_PRESSED(newButtons, BUTTON_ENTER))
       break;
   }
   displayClear();
+}
+
+void printMessageAndWaitForButton(int msg, int val){
+  printMessageAndWaitForButton(msg, true, val);
+}
+
+void printMessageAndWaitForButton(int msg){
+  printMessageAndWaitForButton(msg, false, 0);
 }

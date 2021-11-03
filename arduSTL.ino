@@ -21,9 +21,9 @@ void setup() {
   program[7] = s_stll(O, M0, 5);
   program[8] = s_stll(ASGN, M1, 1);*/
 
-  program[0] = s_stll(L, I0, 2);
-  program[1] = s_stll(FN, M0, 0);
-  program[2] = s_stll(ASGN, Q0, 5);
+  program[0] = s_stll_m(L, I, 2, 0);
+  program[1] = s_stll_m(FN, M, 0, 0);
+  program[2] = s_stll_m(ASGN, Q, 5, 1);
   //program[3] = s_stll(A, I1, 2);
   //program[4] = s_stll(R, Q0, 5);
   PS = 3;
@@ -33,9 +33,9 @@ void setup() {
 
   delay(2000);
 
-  if(!IS_PRESSED(getButtonsNoneBlocking(), BUTTON_ENTER)){
+  /*if(!IS_PRESSED(getButtonsNoneBlocking(), BUTTON_ENTER)){
     if(!IS_PRESSED(getButtonsBlocking(), BUTTON_ENTER))
-      delay(100);
+      delay(100);*/
 
       boolean conf = true;
       while(conf){
@@ -50,43 +50,55 @@ void setup() {
         }
       }
 
-  }
+  //}
   
 }
 
 void insertProgramLine(int number, bool edit){
   //Serial.print("removing ");Serial.print(number); Serial.print("line");
-  int64_t command = 0, mem = 0;
-  int64_t value = 0;
-  int comGroup = showMenu(commandGroupMenu, 0, 6);
+  int64_t command = 0, mem = -1;
+  uint8_t var_pos = 0, bit_pos = 0;
+  int8_t comGroup = showMenu(commandGroupMenu, 0, 6);
+  long int value = 0;
   if(comGroup>=0){
     command = showMenu(comStr, comGroups[comGroup*2], comGroups[comGroup*2+1]);
     if(command>=0 && memGroups[comGroup*2]>0){
       mem = showMenu(memStr, memGroups[comGroup*2], memGroups[comGroup*2+1]);
-      if(mem < 7 && mem > 0){
-        value = enterValue(ENTER_BIT_NR_MSG, 0, false, 1, 7); //bits
-      }else if(mem >= 7 && mem < 10){
-        value = enterValue(ENTER_VALUE_MSG, 0, false, 2, 9); //bytes, words, dwords
-      }else if(mem == 10){
-        value = enterValue(ENTER_VALUE_MSG, 0, true, 9, 9); //const
-      }else if(mem > 10){
-        value = enterValue(ENTER_VALUE_MSG, 0, false, 1, 9); //counters, timers
+      if(mem >= 0){
+
+        value = enterValue(memPosAquireMsg[mem], 0, 
+                              memValidationRules[mem*3], 
+                              memValidationRules[mem*3+1], 
+                              memValidationRules[mem*3+2]);
+        if(mem != 7)
+          var_pos = value;
+
+        if(mem < 4){
+          bit_pos = enterValue(ENTER_BIT_POS_MSG, 0, 0, 1, 7);
+        }
+
       }
+
       if(mem >= 0){
         if(PS>=MAX_PROGRAM_SIZE){
           printMessageAndWaitForButton(LIMIT_MSG);
         }else {
           if(!edit){
             if(number < PS){        
-              for(int i=number;i<PS;i++){
-                program[PS-i+1] = program[PS-i];
+              for(int i=PS;i>number;i--){
+                program[i] = program[i-1];
               }
             }
-          Serial.print((long)command);Serial.print(" ");Serial.print((long)mem);Serial.print(" ");Serial.print((long)value);Serial.print(" ");
-            program[number] = s_stll(command, mem, value);
             if(PS<MAX_PROGRAM_SIZE)PS++;
-          }else{
-            program[number] = s_stll(command, mem, value);
+          }
+
+          if(mem == 7){ //constant
+            Serial.print((long)command);Serial.print(" ");Serial.print((long)mem);Serial.print(" ");Serial.print((long)value);Serial.print(" ");
+            program[number] = s_stll_v(command, mem, value);
+          }
+          else{
+            Serial.print((long)command);Serial.print(" ");Serial.print((long)mem);Serial.print(" ");Serial.print((long)var_pos);Serial.print(" ");Serial.print((long)bit_pos);Serial.print(" ");
+            program[number] = s_stll_m(command, mem, var_pos, bit_pos);
           }
         }
       }
@@ -137,22 +149,33 @@ void editProgram(){
       displaySetCursor(0, (i-pl)*8);
       uint8_t func_id = program[i] >> FUNC_BIT_POS;
       uint64_t param = program[i] & FUNC_PARAM_MASK;
-      uint64_t mem_pos = param >> 32;
-      uint64_t bit_pos = param & 0xFFFFFFFF;
-
+      uint64_t mem_pos = param >> 32 & 0xFF;
+      uint64_t var_pos = param >> 4 & 0xFF;
+      uint64_t bit_pos = param & 0xF;
+      long int value = param & 0xFFFFFFFF;
       if(pos == i){
           displaySetTextInvert();
         }
 
       if(i<PS){
-        displayPrint(i);displayPrint(": ");
+        displayPrint(i+1);displayPrint(": ");
 
         //printCommand(func_id);
         printA(comStr, func_id);
 
         if(mem_pos>0){
+
           printA(memStr, mem_pos);
-          displayPrint((long)bit_pos);displayPrint(" ");
+
+          if(mem_pos == 7)//constant
+            displayPrint((long)value);
+          else
+            displayPrint((long)var_pos);
+          
+          if(mem_pos<4){//if basic command
+            displayPrint(".");
+            displayPrint((long)bit_pos);
+          }
         }
       }else {
         if(PS<MAX_PROGRAM_SIZE){

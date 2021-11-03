@@ -19,15 +19,17 @@
 #define L 10ULL
 #define T 11ULL
 
-#define Q0 1ULL
-#define I0 2ULL
-#define I1 3ULL
-#define M0 4ULL
-#define M1 5ULL
+#define Q 1ULL
+#define I 2ULL
+#define M 3ULL
+#define MB 4ULL
+#define MW 5ULL
+#define MD 6ULL
 
-#define s_stll(a1, a2, a3) ((a1<<40ULL) | ((a2) << (32ULL)) | (a3))
-#define set_b(m, p) *mem_p[m] |= _BV(p);
-#define reset_b(m, p) *mem_p[m] &= ~_BV(p);
+#define s_stll_v(a1, a2, a3) ((a1<<40ULL) | ((a2) << (32ULL)) | (a3))
+#define s_stll_m(a1, a2, a3, a4) ((a1<<40ULL) | ((a2) << (32ULL)) | (a3<<4) | (a4))
+#define set_b(m, p, b) *memMap[m][p] |= _BV(b);
+#define reset_b(m, p, b) *memMap[m][p] &= ~_BV(b);
 
 typedef union {
   uint8_t b[4];
@@ -37,7 +39,7 @@ typedef union {
 
 extern uint64_t program[MAX_PROGRAM_SIZE];
 extern uint8_t volatile PC;
-extern uint8_t m[16];
+extern uint8_t m[64];
 
 void _and(uint64_t param);
 void _or(uint64_t param);

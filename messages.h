@@ -8,14 +8,16 @@
 #define _NEGATIVE_POSITIVE_I 0x3;
 #define _POSITIVE
 
-#define ENTER_BIT_NR_MSG 0
+#define ENTER_VARIABLE_POS_MSG 0
+#define ENTER_BIT_POS_MSG 6
 #define ENTER_VALUE_MSG 1
 #define LIMIT_MSG 2
 #define ADD_LINE_MSG 3
 #define RUNNING_MSG 4
 #define NOPROGRAM_MSG 5
 
-const char enterValueBitNumberMsgStr[] PROGMEM = "Enter bit number:";
+const char enterVariablePositionMsgStr[] PROGMEM = "Enter var position:";
+const char enterBitPositionMsgStr[] PROGMEM = "Enter bit position:";
 const char enterValueMsgStr[] PROGMEM = "Enter value:";
 const char limitMsgStr[] PROGMEM = "LIMIT";
 const char addLineMsgStr[] PROGMEM = "[+]";
@@ -23,12 +25,13 @@ const char runningMsgStr[] PROGMEM = "Running...";
 const char noProgramMsgStr[] PROGMEM = "No program";
 
 const char *const message[] PROGMEM = {
-  enterValueBitNumberMsgStr, 
+  enterVariablePositionMsgStr, 
   enterValueMsgStr,
   limitMsgStr,
   addLineMsgStr,
   runningMsgStr,
-  noProgramMsgStr
+  noProgramMsgStr,
+  enterBitPositionMsgStr
   };
 
 const char mainMenuRunStr[] PROGMEM = "Run";
@@ -107,19 +110,15 @@ const char comCounterLStr[] PROGMEM = "L ";
 const char comCounterLCStr[] PROGMEM = "LC ";
 
 const char memNULLStr[] PROGMEM = "";
-const char memQ0Str[] PROGMEM = "Q0 ";
-const char memI0Str[] PROGMEM = "I0 ";
-const char memI1Str[] PROGMEM = "I1 ";
-const char memM0Str[] PROGMEM = "M0 ";
-const char memM1Str[] PROGMEM = "M1 ";
-const char memM2Str[] PROGMEM = "M2 ";
-const char memM3Str[] PROGMEM = "M3 ";
-const char memMBStr[] PROGMEM = "MB ";
-const char memMWStr[] PROGMEM = "MW ";
-const char memMDStr[] PROGMEM = "MD ";
-const char memCStr[] PROGMEM = "C  ";
-const char memTStr[] PROGMEM = "T  ";
-const char memConstStr[] PROGMEM = "#  ";
+const char memQStr[] PROGMEM = "Q";
+const char memIStr[] PROGMEM = "I";
+const char memMStr[] PROGMEM = "M";
+const char memMBStr[] PROGMEM = "MB";
+const char memMWStr[] PROGMEM = "MW";
+const char memMDStr[] PROGMEM = "MD";
+const char memCStr[] PROGMEM = "C";
+const char memTStr[] PROGMEM = "T";
+const char memConstStr[] PROGMEM = "#";
 
 const char *const mainMenu[] PROGMEM = {
   mainMenuRunStr, 
@@ -204,13 +203,9 @@ const char comGroups[] = { 1, 10, 10, 12, 12, 18, 18, 24, 24, 36, 36, 54};
 
 const char *const memStr[] PROGMEM = {
   memNULLStr,
-  memQ0Str,
-  memI0Str,
-  memI1Str,
-  memM0Str,
-  memM1Str,
-  memM2Str,
-  memM3Str,
+  memQStr,
+  memIStr,
+  memMStr,
   memMBStr,
   memMWStr,
   memMDStr,
@@ -219,6 +214,26 @@ const char *const memStr[] PROGMEM = {
   memTStr,
 };
 
-const char memGroups[] = {1, 8, 8, 12, 13, 14, 12, 13, 0, 0, 0, 0};
+const char memGroups[] = {1, 4, 
+                          4, 8, 
+                          9, 10, 
+                          8, 9, 
+                          0, 0, 
+                          0, 0};
+
+const char memValidationRules[] = {0, 0, 0,
+                                  0, 1, 7,
+                                  0, 1, 7,
+                                  0, 1, 7,
+                                  0, 1, 7,
+                                  0, 1, 7,
+                                  0, 1, 7,
+                                  1, 9, 9,
+                                  0, 1, 9,
+                                  0, 1, 9};
+
+const char memPosAquireMsg[] = {0, 0, 0, 0, 0, 0, 0, 1, 0, 0};
+
+
 
 #endif // _MESSAGES_H

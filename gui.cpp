@@ -227,7 +227,7 @@ void displayPrint(long i){
 
 void printA(const char *const* arr, int id){
   strcpy_P(bufferStr, (char*)pgm_read_word(&(arr[id])));
-  display.print(bufferStr);display.print(" ");
+  display.print(bufferStr);//display.print(" ");
 }
 
 void printAtoBuf(const char *const* arr, int id, char* buf){

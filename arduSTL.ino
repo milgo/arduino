@@ -63,7 +63,16 @@ void insertProgramLine(int number, bool edit){
   if(comGroup>=0){
     command = showMenu(comStr, comGroups[comGroup*2], comGroups[comGroup*2+1]);
     if(command>=0 && memGroups[comGroup*2]>0){
-      mem = showMenu(memStr, memGroups[comGroup*2], memGroups[comGroup*2+1]);
+
+      uint8_t memPtrFrom, memPtrTo;
+      memPtrFrom = memGroups[comGroup*2];
+      memPtrTo = memGroups[comGroup*2+1];
+
+      if(command == 10){// if load command
+        memPtrTo -= 1; //exclude constant from load operator
+      }
+      
+      mem = showMenu(memStr, memPtrFrom, memPtrTo);
       if(mem >= 0){
 
         value = enterValue(memPosAquireMsg[mem], 0, 
@@ -71,7 +80,7 @@ void insertProgramLine(int number, bool edit){
                               memValidationRules[mem*4+1], 
                               memValidationRules[mem*4+2]);
 
-        if(value > memValidationRules[mem*4+3]){
+        if(value > memValidationRules[mem*4+3] && memValidationRules[mem*4+3]>0){
           printMessageAndWaitForButton(MUST_BE_LESS_MSG, memValidationRules[mem*4+3]);
           return;
         }

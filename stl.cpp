@@ -3,6 +3,14 @@
 #include "messages.h"
 #include "gui.h"
 
+/*
+
+Instruction:  00000000 00000000 00000000  00000000  00000000 00000000 00000000 00000000
+             |          Function         |Mem ptr |      Reserved         |Mem id |Bit|
+             |          Function         |Mem ptr |            Value                  |
+
+*/
+
 uint64_t program[MAX_PROGRAM_SIZE];
 uint64_t accumulator[2];
 uint8_t nullByte;
@@ -44,7 +52,7 @@ uint8_t volatile RLO = 0;
 uint8_t volatile cancel_RLO = true;
 uint8_t volatile PC = 0;
 
-uint8_t mem_pos, bit_pos, mask, var_pos;
+uint8_t mem_ptr, bit_pos, mask, mem_id;
 
 void print_binary(int number, uint8_t len){
   static int bits;
@@ -59,14 +67,14 @@ void print_binary(int number, uint8_t len){
 
 void mem_print(uint64_t param){
   uint8_t func_id = param >> FUNC_BIT_POS;
-  uint8_t mem_pos = param >> 32;
+  uint8_t mem_ptr = param >> 32;
   uint8_t bit_pos = param & 0x7;
-  int val = ((**memMap[mem_pos] & (1<<bit_pos))>0);
+  int val = ((**memMap[mem_ptr] & (1<<bit_pos))>0);
   char buf[10];
   printAtoBuf(comStr, func_id, buf); 
   Serial.print(buf);
   Serial.print(" ");
-  printAtoBuf(memStr, mem_pos, buf); 
+  printAtoBuf(memStr, mem_ptr, buf); 
   Serial.print(buf);
   Serial.print(".");Serial.print(bit_pos);
   Serial.print("=");Serial.print(val);
@@ -98,105 +106,110 @@ void pushToAcc(uint64_t param){
 void _nop(uint64_t param){}
 
 void _and(uint64_t param){
-  mem_pos = param >> 32 & 0xFF;
+  mem_ptr = param >> 32 & 0xFF;
   bit_pos = param & 0x7;
-  if(cancel_RLO) RLO = (**memMap[mem_pos]>>bit_pos) & 0x1;
-  else RLO &= (**memMap[mem_pos]>>bit_pos) & 0x1;
+  if(cancel_RLO) RLO = (**memMap[mem_ptr]>>bit_pos) & 0x1;
+  else RLO &= (**memMap[mem_ptr]>>bit_pos) & 0x1;
   cancel_RLO = false;
 }
 
 void _nand(uint64_t param){
-  mem_pos = param >> 32 & 0xFF;
+  mem_ptr = param >> 32 & 0xFF;
   bit_pos = param & 0x7;
-  if(cancel_RLO) RLO = ~(**memMap[mem_pos]>>bit_pos) & 0x1;
-  else RLO &= ~(**memMap[mem_pos]>>bit_pos) & 0x1;
+  if(cancel_RLO) RLO = ~(**memMap[mem_ptr]>>bit_pos) & 0x1;
+  else RLO &= ~(**memMap[mem_ptr]>>bit_pos) & 0x1;
   cancel_RLO = false;
 }
 
 void _or(uint64_t param){
-  mem_pos = param >> 32 & 0xFF;
+  mem_ptr = param >> 32 & 0xFF;
   bit_pos = param & 0x7;
-  if(cancel_RLO) RLO = (**memMap[mem_pos]>>bit_pos) & 0x1;
-  else RLO |= (**memMap[mem_pos]>>bit_pos) & 0x1; 
+  if(cancel_RLO) RLO = (**memMap[mem_ptr]>>bit_pos) & 0x1;
+  else RLO |= (**memMap[mem_ptr]>>bit_pos) & 0x1; 
   cancel_RLO = false;
 }
 
 void _nor(uint64_t param){
-  mem_pos = param >> 32 & 0xFF;
+  mem_ptr = param >> 32 & 0xFF;
   bit_pos = param & 0x7;
-  if(cancel_RLO) RLO = ~(**memMap[mem_pos]>>bit_pos) & 0x1;
-  else RLO |= ~(**memMap[mem_pos]>>bit_pos) & 0x1; 
+  if(cancel_RLO) RLO = ~(**memMap[mem_ptr]>>bit_pos) & 0x1;
+  else RLO |= ~(**memMap[mem_ptr]>>bit_pos) & 0x1; 
   cancel_RLO = false;
 }
 
 void _assign(uint64_t param){
-  mem_pos = param >> 32 & 0xFF;
+  mem_ptr = param >> 32 & 0xFF;
   bit_pos = param & 0x7;
   mask = 1 << bit_pos;
-  **memMap[mem_pos] = ((**memMap[mem_pos] & ~mask) | RLO << bit_pos);
+  **memMap[mem_ptr] = ((**memMap[mem_ptr] & ~mask) | RLO << bit_pos);
   cancel_RLO = true;
 }
 
 void _s(uint64_t param){
-  mem_pos = param >> 32 & 0xFF;
+  mem_ptr = param >> 32 & 0xFF;
   bit_pos = param & 0x7;
   mask = 1 << bit_pos;
   if(RLO==0x1)
-    **memMap[mem_pos] = ((**memMap[mem_pos] & ~mask) | RLO << bit_pos);
+    **memMap[mem_ptr] = ((**memMap[mem_ptr] & ~mask) | RLO << bit_pos);
   cancel_RLO = true;
 }
 
 void _r(uint64_t param){
-  mem_pos = param >> 32 & 0xFF;
+  mem_ptr = param >> 32 & 0xFF;
   bit_pos = param & 0x7;
   mask = 1 << bit_pos;
   if(RLO==0x1)
-    **memMap[mem_pos] = ((**memMap[mem_pos] & ~mask));
+    **memMap[mem_ptr] = ((**memMap[mem_ptr] & ~mask));
   cancel_RLO = true;
 }
 
 void _fp(uint64_t param){
-  mem_pos = param >> 32 & 0xFF;
+  mem_ptr = param >> 32 & 0xFF;
   bit_pos = param & 0x7;
   mask = 1 << bit_pos;
-  uint8_t m = (**memMap[mem_pos]>>bit_pos) & 0x1;
-  if(RLO == 0)**memMap[mem_pos] = ((**memMap[mem_pos] & ~mask));
+  uint8_t m = (**memMap[mem_ptr]>>bit_pos) & 0x1;
+  if(RLO == 0)**memMap[mem_ptr] = ((**memMap[mem_ptr] & ~mask));
   if(RLO == 0x1 && m == 0x0){
     RLO = 0x1;
-    **memMap[mem_pos] = ((**memMap[mem_pos] & ~mask) | 1 << bit_pos);
+    **memMap[mem_ptr] = ((**memMap[mem_ptr] & ~mask) | 1 << bit_pos);
   }else{RLO = 0x0;}
   cancel_RLO = false;
 }
 
 void _fn(uint64_t param){
-  mem_pos = (param >> 32) & 0xFF;
+  mem_ptr = (param >> 32) & 0xFF;
   bit_pos = param & 0x7;
   mask = 1 << bit_pos;
-  uint8_t m = (**memMap[mem_pos]>>bit_pos) & 0x1;
-  if(RLO == 1)**memMap[mem_pos] = ((**memMap[mem_pos] & ~mask) | 1 << bit_pos);
+  uint8_t m = (**memMap[mem_ptr]>>bit_pos) & 0x1;
+  if(RLO == 1)**memMap[mem_ptr] = ((**memMap[mem_ptr] & ~mask) | 1 << bit_pos);
   if(RLO == 0x0 && m == 0x1){
     RLO = 0x1;
-    **memMap[mem_pos] = ((**memMap[mem_pos] & ~mask));
+    **memMap[mem_ptr] = ((**memMap[mem_ptr] & ~mask));
   }else{RLO = 0x0;}  
   cancel_RLO = false;
 }
 
 void _l(uint64_t param){
-  mem_pos = (param >> 32 & 0xFF) - 8; // 8 because MB is 8th on select 
-                                      // and now we ignore mem_u and use m[] 
-                                      // with unions (we substract 8 to get 
-                                      // relative memory position)
-  var_pos = param & 0xF;
+  mem_ptr = (param >> 32) & 0xFF; 
+  mem_id = (param >> 4) & 0xFF; //4,5,6,7
 
-
-  Serial.print(mem_pos);Serial.print(" ");Serial.print(var_pos);
+  /*if(mem_ptr == 7){ //const
+    pushToAcc(param & 0xFFFFFFFF);
+  }else{*/
+    mem_id-=4;//0,1,2
+    uint8_t bytes = 1 << mem_id;
+    for(uint8_t i=0; i< (1<<mem_id); i++)
+      
+  //}
+  
+  Serial.print(mem_ptr);Serial.print(" ");Serial.print(mem_id);
   //uint8_t 
   
-  //pushToAcc(m[mem_pos].w[0]);
+  //pushToAcc(m[mem_ptr].w[0]);
 }
 
 void _t(uint64_t param){
-  mem_pos = param >> 32 & 0xFF;
-  //*mem_p[mem_pos] = accumulator[0];
+  mem_ptr = param >> 32 & 0xFF;
+  //*mem_p[mem_ptr] = accumulator[0];
   **memMap[1] = 2;//accumulator[0];//TUTAJ prawdopodobny nowy sposob odwolywania sie do pamięci
 }

@@ -21,15 +21,16 @@ void setup() {
   program[7] = s_stll(O, M0, 5);
   program[8] = s_stll(ASGN, M1, 1);*/
 
-  program[0] = s_stll_m(L, I, 2, 0);
-  program[1] = s_stll_m(FN, M, 0, 0);
-  program[2] = s_stll_m(ASGN, Q, 5, 1);
+  program[0] = s_stll_v(L, CS, -999999999);
+  program[1] = s_stll_m(T, MD, 4, 0);
+  program[2] = s_stll_m(L, MD, 4, 0);
+  //program[2] = s_stll_m(ASGN, Q, 5, 1);
   //program[3] = s_stll(A, I1, 2);
   //program[4] = s_stll(R, Q0, 5);
   PS = 3;
 
   DDRB = B00100000;//PORTB output pin 5
-  PORTD = B11111100;//pullup on pin 2 
+  PORTD = B11111100;//pullup on pin 2
 
   delay(2000);
 
@@ -68,7 +69,7 @@ void insertProgramLine(int number, bool edit){
       memPtrFrom = memGroups[comGroup*2];
       memPtrTo = memGroups[comGroup*2+1];
 
-      if(command == 10){// if load command
+      if(command == 11){// if transfer command
         memPtrTo -= 1; //exclude constant from load operator
       }
       
@@ -174,19 +175,15 @@ void editProgram(){
 
       if(i<PS){
         displayPrint(i+1);displayPrint(": ");
-
         //printCommand(func_id);
         printA(comStr, func_id);
-
         if(mem_pos>0){
 
           printA(memStr, mem_pos);
-
           if(mem_pos == 7)//constant
-            displayPrint((long)value);
+            displayPrint((long int)value);
           else
             displayPrint((long)var_pos);
-          
           if(mem_pos<4){//if basic command
             displayPrint(".");
             displayPrint((long)bit_pos);

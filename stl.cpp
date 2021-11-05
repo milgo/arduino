@@ -67,18 +67,21 @@ void print_binary(int number, uint8_t len){
 
 void mem_print(uint64_t param){
   uint8_t func_id = param >> FUNC_BIT_POS;
-  uint8_t mem_ptr = param >> 32;
-  uint8_t bit_pos = param & 0x7;
-  int val = ((**memMap[mem_ptr] & (1<<bit_pos))>0);
+  mem_ptr = param >> 32;
+  mem_id = (param >> 4) & 0xFF;
+  bit_pos = param & 0x7;
+  int val = ((*memMap[mem_ptr][mem_id] & (1<<bit_pos))>0);
   char buf[10];
   printAtoBuf(comStr, func_id, buf); 
   Serial.print(buf);
   Serial.print(" ");
   printAtoBuf(memStr, mem_ptr, buf); 
   Serial.print(buf);
+  Serial.print(mem_id);
   Serial.print(".");Serial.print(bit_pos);
   Serial.print("=");Serial.print(val);
-  Serial.print(" RLO=");Serial.println(RLO, BIN);
+  Serial.print(" RLO=");Serial.print(RLO, BIN);
+  Serial.print(" ACC=");Serial.print((long int)(accumulator[0]>>32));Serial.println((long int)accumulator[0]);
 }
 
 void setupMem(){
@@ -107,9 +110,10 @@ void _nop(uint64_t param){}
 
 void _and(uint64_t param){
   mem_ptr = param >> 32 & 0xFF;
+  mem_id = param >> 4 & 0xFF;
   bit_pos = param & 0x7;
-  if(cancel_RLO) RLO = (**memMap[mem_ptr]>>bit_pos) & 0x1;
-  else RLO &= (**memMap[mem_ptr]>>bit_pos) & 0x1;
+  if(cancel_RLO) RLO = (*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1;
+  else RLO &= (*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1;
   cancel_RLO = false;
 }
 
@@ -192,24 +196,40 @@ void _fn(uint64_t param){
 void _l(uint64_t param){
   mem_ptr = (param >> 32) & 0xFF; 
   mem_id = (param >> 4) & 0xFF; //4,5,6,7
+  
+  uint64_t temp = 0;
+  uint8_t type = mem_ptr-4;//0,1,2
+  uint8_t bytes = 1 << type; //byte, word, dword
 
-  /*if(mem_ptr == 7){ //const
-    pushToAcc(param & 0xFFFFFFFF);
-  }else{*/
-    mem_id-=4;//0,1,2
-    uint8_t bytes = 1 << mem_id;
-    for(uint8_t i=0; i< (1<<mem_id); i++)
-      
-  //}
+  //Serial.print("mem_ptr: ");Serial.print(mem_ptr);Serial.print(", mem_id: ");Serial.print(mem_id);Serial.print(", type: ");Serial.print(type);Serial.print(", bytes: ");Serial.println(bytes);
+  if(mem_ptr == 7){ //const
+    temp = param & 0xFFFFFFFF;
+  }
+  else{
+    for(uint8_t i=0; i<bytes; i++){
+      uint64_t t = *memMap[mem_ptr][mem_id+i];
+      temp += t<<(i*8); 
+      //Serial.print("i: ");Serial.print(i);Serial.print(", *memMap[mem_ptr][mem_id+i]= ");Serial.print(*memMap[mem_ptr][mem_id+i], BIN);Serial.print(", temp=");Serial.print((long int)(temp>>32),BIN);Serial.println((long int)temp,BIN);
+    }
+  }
+  pushToAcc(temp);
   
-  Serial.print(mem_ptr);Serial.print(" ");Serial.print(mem_id);
-  //uint8_t 
-  
-  //pushToAcc(m[mem_ptr].w[0]);
 }
 
 void _t(uint64_t param){
-  mem_ptr = param >> 32 & 0xFF;
-  //*mem_p[mem_ptr] = accumulator[0];
-  **memMap[1] = 2;//accumulator[0];//TUTAJ prawdopodobny nowy sposob odwolywania sie do pamięci
+  mem_ptr = (param >> 32) & 0xFF; 
+  mem_id = (param >> 4) & 0xFF; //4,5,6,7
+  
+  uint64_t temp = 0;
+  uint8_t type = mem_ptr-4;//0,1,2
+  uint8_t bytes = 1 << type; //byte, word, dword
+
+  //Serial.print("mem_ptr: ");Serial.print(mem_ptr);Serial.print(", mem_id: ");Serial.print(mem_id);Serial.print(", type: ");Serial.print(type);Serial.print(", bytes: ");Serial.println(bytes);
+
+    for(uint8_t i=0; i<bytes; i++){
+     *memMap[mem_ptr][mem_id+i] = accumulator[0]>>(i*8)&0xFF; 
+      //Serial.print("i: ");Serial.print(i);Serial.print(", *memMap[mem_ptr][mem_id+i]= ");Serial.print(*memMap[mem_ptr][mem_id+i], BIN);Serial.print(", temp=");Serial.print((long int)(temp>>32),BIN);Serial.println((long int)temp,BIN);
+    }
+
+  accumulator[0] = 0;
 }

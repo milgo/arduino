@@ -25,8 +25,9 @@
 #define MB 4ULL
 #define MW 5ULL
 #define MD 6ULL
+#define CS 7ULL
 
-#define s_stll_v(a1, a2, a3) ((a1<<40ULL) | ((a2) << (32ULL)) | (a3))
+#define s_stll_v(a1, a2, a3) ((a1<<40ULL) | ((a2) << (32ULL)) | (a3 & 0xFFFFFFFF))
 #define s_stll_m(a1, a2, a3, a4) ((a1<<40ULL) | ((a2) << (32ULL)) | (a3<<4) | (a4))
 #define set_b(m, p, b) *memMap[m][p] |= _BV(b);
 #define reset_b(m, p, b) *memMap[m][p] &= ~_BV(b);

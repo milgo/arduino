@@ -21,17 +21,34 @@ void setup() {
   program[7] = s_stll(O, M0, 5);
   program[8] = s_stll(ASGN, M1, 1);*/
 
-  program[0] = s_stll_v(L, CS, -999999999);
-  program[1] = s_stll_m(T, MD, 4, 0);
-  program[2] = s_stll_m(L, MD, 4, 0);
+  program[0] = s_stll_v(L, CS, 6000UL);
+  program[1] = s_stll_m(A, M, 0, 0);
+  program[2] = s_stll_m(TSE, TIM, 0, 0);
+  program[3] = s_stll_m(A, TIM, 0, 0);
+  program[4] = s_stll_m(ASGN, Q, 0, 5);
+  
   //program[2] = s_stll_m(ASGN, Q, 5, 1);
   //program[3] = s_stll(A, I1, 2);
   //program[4] = s_stll(R, Q0, 5);
-  PS = 3;
+  PS = 5;
 
   DDRB = B00100000;//PORTB output pin 5
   PORTD = B11111100;//pullup on pin 2
 
+  //setup global timer
+  //------------------
+  noInterrupts();
+  TCCR1A = 0;
+  TCCR1B = 0;
+  TCNT1=0;
+
+  OCR1A=20000;
+  
+  TCCR1B|=(1<<CS11)|(1<<WGM12);
+  TIMSK1|=(1<<OCIE1A);
+  interrupts();
+  //------------------
+  
   delay(2000);
 
   /*if(!IS_PRESSED(getButtonsNoneBlocking(), BUTTON_ENTER)){
@@ -53,6 +70,10 @@ void setup() {
 
   //}
   
+}
+
+ISR(TIMER1_COMPA_vect){
+  timersRoutine();
 }
 
 void insertProgramLine(int number, bool edit){
@@ -86,7 +107,7 @@ void insertProgramLine(int number, bool edit){
           return;
         }
         
-        if(mem != 7)
+        if(mem != CS)//const
           var_pos = value;
 
         if(mem < 4){
@@ -108,7 +129,7 @@ void insertProgramLine(int number, bool edit){
             if(PS<MAX_PROGRAM_SIZE)PS++;
           }
 
-          if(mem == 7){ //constant
+          if(mem == CS){ //constant
             Serial.print((long)command);Serial.print(" ");Serial.print((long)mem);Serial.print(" ");Serial.print((long)value);Serial.print(" ");
             program[number] = s_stll_v(command, mem, value);
           }
@@ -180,7 +201,7 @@ void editProgram(){
         if(mem_pos>0){
 
           printA(memStr, mem_pos);
-          if(mem_pos == 7)//constant
+          if(mem_pos == CS)//constant
             displayPrint((long int)value);
           else
             displayPrint((long)var_pos);

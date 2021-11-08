@@ -116,11 +116,11 @@ const char memNULLStr[] PROGMEM = "";
 const char memQStr[] PROGMEM = "Q";
 const char memIStr[] PROGMEM = "I";
 const char memMStr[] PROGMEM = "M";
+const char memTStr[] PROGMEM = "T";
 const char memMBStr[] PROGMEM = "MB";
 const char memMWStr[] PROGMEM = "MW";
 const char memMDStr[] PROGMEM = "MD";
 const char memCStr[] PROGMEM = "C";
-const char memTStr[] PROGMEM = "T";
 const char memConstStr[] PROGMEM = "#";
 
 const char *const mainMenu[] PROGMEM = {
@@ -209,18 +209,18 @@ const char *const memStr[] PROGMEM = {
   memQStr,
   memIStr,
   memMStr,
+  memTStr,
   memMBStr,
   memMWStr,
   memMDStr,
   memConstStr,
-  memCStr,
-  memTStr,
+  memCStr
 };
 
-const char memGroups[] = {1, 4, 
-                          4, 8, 
+const char memGroups[] = {1, 5, 
+                          5, 9, 
+                          4, 5, 
                           9, 10, 
-                          8, 9, 
                           0, 0, 
                           0, 0};
 

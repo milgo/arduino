@@ -18,14 +18,17 @@
 #define FN 9ULL
 #define L 10ULL
 #define T 11ULL
+#define TSP 12ULL
+#define TSE 13ULL
 
 #define Q 1ULL
 #define I 2ULL
 #define M 3ULL
-#define MB 4ULL
-#define MW 5ULL
-#define MD 6ULL
-#define CS 7ULL
+#define TIM 4ULL
+#define MB 5ULL
+#define MW 6ULL
+#define MD 7ULL
+#define CS 8ULL
 
 #define s_stll_v(a1, a2, a3) ((a1<<40ULL) | ((a2) << (32ULL)) | (a3 & 0xFFFFFFFF))
 #define s_stll_m(a1, a2, a3, a4) ((a1<<40ULL) | ((a2) << (32ULL)) | (a3<<4) | (a4))
@@ -55,8 +58,18 @@ void _fn(uint64_t param);
 void _l(uint64_t param);
 void _t(uint64_t param);
 
+//_sp, _se, _sd, _ss, _sf, _rt
+
+void _sp(uint64_t param);
+void _se(uint64_t param);
+void _sd(uint64_t param);
+void _ss(uint64_t param);
+void _sf(uint64_t param);
+void _rt(uint64_t param);
+
 extern void setupMem();
 extern void executeCommandAt(int pl);
 extern void executeCommand(uint64_t param);
+extern void timersRoutine();
 
 #endif //_STL_H

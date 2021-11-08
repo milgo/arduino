@@ -105,7 +105,7 @@ void executeCommand(uint64_t instr){
   //uint64_t param = instr & FUNC_PARAM_MASK;
   (*func_ptr[func_id])(instr);
   mem_print(instr);
-  delay(200);
+  //delay(200);
 }
 
 void executeCommandAt(int pl){
@@ -293,17 +293,93 @@ void _se(uint64_t param){
 }
 
 void _sd(uint64_t param){
+  mem_ptr = (param >> 32) & 0xFF;
+  mem_id = (param >> 4) & 0xFF;
 
+  if(RLO == 1){
+
+    //start
+    if((*memMap[mem_ptr][mem_id] & 0x2) == 0){
+      //Serial.println("RUNNING");
+      *memMap[mem_ptr][mem_id] = 0x2;
+      timer[mem_id]=0;
+    }
+
+    //stop
+    if(timer[mem_id]>accumulator[0] && (*memMap[mem_ptr][mem_id] & 0x2)){
+      //Serial.println("STOP RUNNING");
+      *memMap[mem_ptr][mem_id] |= 0x1;
+    }
+    
+  }else{
+    *memMap[mem_ptr][mem_id] &= ~(0x3);
+  }
+
+  cancel_RLO = true;
 }
 
 void _ss(uint64_t param){
-  
+  mem_ptr = (param >> 32) & 0xFF;
+  mem_id = (param >> 4) & 0xFF;
+
+  if(RLO == 1){
+
+    //start
+    if((*memMap[mem_ptr][mem_id] & 0x2) == 0){
+      //Serial.println("RUNNING");
+      *memMap[mem_ptr][mem_id] = 0x2;
+      timer[mem_id]=0;
+    }
+    
+  }else{
+    //*memMap[mem_ptr][mem_id] &= ~(0x3);
+  }
+
+  //stop
+  if(timer[mem_id]>accumulator[0] && (*memMap[mem_ptr][mem_id] & 0x2)){
+    //Serial.println("STOP RUNNING");
+    *memMap[mem_ptr][mem_id] |= 0x1;
+  }
+
+  cancel_RLO = true;
 }
 
 void _sf(uint64_t param){
-  
+  mem_ptr = (param >> 32) & 0xFF;
+  mem_id = (param >> 4) & 0xFF;
+
+  if(RLO == 1){
+
+    //start
+    if((*memMap[mem_ptr][mem_id] & 0x2) == 0){
+      Serial.println("start");
+      *memMap[mem_ptr][mem_id] |= 0x1;
+    }
+    
+  }else{
+    //*memMap[mem_ptr][mem_id] &= ~(0x3);
+
+    if((*memMap[mem_ptr][mem_id] & 0x3) == 0x1){
+      Serial.println("GO");
+      *memMap[mem_ptr][mem_id] |= 0x3;
+      timer[mem_id]=0;
+    }
+    
+    if(timer[mem_id]>accumulator[0] && (*memMap[mem_ptr][mem_id] & 0x2)){
+      Serial.println("OFF");
+      *memMap[mem_ptr][mem_id] &= ~(0x3);
+    }
+  }
+
+  cancel_RLO = true;  
 }
 
 void _rt(uint64_t param){
-  
+  mem_ptr = (param >> 32) & 0xFF;
+  mem_id = (param >> 4) & 0xFF;
+
+  if(RLO == 1){
+    *memMap[mem_ptr][mem_id] &= ~(0x3);
+  }
+  cancel_RLO = true;
 }

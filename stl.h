@@ -20,6 +20,10 @@
 #define T 11ULL
 #define TSP 12ULL
 #define TSE 13ULL
+#define TSD 14ULL
+#define TSS 15ULL
+#define TSF 16ULL
+#define TRT 17ULL
 
 #define Q 1ULL
 #define I 2ULL

@@ -23,14 +23,13 @@ void setup() {
 
   program[0] = s_stll_v(L, CS, 6000UL);
   program[1] = s_stll_m(A, M, 0, 0);
-  program[2] = s_stll_m(TSE, TIM, 0, 0);
+  program[2] = s_stll_m(TSF, TIM, 0, 0);
   program[3] = s_stll_m(A, TIM, 0, 0);
   program[4] = s_stll_m(ASGN, Q, 0, 5);
-  
-  //program[2] = s_stll_m(ASGN, Q, 5, 1);
-  //program[3] = s_stll(A, I1, 2);
-  //program[4] = s_stll(R, Q0, 5);
-  PS = 5;
+  program[5] = s_stll_m(A, M, 0, 1);
+  program[6] = s_stll_m(TRT, TIM, 0, 0);
+
+  PS = 7;
 
   DDRB = B00100000;//PORTB output pin 5
   PORTD = B11111100;//pullup on pin 2

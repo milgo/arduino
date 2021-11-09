@@ -39,15 +39,10 @@
 #define set_b(m, p, b) *memMap[m][p] |= _BV(b);
 #define reset_b(m, p, b) *memMap[m][p] &= ~_BV(b);
 
-typedef union {
-  uint8_t b[4];
-  uint16_t w[2];
-  uint32_t dw;
-}mem_u;
-
 extern uint64_t program[MAX_PROGRAM_SIZE];
 extern uint8_t volatile PC;
 extern uint8_t m[64];
+extern uint8_t buttons;
 
 void _and(uint64_t param);
 void _or(uint64_t param);

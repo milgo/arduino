@@ -22,11 +22,11 @@ void setup() {
   program[8] = s_stll(ASGN, M1, 1);*/
 
   program[0] = s_stll_v(L, CS, 6000UL);
-  program[1] = s_stll_m(A, M, 0, 0);
+  program[1] = s_stll_m(A, I, 0, 0);
   program[2] = s_stll_m(TSF, TIM, 0, 0);
   program[3] = s_stll_m(A, TIM, 0, 0);
   program[4] = s_stll_m(ASGN, Q, 0, 5);
-  program[5] = s_stll_m(A, M, 0, 1);
+  program[5] = s_stll_m(A, I, 0, 1);
   program[6] = s_stll_m(TRT, TIM, 0, 0);
 
   PS = 7;
@@ -243,7 +243,7 @@ void runProgram(){
     displayDisplay();
     while(true){
   
-      m[0] = ~getButtonsNoneBlocking();
+      buttons = ~getButtonsNoneBlocking();
       //delay(100);
       
       executeCommandAt(PC++);

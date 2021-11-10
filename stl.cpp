@@ -12,12 +12,12 @@ Instruction:  00000000 00000000 00000000  00000000  00000000 00000000 00000000 0
 */
 
 uint64_t program[MAX_PROGRAM_SIZE];
-uint64_t accumulator[2];
+int64_t accumulator[2];
 uint8_t nullByte;
 
 void _nop(uint64_t param);
 
-void (*func_ptr[])(uint64_t) = {_nop, _and, _or, _nand, _nor, _assign, _s, _r, _fp, _fn, _l, _t, /**/_sp, _se, _sd, _ss, _sf, _rt};
+void (*func_ptr[])(uint64_t) = {_nop, _and, _or, _nand, _nor, _assign, _s, _r, _fp, _fn, _l, _t, /**/_sp, _se, _sd, _ss, _sf, _rt, _cu, _cd, _cs, _cr, _cl, _clc};
 uint8_t buttons;
 uint8_t m[64];
 uint8_t t[8];
@@ -256,25 +256,18 @@ void _sp(uint64_t param){
 
     //start
     if((*memMap[mem_ptr][mem_id] & 0x2) == 0){
-      //Serial.println("RUNNING");
       *memMap[mem_ptr][mem_id] = 0x3;
       timer[mem_id]=0;
     }
 
     //stop
     if(timer[mem_id]>accumulator[0] && (*memMap[mem_ptr][mem_id] & 0x2)){
-      //Serial.println("STOP RUNNING");
-      //*memMap[mem_ptr][mem_id] &= ~(0x2);
       *memMap[mem_ptr][mem_id] &= ~(0x1);
     }
     
   }else{
     *memMap[mem_ptr][mem_id] &= ~(0x3);
   }
-
-//Serial.print("timer 0 ");Serial.print(mem_ptr);Serial.print(" ");Serial.print(mem_id);Serial.print(" ");Serial.println(*memMap[mem_ptr][mem_id], BIN);
-
-  //if(timer[mem_id] >= accumulator[0]) RLO = 0;
   cancel_RLO = true;
 }
 
@@ -286,18 +279,13 @@ void _se(uint64_t param){
 
     //start
     if((*memMap[mem_ptr][mem_id] & 0x2) == 0){
-      //Serial.println("RUNNING");
       *memMap[mem_ptr][mem_id] = 0x3;
       timer[mem_id]=0;
     }
-    
-  }else{
-    //*memMap[mem_ptr][mem_id] &= ~(0x3);
   }
 
   //stop
   if(timer[mem_id]>accumulator[0] && (*memMap[mem_ptr][mem_id] & 0x2)){
-    //Serial.println("STOP RUNNING");
     *memMap[mem_ptr][mem_id] &= ~(0x3);
   }
 
@@ -312,14 +300,12 @@ void _sd(uint64_t param){
 
     //start
     if((*memMap[mem_ptr][mem_id] & 0x2) == 0){
-      //Serial.println("RUNNING");
       *memMap[mem_ptr][mem_id] = 0x2;
       timer[mem_id]=0;
     }
 
     //stop
     if(timer[mem_id]>accumulator[0] && (*memMap[mem_ptr][mem_id] & 0x2)){
-      //Serial.println("STOP RUNNING");
       *memMap[mem_ptr][mem_id] |= 0x1;
     }
     
@@ -338,7 +324,6 @@ void _ss(uint64_t param){
 
     //start
     if((*memMap[mem_ptr][mem_id] & 0x2) == 0){
-      //Serial.println("RUNNING");
       *memMap[mem_ptr][mem_id] = 0x2;
       timer[mem_id]=0;
     }
@@ -349,7 +334,6 @@ void _ss(uint64_t param){
 
   //stop
   if(timer[mem_id]>accumulator[0] && (*memMap[mem_ptr][mem_id] & 0x2)){
-    //Serial.println("STOP RUNNING");
     *memMap[mem_ptr][mem_id] |= 0x1;
   }
 
@@ -364,21 +348,16 @@ void _sf(uint64_t param){
 
     //start
     if((*memMap[mem_ptr][mem_id] & 0x2) == 0){
-      Serial.println("start");
       *memMap[mem_ptr][mem_id] |= 0x1;
     }
     
   }else{
-    //*memMap[mem_ptr][mem_id] &= ~(0x3);
-
     if((*memMap[mem_ptr][mem_id] & 0x3) == 0x1){
-      Serial.println("GO");
       *memMap[mem_ptr][mem_id] |= 0x3;
       timer[mem_id]=0;
     }
     
     if(timer[mem_id]>accumulator[0] && (*memMap[mem_ptr][mem_id] & 0x2)){
-      Serial.println("OFF");
       *memMap[mem_ptr][mem_id] &= ~(0x3);
     }
   }
@@ -394,4 +373,48 @@ void _rt(uint64_t param){
     *memMap[mem_ptr][mem_id] &= ~(0x3);
   }
   cancel_RLO = true;
+}
+
+void _cu(uint64_t param){
+  mem_id = (param >> 4) & 0xFF;
+  if(RLO == 1){
+    counter[mem_id]++;
+  }
+  cancel_RLO = true;
+}
+
+void _cd(uint64_t param){
+  mem_id = (param >> 4) & 0xFF;
+  if(RLO == 1){
+    counter[mem_id]--;
+  }
+  cancel_RLO = true;
+}
+
+void _cs(uint64_t param){
+  mem_id = (param >> 4) & 0xFF;
+  if(RLO == 1){
+    counter[mem_id]=accumulator[0];
+  }
+  cancel_RLO = true;
+}
+
+void _cr(uint64_t param){
+  mem_id = (param >> 4) & 0xFF;
+  if(RLO == 1){
+    counter[mem_id]=0;
+  }
+  cancel_RLO = true;
+}
+
+void _cl(uint64_t param){
+  mem_id = (param >> 4) & 0xFF;
+  if(RLO == 1){
+    accumulator[0] = counter[mem_id];
+  }
+  cancel_RLO = true;
+}
+
+void _clc(uint64_t param){
+  
 }

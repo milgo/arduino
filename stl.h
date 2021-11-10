@@ -25,6 +25,13 @@
 #define TSF 16ULL
 #define TRT 17ULL
 
+#define CU 18ULL
+#define CD 19ULL
+#define SC 20ULL
+#define RC 21ULL
+#define LC 22ULL
+#define CLC 23ULL
+
 #define Q 1ULL
 #define I 2ULL
 #define M 3ULL
@@ -33,6 +40,7 @@
 #define MW 6ULL
 #define MD 7ULL
 #define CS 8ULL
+#define CN 9ULL
 
 #define s_stll_v(a1, a2, a3) ((a1<<40ULL) | ((a2) << (32ULL)) | (a3 & 0xFFFFFFFF))
 #define s_stll_m(a1, a2, a3, a4) ((a1<<40ULL) | ((a2) << (32ULL)) | (a3<<4) | (a4))
@@ -65,6 +73,15 @@ void _sd(uint64_t param);
 void _ss(uint64_t param);
 void _sf(uint64_t param);
 void _rt(uint64_t param);
+
+//_cu, _cd, _cs, _cr, _cl, _clc
+
+void _cu(uint64_t param);
+void _cd(uint64_t param);
+void _cs(uint64_t param);
+void _cr(uint64_t param);
+void _cl(uint64_t param);
+void _clc(uint64_t param);
 
 extern void setupMem();
 extern void executeCommandAt(int pl);

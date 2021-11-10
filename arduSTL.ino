@@ -19,9 +19,10 @@ void setup() {
   program[6] = s_stll_m(TRT, TIM, 0, 0);
   PS = 7;*/
 
-  program[0] = s_stll_m(A, M, 0, 0);
-  program[1] = s_stll_m(ASGN, Q, 0, 5);
-  PS = 2; 
+  program[0] = s_stll_m(A, M, 0, 7);
+  program[1] = s_stll_m(CD, CN, 0, 0);
+  program[2] = s_stll_m(LC, CN, 0, 0);
+  PS = 3; 
 
   DDRB = B00100000;//PORTB output pin 5
   PORTD = B11111100;//pullup on pin 2

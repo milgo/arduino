@@ -37,8 +37,11 @@ uint8_t volatile * const memM[] = {&m[0], &m[1], &m[2], &m[3], &m[4], &m[5], &m[
 uint8_t volatile * const memC[] = {&c};
 uint8_t volatile * const memT[] = {&t[0], &t[1], &t[2], &t[3], &t[4], &t[5], &t[6], &t[7]};
 
+uint8_t volatile fixedTimer[8];
 uint32_t volatile timer[8];
 int32_t volatile counter[8];
+
+const PROGMEM uint8_t fixedTimerTime[]  = {10, 20, 40, 50, 80, 100, 160, 200};
 
 uint8_t volatile *const *memMap[] = {
   memNull,
@@ -91,14 +94,22 @@ void mem_print(uint64_t param){
 }
 
 void setupMem(){
-  set_b(M, 0, 0);
-  set_b(M, 1, 0);
+  //set_b(M, 0, 0);
+  //set_b(M, 1, 0);
 }
 
-void timersRoutine(){
-  for(int i=0; i<8; i++)
-    //if(*memMap[mem_ptr][i] || 0x3 == 0x1 )
-      timer[i]+=10;
+void timersRoutine(){//10ms
+  for(uint8_t i=0; i<8; i++){
+    timer[i]+=10;
+    
+    fixedTimer[i]+=1;
+    if(fixedTimer[i] >= pgm_read_byte_near(fixedTimerTime + i)){
+      //Serial.println(fixedTimer[i]);
+      fixedTimer[i] = 0;
+      m[0] ^= 1<<i;
+      
+    }
+  }
 }
 
 void executeCommand(uint64_t instr){

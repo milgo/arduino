@@ -10,26 +10,18 @@ void setup() {
 
   setupGUI();
 
-  //setupFunctions();
-  /*program[0] = s_stll(A, M0, 0);
-  program[1] = s_stll(A, M0, 1);
-  program[2] = s_stll(ASGN, M1, 1);
-  program[3] = s_stll(A, M0, 2);
-  program[4] = s_stll(A, M0, 3);
-  program[5] = s_stll(ASGN, M1, 1);
-  program[6] = s_stll(O, M0, 4);
-  program[7] = s_stll(O, M0, 5);
-  program[8] = s_stll(ASGN, M1, 1);*/
-
-  program[0] = s_stll_v(L, CS, 6000UL);
+  /*program[0] = s_stll_v(L, CS, 6000UL);
   program[1] = s_stll_m(A, I, 0, 0);
   program[2] = s_stll_m(TSF, TIM, 0, 0);
   program[3] = s_stll_m(A, TIM, 0, 0);
   program[4] = s_stll_m(ASGN, Q, 0, 5);
   program[5] = s_stll_m(A, I, 0, 1);
   program[6] = s_stll_m(TRT, TIM, 0, 0);
+  PS = 7;*/
 
-  PS = 7;
+  program[0] = s_stll_m(A, M, 0, 0);
+  program[1] = s_stll_m(ASGN, Q, 0, 5);
+  PS = 2; 
 
   DDRB = B00100000;//PORTB output pin 5
   PORTD = B11111100;//pullup on pin 2
@@ -42,6 +34,7 @@ void setup() {
   TCNT1=0;
 
   OCR1A=20000;
+  //OCR1A=2500;
   
   TCCR1B|=(1<<CS11)|(1<<WGM12);
   TIMSK1|=(1<<OCIE1A);

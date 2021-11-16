@@ -25,6 +25,8 @@ void setup() {
   program[3] = s_stll_m(A, M, 0, 7);
   program[4] = s_stll_m(CD, CN, 0, 0);
   program[5] = s_stll_m(LC, CN, 0, 0);
+
+  
   PS = 6; 
 
   DDRB = B00100000;//PORTB output pin 5
@@ -80,7 +82,7 @@ void insertProgramLine(int number, bool edit){
   long int value = 0;
   if(comGroup>=0){
     command = showMenu(comStr, comGroups[comGroup*2], comGroups[comGroup*2+1]);
-    if(command>=0 && memGroups[comGroup*2]>0){
+    if(command>=0 && memGroups[comGroup*2]>=0){
 
       uint8_t memPtrFrom, memPtrTo;
       memPtrFrom = memGroups[comGroup*2];
@@ -89,27 +91,31 @@ void insertProgramLine(int number, bool edit){
       if(command == 11){// if transfer command
         memPtrTo -= 1; //exclude constant from load operator
       }
-      
-      mem = showMenu(memStr, memPtrFrom, memPtrTo);
-      if(mem >= 0){
 
-        value = enterValue(memPosAquireMsg[mem], 0, 
-                              memValidationRules[mem*4], 
-                              memValidationRules[mem*4+1], 
-                              memValidationRules[mem*4+2]);
-
-        if(value > memValidationRules[mem*4+3] && memValidationRules[mem*4+3]>0){
-          printMessageAndWaitForButton(MUST_BE_LESS_MSG, memValidationRules[mem*4+3]);
-          return;
+      if(memGroups[comGroup*2]>0){ //if operation with mem selection
+        mem = showMenu(memStr, memPtrFrom, memPtrTo);
+        if(mem >= 0){
+  
+          value = enterValue(memPosAquireMsg[mem], 0, 
+                                memValidationRules[mem*4], 
+                                memValidationRules[mem*4+1], 
+                                memValidationRules[mem*4+2]);
+  
+          if(value > memValidationRules[mem*4+3] && memValidationRules[mem*4+3]>0){
+            printMessageAndWaitForButton(MUST_BE_LESS_MSG, memValidationRules[mem*4+3]);
+            return;
+          }
+          
+          if(mem != CS)//const
+            var_pos = value;
+  
+          if(mem < 4){
+            bit_pos = enterValue(ENTER_BIT_POS_MSG, 0, 0, 1, 7);
+          }
+  
         }
-        
-        if(mem != CS)//const
-          var_pos = value;
-
-        if(mem < 4){
-          bit_pos = enterValue(ENTER_BIT_POS_MSG, 0, 0, 1, 7);
-        }
-
+      }else{
+        mem = 0;
       }
 
       if(mem >= 0){

@@ -18,11 +18,14 @@ void setup() {
   program[5] = s_stll_m(A, I, 0, 1);
   program[6] = s_stll_m(TRT, TIM, 0, 0);
   PS = 7;*/
-
-  program[0] = s_stll_m(A, M, 0, 7);
-  program[1] = s_stll_m(CD, CN, 0, 0);
-  program[2] = s_stll_m(LC, CN, 0, 0);
-  PS = 3; 
+  program[0] = s_stll_v(L, CS, 1000);
+  program[1] = s_stll_m(A, M, 1, 0);
+  program[2] = s_stll_m(SC, CN, 0, 0);
+  
+  program[3] = s_stll_m(A, M, 0, 7);
+  program[4] = s_stll_m(CD, CN, 0, 0);
+  program[5] = s_stll_m(LC, CN, 0, 0);
+  PS = 6; 
 
   DDRB = B00100000;//PORTB output pin 5
   PORTD = B11111100;//pullup on pin 2
@@ -227,7 +230,7 @@ void editProgram(){
 
 void runProgram(){
   //load
-  //setupMem();
+  setupMem();
   displayClear();
   displaySetTextNormal();
   
@@ -241,8 +244,10 @@ void runProgram(){
       //delay(100);
       
       executeCommandAt(PC++);
-      if(PC>=PS)
+      if(PC>=PS){
+        afterFirstScan();
         PC=0;
+      }
     }
   }else{
     printA(message, NOPROGRAM_MSG);

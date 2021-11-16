@@ -84,6 +84,7 @@ void _cl(uint64_t param);
 void _clc(uint64_t param);
 
 extern void setupMem();
+extern void afterFirstScan();
 extern void executeCommandAt(int pl);
 extern void executeCommand(uint64_t param);
 extern void timersRoutine();

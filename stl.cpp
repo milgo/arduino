@@ -96,6 +96,14 @@ void mem_print(uint64_t param){
 void setupMem(){
   //set_b(M, 0, 0);
   //set_b(M, 1, 0);
+  m[1] |=  1 << 0; //FirstScan
+  m[1] |=  0 << 1; //DiagStatusUpdate
+  m[1] |=  1 << 2; //AlwaysTrue
+  m[1] |=  0 << 3; //AlwaysFalse
+}
+
+void afterFirstScan(){
+  m[1] &= ~(1<<0);
 }
 
 void timersRoutine(){//10ms

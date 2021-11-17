@@ -17,7 +17,10 @@ uint8_t nullByte;
 
 void _nop(uint64_t param);
 
-void (*func_ptr[])(uint64_t) = {_nop, _and, _or, _nand, _nor, _assign, _s, _r, _fp, _fn, _l, _t, /**/_sp, _se, _sd, _ss, _sf, _rt, _cu, _cd, _cs, _cr, _cl, _clc};
+void (*func_ptr[])(uint64_t) = {_nop, _and, _or, _nand, _nor, _assign, _s, _r, _fp, _fn, _l, _t, /**/_sp, _se, _sd, _ss, _sf, _rt, _cu, _cd, _cs, _cr, _cl, _clc,
+ _addI, _subI, _mulI, _divI, _addD, _subD, _mulD, _divD, _addR, _subR, _mulR, _divR,
+ _eqI, _diffI, _gtI, _ltI, _gteqI, _lteqI, _eqD, _diffD, _gtD, _ltD, _gteqD, _lteqD, _eqR, _diffR, _gtR, _ltR, _gteqR, _lteqR};
+ 
 uint8_t buttons;
 uint8_t m[64];
 uint8_t t[8];
@@ -426,3 +429,42 @@ void _cl(uint64_t param){
 void _clc(uint64_t param){
   
 }
+
+int32_t resI = 0;
+void _addI(uint64_t param){resI = (int32_t)(accumulator[1])+(int32_t)(accumulator[0]); accumulator[0] = resI;}
+void _subI(uint64_t param){resI = (int32_t)(accumulator[1])-(int32_t)(accumulator[0]); accumulator[0] = resI;}
+void _mulI(uint64_t param){resI = (int32_t)(accumulator[1])*(int32_t)(accumulator[0]); accumulator[0] = resI;}
+void _divI(uint64_t param){resI = (int32_t)(accumulator[1])/(int32_t)(accumulator[0]); accumulator[0] = resI;}
+
+int64_t resD = 0;
+void _addD(uint64_t param){resD = (int64_t)(accumulator[1])+(int64_t)(accumulator[0]); accumulator[0] = resD;}
+void _subD(uint64_t param){resD = (int64_t)(accumulator[1])-(int64_t)(accumulator[0]); accumulator[0] = resD;}
+void _mulD(uint64_t param){resD = (int64_t)(accumulator[1])*(int64_t)(accumulator[0]); accumulator[0] = resD;}
+void _divD(uint64_t param){resD = (int64_t)(accumulator[1])/(int64_t)(accumulator[0]); accumulator[0] = resD;}
+
+double resR = 0.0;
+void _addR(uint64_t param){resD = (double)(accumulator[1])+(double)(accumulator[0]); accumulator[0] = resR;}
+void _subR(uint64_t param){resD = (double)(accumulator[1])-(double)(accumulator[0]); accumulator[0] = resR;}
+void _mulR(uint64_t param){resD = (double)(accumulator[1])*(double)(accumulator[0]); accumulator[0] = resR;}
+void _divR(uint64_t param){resD = (double)(accumulator[1])/(double)(accumulator[0]); accumulator[0] = resR;}
+
+void _eqI(uint64_t param){}
+void _diffI(uint64_t param){}
+void _gtI(uint64_t param){}
+void _ltI(uint64_t param){}
+void _gteqI(uint64_t param){}
+void _lteqI(uint64_t param){}
+
+void _eqD(uint64_t param){}
+void _diffD(uint64_t param){}
+void _gtD(uint64_t param){}
+void _ltD(uint64_t param){}
+void _gteqD(uint64_t param){}
+void _lteqD(uint64_t param){}
+
+void _eqR(uint64_t param){}
+void _diffR(uint64_t param){}
+void _gtR(uint64_t param){}
+void _ltR(uint64_t param){}
+void _gteqR(uint64_t param){}
+void _lteqR(uint64_t param){}

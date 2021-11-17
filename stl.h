@@ -6,7 +6,7 @@
 
 #define FUNC_BIT_POS 40
 #define FUNC_PARAM_MASK 0xFFFFFFFFFFULL
-#define MAX_PROGRAM_SIZE 10
+#define MAX_PROGRAM_SIZE 15
 #define A 1ULL
 #define O 2ULL
 #define AN 3ULL
@@ -32,6 +32,19 @@
 #define LC 22ULL
 #define CLC 23ULL
 
+#define ADDI 24ULL
+#define SUBI 25ULL
+#define MULI 26ULL
+#define DIVI 27ULL
+#define ADDD 28ULL
+#define SUBD 29ULL
+#define MULD 30ULL
+#define DIVD 31ULL
+#define ADDR 32ULL
+#define SUBR 33ULL
+#define MULR 34ULL
+#define DIVR 35ULL
+
 #define Q 1ULL
 #define I 2ULL
 #define M 3ULL
@@ -44,6 +57,7 @@
 
 #define s_stll_v(a1, a2, a3) ((a1<<40ULL) | ((a2) << (32ULL)) | (a3 & 0xFFFFFFFF))
 #define s_stll_m(a1, a2, a3, a4) ((a1<<40ULL) | ((a2) << (32ULL)) | (a3<<4) | (a4))
+#define s_stll_s(a1) (a1<<40ULL)
 #define set_b(m, p, b) *memMap[m][p] |= _BV(b);
 #define reset_b(m, p, b) *memMap[m][p] &= ~_BV(b);
 
@@ -82,6 +96,42 @@ void _cs(uint64_t param);
 void _cr(uint64_t param);
 void _cl(uint64_t param);
 void _clc(uint64_t param);
+
+void _addI(uint64_t param);
+void _subI(uint64_t param);
+void _mulI(uint64_t param);
+void _divI(uint64_t param);
+
+void _addD(uint64_t param);
+void _subD(uint64_t param);
+void _mulD(uint64_t param);
+void _divD(uint64_t param);
+
+void _addR(uint64_t param);
+void _subR(uint64_t param);
+void _mulR(uint64_t param);
+void _divR(uint64_t param);
+
+void _eqI(uint64_t param);
+void _diffI(uint64_t param);
+void _gtI(uint64_t param);
+void _ltI(uint64_t param);
+void _gteqI(uint64_t param);
+void _lteqI(uint64_t param);
+
+void _eqD(uint64_t param);
+void _diffD(uint64_t param);
+void _gtD(uint64_t param);
+void _ltD(uint64_t param);
+void _gteqD(uint64_t param);
+void _lteqD(uint64_t param);
+
+void _eqR(uint64_t param);
+void _diffR(uint64_t param);
+void _gtR(uint64_t param);
+void _ltR(uint64_t param);
+void _gteqR(uint64_t param);
+void _lteqR(uint64_t param);
 
 extern void setupMem();
 extern void afterFirstScan();

@@ -93,7 +93,9 @@ void mem_print(uint64_t param){
   Serial.print(".");Serial.print(bit_pos);
   Serial.print("=");Serial.print(val);
   Serial.print(" RLO=");Serial.print(RLO, BIN);
-  Serial.print(" ACC=");Serial.print((long int)(accumulator[0]>>32));Serial.println((long int)accumulator[0]);
+  double d = accumulator[0];
+  Serial.print(" ACC=");Serial.print((long int)(accumulator[0]>>32));Serial.print((long int)accumulator[0]);
+  Serial.print(" ACCD=");Serial.println(d);
 }
 
 void setupMem(){
@@ -443,10 +445,10 @@ void _mulD(uint64_t param){resD = (int64_t)(accumulator[1])*(int64_t)(accumulato
 void _divD(uint64_t param){resD = (int64_t)(accumulator[1])/(int64_t)(accumulator[0]); accumulator[0] = resD;}
 
 double resR = 0.0;
-void _addR(uint64_t param){resD = (double)(accumulator[1])+(double)(accumulator[0]); accumulator[0] = resR;}
-void _subR(uint64_t param){resD = (double)(accumulator[1])-(double)(accumulator[0]); accumulator[0] = resR;}
-void _mulR(uint64_t param){resD = (double)(accumulator[1])*(double)(accumulator[0]); accumulator[0] = resR;}
-void _divR(uint64_t param){resD = (double)(accumulator[1])/(double)(accumulator[0]); accumulator[0] = resR;}
+void _addR(uint64_t param){resR = (double)(accumulator[1])+(double)(accumulator[0]); accumulator[0] = resR;}
+void _subR(uint64_t param){resR = (double)(accumulator[1])-(double)(accumulator[0]); accumulator[0] = resR;}
+void _mulR(uint64_t param){resR = (double)(accumulator[1])*(double)(accumulator[0]); accumulator[0] = resR;}
+void _divR(uint64_t param){resR = (double)(accumulator[1])/(double)(accumulator[0]); accumulator[0] = resR;}
 
 void _eqI(uint64_t param){}
 void _diffI(uint64_t param){}

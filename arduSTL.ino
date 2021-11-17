@@ -20,19 +20,19 @@ void setup() {
   PS = 7;*/
   program[0] = s_stll_v(L, CS, 10);
   program[1] = s_stll_v(L, CS, 3);
-  program[2] = s_stll_s(ADDI);
+  program[2] = s_stll_s(ADDR);
 
   program[3] = s_stll_v(L, CS, 10);
   program[4] = s_stll_v(L, CS, 3);
-  program[5] = s_stll_s(SUBI);
+  program[5] = s_stll_s(SUBR);
 
   program[6] = s_stll_v(L, CS, 10);
   program[7] = s_stll_v(L, CS, 3);
-  program[8] = s_stll_s(MULI);
+  program[8] = s_stll_s(MULR);
 
   program[9] = s_stll_v(L, CS, 10);
   program[10] = s_stll_v(L, CS, 3);
-  program[11] = s_stll_s(DIVI);
+  program[11] = s_stll_s(DIVR);
 
   PS = 12; 
 

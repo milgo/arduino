@@ -139,11 +139,11 @@ void insertProgramLine(int number, bool edit){
           }
 
           if(mem == CS){ //constant
-            Serial.print((long)command);Serial.print(" ");Serial.print((long)mem);Serial.print(" ");Serial.print((long)value);Serial.print(" ");
+            //Serial.print((long)command);Serial.print(" ");Serial.print((long)mem);Serial.print(" ");Serial.print((long)value);Serial.print(" ");
             program[number] = s_stll_v(command, mem, value);
           }
           else{
-            Serial.print((long)command);Serial.print(" ");Serial.print((long)mem);Serial.print(" ");Serial.print((long)var_pos);Serial.print(" ");Serial.print((long)bit_pos);Serial.print(" ");
+            //Serial.print((long)command);Serial.print(" ");Serial.print((long)mem);Serial.print(" ");Serial.print((long)var_pos);Serial.print(" ");Serial.print((long)bit_pos);Serial.print(" ");
             program[number] = s_stll_m(command, mem, var_pos, bit_pos);
           }
         }

@@ -231,11 +231,11 @@ const char memValidationRules[] = {0, 0, 0, 0,
                                   0, 2, 9, 63,
                                   0, 2, 9, 31,
                                   0, 2, 9, 16,
-                                  1, 9, 9, -1,
                                   0, 1, 9, 9,
+                                  1, 9, 9, -1,
                                   0, 1, 9, 9};
 
-const char memPosAquireMsg[] = {0, 0, 0, 0, 0, 0, 0, 1, 0, 0};
+const char memPosAquireMsg[] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
 
 
 

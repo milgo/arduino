@@ -6,7 +6,8 @@
 
 #define FUNC_BIT_POS 40
 #define FUNC_PARAM_MASK 0xFFFFFFFFFFULL
-#define MAX_PROGRAM_SIZE 15
+#define MAX_PROGRAM_SIZE 32
+#define NOP 0ULL
 #define A 1ULL
 #define O 2ULL
 #define AN 3ULL
@@ -36,23 +37,23 @@
 #define SUBI 25ULL
 #define MULI 26ULL
 #define DIVI 27ULL
-#define ADDD 28ULL
+/*#define ADDD 28ULL
 #define SUBD 29ULL
 #define MULD 30ULL
 #define DIVD 31ULL
 #define ADDR 32ULL
 #define SUBR 33ULL
 #define MULR 34ULL
-#define DIVR 35ULL
+#define DIVR 35ULL*/
 
-#define EQI 36ULL
-#define DIFFI 37ULL
-#define GTI 38ULL
-#define LTI 39ULL
-#define GTEQI 40ULL
-#define LTEQI 41ULL
+#define EQI 28ULL
+#define DIFFI 29ULL
+#define GTI 30ULL
+#define LTI 31ULL
+#define GTEQI 32ULL
+#define LTEQI 33ULL
 
-#define EQD 42ULL
+/*#define EQD 42ULL
 #define DIFFD 43ULL
 #define GTD 44ULL
 #define LTD 45ULL
@@ -64,7 +65,11 @@
 #define GTR 50ULL
 #define LTR 51ULL
 #define GTEQR 52ULL
-#define LTEQR 53ULL
+#define LTEQR 53ULL*/
+
+#define JU 34ULL
+#define JC 35ULL
+#define JCN 36ULL
 
 #define Q 1ULL
 #define I 2ULL
@@ -75,6 +80,7 @@
 #define MD 7ULL
 #define CS 8ULL
 #define CN 9ULL
+#define AD 10ULL
 
 #define s_stll_v(a1, a2, a3) ((a1<<40ULL) | ((a2) << (32ULL)) | (a3 & 0xFFFFFFFF))
 #define s_stll_m(a1, a2, a3, a4) ((a1<<40ULL) | ((a2) << (32ULL)) | (a3<<4) | (a4))
@@ -84,6 +90,7 @@
 
 extern uint64_t program[MAX_PROGRAM_SIZE];
 extern uint8_t volatile PC;
+extern uint8_t volatile PS;
 extern uint8_t m[64];
 extern uint8_t buttons;
 
@@ -123,7 +130,7 @@ void _subI(uint64_t param);
 void _mulI(uint64_t param);
 void _divI(uint64_t param);
 
-void _addD(uint64_t param);
+/*void _addD(uint64_t param);
 void _subD(uint64_t param);
 void _mulD(uint64_t param);
 void _divD(uint64_t param);
@@ -131,7 +138,7 @@ void _divD(uint64_t param);
 void _addR(uint64_t param);
 void _subR(uint64_t param);
 void _mulR(uint64_t param);
-void _divR(uint64_t param);
+void _divR(uint64_t param);*/
 
 void _eqI(uint64_t param);
 void _diffI(uint64_t param);
@@ -140,7 +147,7 @@ void _ltI(uint64_t param);
 void _gteqI(uint64_t param);
 void _lteqI(uint64_t param);
 
-void _eqD(uint64_t param);
+/*void _eqD(uint64_t param);
 void _diffD(uint64_t param);
 void _gtD(uint64_t param);
 void _ltD(uint64_t param);
@@ -152,7 +159,11 @@ void _diffR(uint64_t param);
 void _gtR(uint64_t param);
 void _ltR(uint64_t param);
 void _gteqR(uint64_t param);
-void _lteqR(uint64_t param);
+void _lteqR(uint64_t param);*/
+
+void _ju(uint64_t param);
+void _jc(uint64_t param);
+void _jcn(uint64_t param);
 
 extern void setupMem();
 extern void afterFirstScan();

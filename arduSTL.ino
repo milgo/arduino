@@ -3,8 +3,6 @@
 #include "stl.h"
 #include "gui.h"
 
-int PS = 0;
-
 void setup() {
   Serial.begin(9600);
 
@@ -18,17 +16,15 @@ void setup() {
   program[5] = s_stll_m(A, I, 0, 1);
   program[6] = s_stll_m(TRT, TIM, 0, 0);
   PS = 7;*/
-  program[0] = s_stll_v(L, CS, 10);
-  program[1] = s_stll_v(L, CS, 3);
-  
-  program[2] = s_stll_s(EQR);
-  program[3] = s_stll_s(DIFFR);
-  program[4] = s_stll_s(GTR);
-  program[5] = s_stll_s(LTR);
-  program[6] = s_stll_s(GTEQR);
-  program[7] = s_stll_s(LTEQR);
+  program[0] = s_stll_v(L, CS, 3);
+  program[1] = s_stll_v(L, CS, 10);
+  program[2] = s_stll_s(LTI);
+  program[3] = s_stll_v(JCN, AD, 7);
+  program[4] = s_stll_m(A, I, 0, 1);
+  program[5] = s_stll_m(ASGN, Q, 0, 5);
+  program[6] = s_stll_s(NOP);
 
-  PS = 8; 
+  PS = 7; 
 
   DDRB = B00100000;//PORTB output pin 5
   PORTD = B11111100;//pullup on pin 2
@@ -56,7 +52,7 @@ void setup() {
 
       boolean conf = true;
       while(conf){
-        int newMenuPosition = showMenu(mainMenu, 0, MAIN_MENU_OPTS);
+        int newMenuPosition = showMenu(mainMenu, 0, MAIN_MENU_SIZE);
         switch(newMenuPosition){
           case -1: /*exitCurrentMenu(menuPosition);*/ break;
           case 0: /*enterCurrentOption(newMenuPosition);*/conf = false; break;
@@ -79,7 +75,7 @@ void insertProgramLine(int number, bool edit){
   //Serial.print("removing ");Serial.print(number); Serial.print("line");
   int64_t command = 0, mem = -1;
   uint8_t var_pos = 0, bit_pos = 0;
-  int8_t comGroup = showMenu(commandGroupMenu, 0, 6);
+  int8_t comGroup = showMenu(commandGroupMenu, 0, COMM_MENU_SIZE);
   long int value = 0;
   if(comGroup>=0){
     command = showMenu(comStr, comGroups[comGroup*2], comGroups[comGroup*2+1]);
@@ -107,7 +103,7 @@ void insertProgramLine(int number, bool edit){
             return;
           }
           
-          if(mem != CS)//const
+          if(mem != CS && mem != AD)//const
             var_pos = value;
   
           if(mem < 4){
@@ -132,7 +128,7 @@ void insertProgramLine(int number, bool edit){
             if(PS<MAX_PROGRAM_SIZE)PS++;
           }
 
-          if(mem == CS){ //constant
+          if(mem == CS || mem == AD){ //constant
             //Serial.print((long)command);Serial.print(" ");Serial.print((long)mem);Serial.print(" ");Serial.print((long)value);Serial.print(" ");
             program[number] = s_stll_v(command, mem, value);
           }
@@ -147,7 +143,7 @@ void insertProgramLine(int number, bool edit){
 }
 
 void removeProgramLine(int number){
-  Serial.print("removing ");Serial.print(number); Serial.print("line");
+  //Serial.print("removing ");Serial.print(number); Serial.print("line");
   for(int i=number;i<PS;i++){
     program[i] = program[i+1];
   }
@@ -201,10 +197,11 @@ void editProgram(){
         displayPrint(i+1);displayPrint(": ");
         //printCommand(func_id);
         printA(comStr, func_id);
+        displayPrint(" ");
         if(mem_pos>0){
 
           printA(memStr, mem_pos);
-          if(mem_pos == CS)//constant
+          if(mem_pos == CS || mem_pos == AD)//constant
             displayPrint((long int)value);
           else
             displayPrint((long)var_pos);

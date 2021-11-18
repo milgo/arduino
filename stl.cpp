@@ -18,8 +18,9 @@ uint8_t nullByte;
 void _nop(uint64_t param);
 
 void (*func_ptr[])(uint64_t) = {_nop, _and, _or, _nand, _nor, _assign, _s, _r, _fp, _fn, _l, _t, /**/_sp, _se, _sd, _ss, _sf, _rt, _cu, _cd, _cs, _cr, _cl, _clc,
- _addI, _subI, _mulI, _divI, _addD, _subD, _mulD, _divD, _addR, _subR, _mulR, _divR,
- _eqI, _diffI, _gtI, _ltI, _gteqI, _lteqI, _eqD, _diffD, _gtD, _ltD, _gteqD, _lteqD, _eqR, _diffR, _gtR, _ltR, _gteqR, _lteqR};
+ _addI, _subI, _mulI, _divI, /*_addD, _subD, _mulD, _divD, _addR, _subR, _mulR, _divR,*/
+ _eqI, _diffI, _gtI, _ltI, _gteqI, _lteqI, /*_eqD, _diffD, _gtD, _ltD, _gteqD, _lteqD, _eqR, _diffR, _gtR, _ltR, _gteqR, _lteqR,*/
+ _ju, _jc, _jcn};
  
 uint8_t buttons;
 uint8_t m[64];
@@ -59,26 +60,25 @@ uint8_t volatile *const *memMap[] = {
   memC
 };
 
-
 uint8_t volatile RLO = 0;
 uint8_t volatile cancel_RLO = true;
-uint8_t volatile PC = 0;
+uint8_t volatile PC = 0, PS = 0;
 
-uint8_t mem_ptr, bit_pos, mask, mem_id;
+uint8_t mem_ptr, bit_pos, mask, mem_id, addr;
 
 void print_binary(int number, uint8_t len){
-  static int bits;
+  /*static int bits;
   if(number){
     bits++;
     print_binary(number >> 1, len);
     if(bits)for(uint8_t x = (len - bits);x;x--)Serial.write('0');
     bits=0;
     Serial.write((number & 1)?'1':'0');
-  }
+  }*/
 }
 
 void mem_print(uint64_t param){
-  uint8_t func_id = param >> FUNC_BIT_POS;
+  /*uint8_t func_id = param >> FUNC_BIT_POS;
   mem_ptr = param >> 32;
   mem_id = (param >> 4) & 0xFF;
   bit_pos = param & 0x7;
@@ -95,7 +95,7 @@ void mem_print(uint64_t param){
   Serial.print(" RLO=");Serial.print(RLO, BIN);
   double d = accumulator[0];
   Serial.print(" ACC=");Serial.print((long int)(accumulator[0]>>32));Serial.print((long int)accumulator[0]);
-  Serial.print(" ACCD=");Serial.println(d);
+  Serial.print(" ACCD=");Serial.println(d);*/
 }
 
 void setupMem(){
@@ -438,7 +438,7 @@ void _subI(uint64_t param){accI0 = (int32_t)(accumulator[1])-(int32_t)(accumulat
 void _mulI(uint64_t param){accI0 = (int32_t)(accumulator[1])*(int32_t)(accumulator[0]); accumulator[0] = accI0;}
 void _divI(uint64_t param){accI0 = (int32_t)(accumulator[1])/(int32_t)(accumulator[0]); accumulator[0] = accI0;}
 
-int64_t accD0 = 0, accD1 = 0;
+/*int64_t accD0 = 0, accD1 = 0;
 void _addD(uint64_t param){accD0 = (int64_t)(accumulator[1])+(int64_t)(accumulator[0]); accumulator[0] = accD0;}
 void _subD(uint64_t param){accD0 = (int64_t)(accumulator[1])-(int64_t)(accumulator[0]); accumulator[0] = accD0;}
 void _mulD(uint64_t param){accD0 = (int64_t)(accumulator[1])*(int64_t)(accumulator[0]); accumulator[0] = accD0;}
@@ -448,7 +448,7 @@ double accR0 = 0.0, accR1 = 0.0;
 void _addR(uint64_t param){accR0 = (double)(accumulator[1])+(double)(accumulator[0]); accumulator[0] = accR0;}
 void _subR(uint64_t param){accR0 = (double)(accumulator[1])-(double)(accumulator[0]); accumulator[0] = accR0;}
 void _mulR(uint64_t param){accR0 = (double)(accumulator[1])*(double)(accumulator[0]); accumulator[0] = accR0;}
-void _divR(uint64_t param){accR0 = (double)(accumulator[1])/(double)(accumulator[0]); accumulator[0] = accR0;}
+void _divR(uint64_t param){accR0 = (double)(accumulator[1])/(double)(accumulator[0]); accumulator[0] = accR0;}*/
 
 void loadIFromAcc(){
   accI0 = (uint32_t)accumulator[0]; accI1 = (uint32_t)accumulator[1];
@@ -461,7 +461,7 @@ void _ltI(uint64_t param){loadIFromAcc(); RLO=(accI1<accI0); cancel_RLO=false;}
 void _gteqI(uint64_t param){loadIFromAcc(); RLO=(accI1>=accI0); cancel_RLO=false;}
 void _lteqI(uint64_t param){loadIFromAcc(); RLO=(accI1<=accI0); cancel_RLO=false;}
 
-void loadDFromAcc(){
+/*void loadDFromAcc(){
   accD0 = (uint64_t)accumulator[0]; accD1 = (uint64_t)accumulator[1];
 }
 
@@ -481,4 +481,21 @@ void _diffR(uint64_t param){loadRFromAcc(); RLO=(accR1!=accR0); cancel_RLO=false
 void _gtR(uint64_t param){loadRFromAcc(); RLO=(accR1>accR0); cancel_RLO=false;}
 void _ltR(uint64_t param){loadRFromAcc(); RLO=(accR1<accR0); cancel_RLO=false;}
 void _gteqR(uint64_t param){loadRFromAcc(); RLO=(accR1>=accR0); cancel_RLO=false;}
-void _lteqR(uint64_t param){loadRFromAcc(); RLO=(accR1<=accR0); cancel_RLO=false;}
+void _lteqR(uint64_t param){loadRFromAcc(); RLO=(accR1<=accR0); cancel_RLO=false;}*/
+
+void _ju(uint64_t param){
+  addr = param & 0xFF;
+  PC = addr;
+}
+
+void _jc(uint64_t param){
+  addr = param & 0xFF;
+  if(RLO == 1)PC = addr;
+  cancel_RLO = true;
+}
+
+void _jcn(uint64_t param){
+  addr = param & 0xFF;
+  if(RLO == 0)PC = addr;
+  cancel_RLO = true;
+}

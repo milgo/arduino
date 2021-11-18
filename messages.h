@@ -39,8 +39,8 @@ const char *const message[] PROGMEM = {
 
 const char mainMenuRunStr[] PROGMEM = "Run";
 const char mainMenuEditStr[] PROGMEM = "Edit";
-const char mainMenuClearStr[] PROGMEM = "Clear";
-const char mainMenuSetupStr[] PROGMEM = "Setup";
+const char mainMenuClearStr[] PROGMEM = "Program";
+const char mainMenuSetupStr[] PROGMEM = "Clear";
 
 const char comMenuBasicStr[] PROGMEM = "Basic";
 const char comMenuMoveStr[] PROGMEM = "Move";
@@ -48,12 +48,13 @@ const char comMenuAritmeticStr[] PROGMEM = "Aritmetic";
 const char comMenuCompareStr[] PROGMEM = "Compare";
 const char comMenuTimersStr[] PROGMEM = "Timers";
 const char comMenuCounterStr[] PROGMEM = "Counters";
+const char comMenuJumpStr[] PROGMEM = "Jump";
 
 const char editMenuInsertStr[] PROGMEM = "Insert";
 const char editMenuEditStr[] PROGMEM = "Edit";
 const char editMenuRemoveStr[] PROGMEM = "Remove";
 
-const char comNOPStr[] PROGMEM = "";
+const char comNOPStr[] PROGMEM = "NOP";
 const char comBasicAStr[] PROGMEM = "A  ";
 const char comBasicOStr[] PROGMEM = "O  ";
 
@@ -71,21 +72,21 @@ const char comAritAddIStr[] PROGMEM = "+I ";
 const char comAritSubIStr[] PROGMEM = "-I ";
 const char comAritMulIStr[] PROGMEM = "*I ";
 const char comAritDivIStr[] PROGMEM = "/I ";
-const char comAritAddDStr[] PROGMEM = "+D ";
+/*const char comAritAddDStr[] PROGMEM = "+D ";
 const char comAritSubDStr[] PROGMEM = "-D ";
 const char comAritMulDStr[] PROGMEM = "*D ";
 const char comAritDivDStr[] PROGMEM = "/D ";
 const char comAritAddRStr[] PROGMEM = "+R ";
 const char comAritSubRStr[] PROGMEM = "-R ";
 const char comAritMulRStr[] PROGMEM = "*R ";
-const char comAritDivRStr[] PROGMEM = "/R ";
+const char comAritDivRStr[] PROGMEM = "/R ";*/
 const char comCompEqIStr[] PROGMEM = "==I";
 const char comCompDiffIStr[] PROGMEM = "<>I";
 const char comCompGtIStr[] PROGMEM = ">I ";
 const char comCompLtIStr[] PROGMEM = "<I ";
 const char comCompGtEqIStr[] PROGMEM = ">=I";
 const char comCompLtEqIStr[] PROGMEM = "<=I";
-const char comCompEqDStr[] PROGMEM = "==D";
+/*const char comCompEqDStr[] PROGMEM = "==D";
 const char comCompDiffDStr[] PROGMEM = "<>D";
 const char comCompGtDStr[] PROGMEM = ">D ";
 const char comCompLtDStr[] PROGMEM = "<D ";
@@ -96,7 +97,7 @@ const char comCompDiffRStr[] PROGMEM = "<>R";
 const char comCompGtRStr[] PROGMEM = ">R ";
 const char comCompLtRStr[] PROGMEM = "<R ";
 const char comCompGtEqRStr[] PROGMEM = ">=R";
-const char comCompLtEqRStr[] PROGMEM = "<=R";
+const char comCompLtEqRStr[] PROGMEM = "<=R";*/
 
 const char comTimerSPStr[] PROGMEM = "SP ";
 const char comTimerSEStr[] PROGMEM = "SE ";
@@ -112,6 +113,10 @@ const char comCounterRStr[] PROGMEM = "R  ";
 const char comCounterLStr[] PROGMEM = "L ";
 const char comCounterLCStr[] PROGMEM = "LC ";
 
+const char comJumpUncStr[] PROGMEM = "JU ";
+const char comJumpCondStr[] PROGMEM = "JC ";
+const char comJumpCondNotStr[] PROGMEM = "JCN";
+
 const char memNULLStr[] PROGMEM = "";
 const char memQStr[] PROGMEM = "Q";
 const char memIStr[] PROGMEM = "I";
@@ -122,6 +127,7 @@ const char memMWStr[] PROGMEM = "MW";
 const char memMDStr[] PROGMEM = "MD";
 const char memCStr[] PROGMEM = "C";
 const char memConstStr[] PROGMEM = "#";
+const char memAddrStr[] PROGMEM = "@";
 
 const char *const mainMenu[] PROGMEM = {
   mainMenuRunStr, 
@@ -136,7 +142,8 @@ const char *const commandGroupMenu[] PROGMEM = {
   comMenuTimersStr, 
   comMenuCounterStr,
   comMenuAritmeticStr, 
-  comMenuCompareStr
+  comMenuCompareStr,
+  comMenuJumpStr
   };
   
 const char *const editMenu[] PROGMEM = {
@@ -174,21 +181,21 @@ const char *const comStr[] PROGMEM = {
   comAritSubIStr,
   comAritMulIStr,
   comAritDivIStr,
-  comAritAddDStr,
+  /*comAritAddDStr,
   comAritSubDStr,
   comAritMulDStr,
   comAritDivDStr,
   comAritAddRStr,
   comAritSubRStr,
   comAritMulRStr,
-  comAritDivRStr,
+  comAritDivRStr,*/
   comCompEqIStr,
   comCompDiffIStr,
   comCompGtIStr,
   comCompLtIStr,
   comCompGtEqIStr,
   comCompLtEqIStr,
-  comCompEqDStr,
+  /*comCompEqDStr,
   comCompDiffDStr,
   comCompGtDStr,
   comCompLtDStr,
@@ -199,10 +206,13 @@ const char *const comStr[] PROGMEM = {
   comCompGtRStr,
   comCompLtRStr,
   comCompGtEqRStr,
-  comCompLtEqRStr,
+  comCompLtEqRStr,*/
+  comJumpUncStr,
+  comJumpCondStr,
+  comJumpCondNotStr
   };
 
-const char comGroups[] = { 1, 10, 10, 12, 12, 18, 18, 24, 24, 36, 36, 54};
+const char comGroups[] = { 1, 10, 10, 12, 12, 18, 18, 24, 24, 28, 28, 34, 34, 37};
 
 const char *const memStr[] PROGMEM = {
   memNULLStr,
@@ -214,7 +224,8 @@ const char *const memStr[] PROGMEM = {
   memMWStr,
   memMDStr,
   memConstStr,
-  memCStr
+  memCStr,
+  memAddrStr
 };
 
 const char memGroups[] = {1, 5, 
@@ -222,7 +233,8 @@ const char memGroups[] = {1, 5,
                           4, 5, 
                           9, 10, 
                           0, 0, 
-                          0, 0};
+                          0, 0,
+                          10, 11};
 
 const char memValidationRules[] = {0, 0, 0, 0,
                                   0, 1, 7, 7,
@@ -233,7 +245,8 @@ const char memValidationRules[] = {0, 0, 0, 0,
                                   0, 2, 9, 16,
                                   0, 1, 9, 9,
                                   1, 9, 9, -1,
-                                  0, 1, 9, 9};
+                                  0, 1, 9, 9,
+                                  0, 2, 9, 32};
 
 const char memPosAquireMsg[] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
 

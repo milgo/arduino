@@ -432,41 +432,53 @@ void _clc(uint64_t param){
   
 }
 
-int32_t resI = 0;
-void _addI(uint64_t param){resI = (int32_t)(accumulator[1])+(int32_t)(accumulator[0]); accumulator[0] = resI;}
-void _subI(uint64_t param){resI = (int32_t)(accumulator[1])-(int32_t)(accumulator[0]); accumulator[0] = resI;}
-void _mulI(uint64_t param){resI = (int32_t)(accumulator[1])*(int32_t)(accumulator[0]); accumulator[0] = resI;}
-void _divI(uint64_t param){resI = (int32_t)(accumulator[1])/(int32_t)(accumulator[0]); accumulator[0] = resI;}
+int32_t accI0 = 0, accI1 = 0;
+void _addI(uint64_t param){accI0 = (int32_t)(accumulator[1])+(int32_t)(accumulator[0]); accumulator[0] = accI0;}
+void _subI(uint64_t param){accI0 = (int32_t)(accumulator[1])-(int32_t)(accumulator[0]); accumulator[0] = accI0;}
+void _mulI(uint64_t param){accI0 = (int32_t)(accumulator[1])*(int32_t)(accumulator[0]); accumulator[0] = accI0;}
+void _divI(uint64_t param){accI0 = (int32_t)(accumulator[1])/(int32_t)(accumulator[0]); accumulator[0] = accI0;}
 
-int64_t resD = 0;
-void _addD(uint64_t param){resD = (int64_t)(accumulator[1])+(int64_t)(accumulator[0]); accumulator[0] = resD;}
-void _subD(uint64_t param){resD = (int64_t)(accumulator[1])-(int64_t)(accumulator[0]); accumulator[0] = resD;}
-void _mulD(uint64_t param){resD = (int64_t)(accumulator[1])*(int64_t)(accumulator[0]); accumulator[0] = resD;}
-void _divD(uint64_t param){resD = (int64_t)(accumulator[1])/(int64_t)(accumulator[0]); accumulator[0] = resD;}
+int64_t accD0 = 0, accD1 = 0;
+void _addD(uint64_t param){accD0 = (int64_t)(accumulator[1])+(int64_t)(accumulator[0]); accumulator[0] = accD0;}
+void _subD(uint64_t param){accD0 = (int64_t)(accumulator[1])-(int64_t)(accumulator[0]); accumulator[0] = accD0;}
+void _mulD(uint64_t param){accD0 = (int64_t)(accumulator[1])*(int64_t)(accumulator[0]); accumulator[0] = accD0;}
+void _divD(uint64_t param){accD0 = (int64_t)(accumulator[1])/(int64_t)(accumulator[0]); accumulator[0] = accD0;}
 
-double resR = 0.0;
-void _addR(uint64_t param){resR = (double)(accumulator[1])+(double)(accumulator[0]); accumulator[0] = resR;}
-void _subR(uint64_t param){resR = (double)(accumulator[1])-(double)(accumulator[0]); accumulator[0] = resR;}
-void _mulR(uint64_t param){resR = (double)(accumulator[1])*(double)(accumulator[0]); accumulator[0] = resR;}
-void _divR(uint64_t param){resR = (double)(accumulator[1])/(double)(accumulator[0]); accumulator[0] = resR;}
+double accR0 = 0.0, accR1 = 0.0;
+void _addR(uint64_t param){accR0 = (double)(accumulator[1])+(double)(accumulator[0]); accumulator[0] = accR0;}
+void _subR(uint64_t param){accR0 = (double)(accumulator[1])-(double)(accumulator[0]); accumulator[0] = accR0;}
+void _mulR(uint64_t param){accR0 = (double)(accumulator[1])*(double)(accumulator[0]); accumulator[0] = accR0;}
+void _divR(uint64_t param){accR0 = (double)(accumulator[1])/(double)(accumulator[0]); accumulator[0] = accR0;}
 
-void _eqI(uint64_t param){}
-void _diffI(uint64_t param){}
-void _gtI(uint64_t param){}
-void _ltI(uint64_t param){}
-void _gteqI(uint64_t param){}
-void _lteqI(uint64_t param){}
+void loadIFromAcc(){
+  accI0 = (uint32_t)accumulator[0]; accI1 = (uint32_t)accumulator[1];
+}
+ 
+void _eqI(uint64_t param){loadIFromAcc(); RLO=(accI1==accI0); cancel_RLO=false;}
+void _diffI(uint64_t param){loadIFromAcc(); RLO=(accI1!=accI0); cancel_RLO=false;}
+void _gtI(uint64_t param){loadIFromAcc(); RLO=(accI1>accI0); cancel_RLO=false;}
+void _ltI(uint64_t param){loadIFromAcc(); RLO=(accI1<accI0); cancel_RLO=false;}
+void _gteqI(uint64_t param){loadIFromAcc(); RLO=(accI1>=accI0); cancel_RLO=false;}
+void _lteqI(uint64_t param){loadIFromAcc(); RLO=(accI1<=accI0); cancel_RLO=false;}
 
-void _eqD(uint64_t param){}
-void _diffD(uint64_t param){}
-void _gtD(uint64_t param){}
-void _ltD(uint64_t param){}
-void _gteqD(uint64_t param){}
-void _lteqD(uint64_t param){}
+void loadDFromAcc(){
+  accD0 = (uint64_t)accumulator[0]; accD1 = (uint64_t)accumulator[1];
+}
 
-void _eqR(uint64_t param){}
-void _diffR(uint64_t param){}
-void _gtR(uint64_t param){}
-void _ltR(uint64_t param){}
-void _gteqR(uint64_t param){}
-void _lteqR(uint64_t param){}
+void _eqD(uint64_t param){loadDFromAcc(); RLO=(accD1==accD0); cancel_RLO=false;}
+void _diffD(uint64_t param){loadDFromAcc(); RLO=(accD1!=accD0); cancel_RLO=false;}
+void _gtD(uint64_t param){loadDFromAcc(); RLO=(accD1>accD0); cancel_RLO=false;}
+void _ltD(uint64_t param){loadDFromAcc(); RLO=(accD1<accD0); cancel_RLO=false;}
+void _gteqD(uint64_t param){loadDFromAcc(); RLO=(accD1>=accD0); cancel_RLO=false;}
+void _lteqD(uint64_t param){loadDFromAcc(); RLO=(accD1<=accD0); cancel_RLO=false;}
+
+void loadRFromAcc(){
+  accR0 = (double)accumulator[0]; accR1 = (double)accumulator[1];
+}
+
+void _eqR(uint64_t param){loadRFromAcc(); RLO=(accR1==accR0); cancel_RLO=false;}
+void _diffR(uint64_t param){loadRFromAcc(); RLO=(accR1!=accR0); cancel_RLO=false;}
+void _gtR(uint64_t param){loadRFromAcc(); RLO=(accR1>accR0); cancel_RLO=false;}
+void _ltR(uint64_t param){loadRFromAcc(); RLO=(accR1<accR0); cancel_RLO=false;}
+void _gteqR(uint64_t param){loadRFromAcc(); RLO=(accR1>=accR0); cancel_RLO=false;}
+void _lteqR(uint64_t param){loadRFromAcc(); RLO=(accR1<=accR0); cancel_RLO=false;}

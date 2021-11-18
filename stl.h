@@ -45,6 +45,27 @@
 #define MULR 34ULL
 #define DIVR 35ULL
 
+#define EQI 36ULL
+#define DIFFI 37ULL
+#define GTI 38ULL
+#define LTI 39ULL
+#define GTEQI 40ULL
+#define LTEQI 41ULL
+
+#define EQD 42ULL
+#define DIFFD 43ULL
+#define GTD 44ULL
+#define LTD 45ULL
+#define GTEQD 46ULL
+#define LTEQD 47ULL
+
+#define EQR 48ULL
+#define DIFFR 49ULL
+#define GTR 50ULL
+#define LTR 51ULL
+#define GTEQR 52ULL
+#define LTEQR 53ULL
+
 #define Q 1ULL
 #define I 2ULL
 #define M 3ULL

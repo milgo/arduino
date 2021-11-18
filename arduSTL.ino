@@ -20,21 +20,15 @@ void setup() {
   PS = 7;*/
   program[0] = s_stll_v(L, CS, 10);
   program[1] = s_stll_v(L, CS, 3);
-  program[2] = s_stll_s(ADDR);
+  
+  program[2] = s_stll_s(EQR);
+  program[3] = s_stll_s(DIFFR);
+  program[4] = s_stll_s(GTR);
+  program[5] = s_stll_s(LTR);
+  program[6] = s_stll_s(GTEQR);
+  program[7] = s_stll_s(LTEQR);
 
-  program[3] = s_stll_v(L, CS, 10);
-  program[4] = s_stll_v(L, CS, 3);
-  program[5] = s_stll_s(SUBR);
-
-  program[6] = s_stll_v(L, CS, 10);
-  program[7] = s_stll_v(L, CS, 3);
-  program[8] = s_stll_s(MULR);
-
-  program[9] = s_stll_v(L, CS, 10);
-  program[10] = s_stll_v(L, CS, 3);
-  program[11] = s_stll_s(DIVR);
-
-  PS = 12; 
+  PS = 8; 
 
   DDRB = B00100000;//PORTB output pin 5
   PORTD = B11111100;//pullup on pin 2

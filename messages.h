@@ -16,6 +16,8 @@
 #define NOPROGRAM_MSG 5
 #define ENTER_BIT_POS_MSG 6
 #define MUST_BE_IN_RANGE 7
+#define PROGRAMMING_EEPROM 8
+#define READING_EEPROM 9
 
 const char enterVariablePositionMsgStr[] PROGMEM = "Enter var position:";
 const char enterBitPositionMsgStr[] PROGMEM = "Enter bit position:";
@@ -25,6 +27,8 @@ const char addLineMsgStr[] PROGMEM = "[+]";
 const char runningMsgStr[] PROGMEM = "Running...";
 const char noProgramMsgStr[] PROGMEM = "No program";
 const char mustBeInRange[] PROGMEM = "Must be in range: ";
+const char programmingEepromMsgStr[] PROGMEM = "Programming eeprom...";
+const char readingEepromMsgStr[] PROGMEM = "Reading from eeprom...";
 
 const char *const message[] PROGMEM = {
   enterVariablePositionMsgStr, 
@@ -34,7 +38,9 @@ const char *const message[] PROGMEM = {
   runningMsgStr,
   noProgramMsgStr,
   enterBitPositionMsgStr,
-  mustBeInRange
+  mustBeInRange,
+  programmingEepromMsgStr,
+  readingEepromMsgStr
   };
 
 const char mainMenuRunStr[] PROGMEM = "Run";

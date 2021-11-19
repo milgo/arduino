@@ -6,20 +6,44 @@
 
 
 void writeProgramToEeprom(){
-  
+  printA(message, PROGRAMMING_EEPROM);
+  displayDisplay();
+  int addr = 0;
+  for(uint8_t i=0; i<PS; i++){
+    EEPROM.write(addr, (program[i] >> 24) & 0xFF);
+    EEPROM.write(addr+1, (program[i] >> 16) & 0xFF);
+    EEPROM.write(addr+2, (program[i] >> 8) & 0xFF);
+    EEPROM.write(addr+3, program[i] & 0xFF);
+    addr+=4;
+  }
+  //Write PS and the end of eeprom
+  EEPROM.write(0x3FF, PS);
+  delay(1000);
 }
 
 void readProgramFromEeprom(){
-  
+  int addr = 0;
+  PS = EEPROM.read(0x3FF);
+  //Serial.println(PS);
+  for(uint8_t i=0; i<PS; i++){
+    program[i] = ((uint32_t)EEPROM.read(addr) << 24UL) +
+                  ((uint32_t)EEPROM.read(addr+1) << 16UL)+
+                  ((uint32_t)EEPROM.read(addr+2) << 8UL) +
+                  ((uint32_t)EEPROM.read(addr+3));
+    addr+=4;
+  }
 }
 
 void clearProgramLocal(){
-  
+  for(uint8_t i=0; i<PS; i++){
+      program[i] = 0;
+  }
+  PS = 0;
 }
 
 void setup() {
   Serial.begin(9600);
-
+//EEPROM.write(0x3FF, 0);
   setupGUI();
 
   /*program[0] = s_stll_v(L, CS, 6000UL);
@@ -30,7 +54,7 @@ void setup() {
   program[5] = s_stll_m(A, I, 0, 1);
   program[6] = s_stll_m(TRT, TIM, 0, 0);
   PS = 7;*/
-  program[0] = s_stll_v(L, CS, 3);
+  /*program[0] = s_stll_v(L, CS, 3);
   program[1] = s_stll_v(L, CS, 10);
   program[2] = s_stll_s(LTI);
   program[3] = s_stll_v(JCN, AD, 7);
@@ -38,7 +62,7 @@ void setup() {
   program[5] = s_stll_m(ASGN, Q, 0, 5);
   program[6] = s_stll_s(NOP);
 
-  PS = 7; 
+  PS = 7; */
 
   DDRB = B00100000;//PORTB output pin 5
   PORTD = B11111100;//pullup on pin 2
@@ -58,7 +82,7 @@ void setup() {
   interrupts();
   //------------------
   
-  delay(2000);
+  //delay(2000);
 
   readProgramFromEeprom();
 
@@ -71,9 +95,9 @@ void setup() {
       while(conf){
         int newMenuPosition = showMenu(mainMenu, 0, MAIN_MENU_SIZE);
         switch(newMenuPosition){
-          case -1: /*exitCurrentMenu(menuPosition);*/ break;
-          case 0: /*enterCurrentOption(newMenuPosition);*/conf = false; break;
-          case 1: /*enterValue("Enter value:", k, true, 9, 9);break;*/editProgram(); break;
+          case -1: break;
+          case 0: conf = false; break;
+          case 1: editProgram(); break;
           case 2: writeProgramToEeprom(); break;
           case 3: clearProgramLocal(); break;
           default:break;
@@ -118,7 +142,7 @@ void insertProgramLine(int number, bool edit){
   
           value = enterValue(memPosAquireMsg[mem], 0, sig, len, dig);
           
-          if(value <= minimum || value >= maximum){
+          if(value < minimum || value > maximum){
             printMessageAndWaitForButton(MUST_BE_IN_RANGE, minimum, maximum);
             return;
           }

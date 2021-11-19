@@ -15,7 +15,7 @@
 #define RUNNING_MSG 4
 #define NOPROGRAM_MSG 5
 #define ENTER_BIT_POS_MSG 6
-#define MUST_BE_LESS_MSG 7
+#define MUST_BE_IN_RANGE 7
 
 const char enterVariablePositionMsgStr[] PROGMEM = "Enter var position:";
 const char enterBitPositionMsgStr[] PROGMEM = "Enter bit position:";
@@ -24,7 +24,7 @@ const char limitMsgStr[] PROGMEM = "LIMIT";
 const char addLineMsgStr[] PROGMEM = "[+]";
 const char runningMsgStr[] PROGMEM = "Running...";
 const char noProgramMsgStr[] PROGMEM = "No program";
-const char mustBeLessThenStr[] PROGMEM = "Value must be less then: ";
+const char mustBeInRange[] PROGMEM = "Must be in range: ";
 
 const char *const message[] PROGMEM = {
   enterVariablePositionMsgStr, 
@@ -34,7 +34,7 @@ const char *const message[] PROGMEM = {
   runningMsgStr,
   noProgramMsgStr,
   enterBitPositionMsgStr,
-  mustBeLessThenStr
+  mustBeInRange
   };
 
 const char mainMenuRunStr[] PROGMEM = "Run";
@@ -236,17 +236,17 @@ const char memGroups[] = {1, 5,
                           0, 0,
                           10, 11};
 
-const char memValidationRules[] = {0, 0, 0, 0,
-                                  0, 1, 7, 7,
-                                  0, 1, 7, 7,
-                                  0, 2, 9, 63,
-                                  0, 2, 9, 63,
-                                  0, 2, 9, 31,
-                                  0, 2, 9, 16,
-                                  0, 1, 9, 9,
-                                  1, 9, 9, -1,
-                                  0, 1, 9, 9,
-                                  0, 2, 9, 32};
+const int16_t memValidationRules[] PROGMEM = {0, 0, 0, 0, 0,
+                                  0, 1, 7, 0, 7,
+                                  0, 1, 7, 0, 7,
+                                  0, 2, 9, 0, 63,
+                                  0, 2, 9, 0, 63,
+                                  0, 2, 9, 0, 31,
+                                  0, 2, 9, 0, 16,
+                                  0, 1, 9, 0, 9,
+                                  1, 5, 9, -32768, 32767,
+                                  0, 1, 9, 0, 9,
+                                  0, 2, 9, 0, 32};
 
 const char memPosAquireMsg[] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
 

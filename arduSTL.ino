@@ -1,7 +1,21 @@
 
+#include <EEPROM.h>
 #include "messages.h"
 #include "stl.h"
 #include "gui.h"
+
+
+void writeProgramToEeprom(){
+  
+}
+
+void readProgramFromEeprom(){
+  
+}
+
+void clearProgramLocal(){
+  
+}
 
 void setup() {
   Serial.begin(9600);
@@ -46,6 +60,9 @@ void setup() {
   
   delay(2000);
 
+  readProgramFromEeprom();
+
+  //If enter pressed after reset then go to menu
   /*if(!IS_PRESSED(getButtonsNoneBlocking(), BUTTON_ENTER)){
     if(!IS_PRESSED(getButtonsBlocking(), BUTTON_ENTER))
       delay(100);*/
@@ -57,8 +74,8 @@ void setup() {
           case -1: /*exitCurrentMenu(menuPosition);*/ break;
           case 0: /*enterCurrentOption(newMenuPosition);*/conf = false; break;
           case 1: /*enterValue("Enter value:", k, true, 9, 9);break;*/editProgram(); break;
-          case 2: /*enterCurrentOption(newMenuPosition);*/ break;
-          case 3: /*enterCurrentOption(newMenuPosition);*/ break;
+          case 2: writeProgramToEeprom(); break;
+          case 3: clearProgramLocal(); break;
           default:break;
         }
       }
@@ -73,10 +90,10 @@ ISR(TIMER1_COMPA_vect){
 
 void insertProgramLine(int number, bool edit){
   //Serial.print("removing ");Serial.print(number); Serial.print("line");
-  int64_t command = 0, mem = -1;
+  int32_t command = 0, mem = -1;
   uint8_t var_pos = 0, bit_pos = 0;
   int8_t comGroup = showMenu(commandGroupMenu, 0, COMM_MENU_SIZE);
-  long int value = 0;
+  int32_t value = 0;
   if(comGroup>=0){
     command = showMenu(comStr, comGroups[comGroup*2], comGroups[comGroup*2+1]);
     if(command>=0 && memGroups[comGroup*2]>=0){
@@ -92,14 +109,17 @@ void insertProgramLine(int number, bool edit){
       if(memGroups[comGroup*2]>0){ //if operation with mem selection
         mem = showMenu(memStr, memPtrFrom, memPtrTo);
         if(mem >= 0){
+
+          char sig = pgm_read_word(&memValidationRules[mem*5]);
+          char len = pgm_read_word(&memValidationRules[mem*5+1]);
+          char dig = pgm_read_word(&memValidationRules[mem*5+2]);
+          int16_t minimum = pgm_read_word(&memValidationRules[mem*5+3]);
+          int16_t maximum = pgm_read_word(&memValidationRules[mem*5+4]);
   
-          value = enterValue(memPosAquireMsg[mem], 0, 
-                                memValidationRules[mem*4], 
-                                memValidationRules[mem*4+1], 
-                                memValidationRules[mem*4+2]);
-  
-          if(value > memValidationRules[mem*4+3] && memValidationRules[mem*4+3]>0){
-            printMessageAndWaitForButton(MUST_BE_LESS_MSG, memValidationRules[mem*4+3]);
+          value = enterValue(memPosAquireMsg[mem], 0, sig, len, dig);
+          
+          if(value <= minimum || value >= maximum){
+            printMessageAndWaitForButton(MUST_BE_IN_RANGE, minimum, maximum);
             return;
           }
           
@@ -184,11 +204,12 @@ void editProgram(){
     for(int i=pl; i<pl+4 && i<=PS; i++){
       displaySetCursor(0, (i-pl)*8);
       uint8_t func_id = program[i] >> FUNC_BIT_POS;
-      uint64_t param = program[i] & FUNC_PARAM_MASK;
-      uint64_t mem_pos = param >> 32 & 0xFF;
-      uint64_t var_pos = param >> 4 & 0xFF;
-      uint64_t bit_pos = param & 0xF;
-      long int value = param & 0xFFFFFFFF;
+      uint16_t param = program[i] & FUNC_PARAM_MASK;
+      uint8_t mem_pos = (program[i] >> MEM_BIT_POS) & 0xFF;
+      uint8_t var_pos = param >> 4 & 0xFF;
+      uint8_t bit_pos = param & 0xF;
+      int value = param & FUNC_PARAM_MASK;
+
       if(pos == i){
           displaySetTextInvert();
         }

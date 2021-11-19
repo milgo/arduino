@@ -27,12 +27,12 @@
 
 extern void setupGUI();
 extern int showMenu(const char * const *menu, int from, int to);
-extern long int enterValue(int msg, long int curVal, bool isSigned, int len, int maxDigit);
+extern int32_t enterValue(int msg, long int curVal, bool isSigned, int len, int maxDigit);
 extern void printA(const char *const* arr, int id);
 extern void printAtoBuf(const char *const* arr, int id, char* buf);
 
 extern void printMessageAndWaitForButton(int msg);
-extern void printMessageAndWaitForButton(int msg, int v);
+extern void printMessageAndWaitForButton(int msg, int v1, int v2);
 extern void displaySetTextNormal();
 extern void displaySetTextInvert();
 extern void displayClear();

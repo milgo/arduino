@@ -82,8 +82,6 @@ void setup() {
   interrupts();
   //------------------
   
-  //delay(2000);
-
   readProgramFromEeprom();
 
   //If enter pressed after reset then go to menu
@@ -108,8 +106,26 @@ void setup() {
   
 }
 
+const char _1[] PROGMEM = {""};
+const char _2[] PROGMEM = {"."};
+const char _3[] PROGMEM = {".."};
+const char _4[] PROGMEM = {"..."};
+const char* const runningPromptArray[] PROGMEM = {_1, _2, _3, _4};
+uint8_t runningIndCounter;
+uint8_t runningIndCounterPrev;
+
+void runEvery500ms(){
+  runningIndCounter++;
+}
+
+int timerCounter = 0;
 ISR(TIMER1_COMPA_vect){
   timersRoutine();
+  timerCounter++;
+  if(timerCounter>=50){
+    runEvery500ms();
+    timerCounter = 0;
+  }
 }
 
 void insertProgramLine(int number, bool edit){
@@ -277,6 +293,8 @@ void editProgram(){
   }
 }
 
+
+
 void runProgram(){
   //load
   setupMem();
@@ -288,6 +306,16 @@ void runProgram(){
     printA(message, RUNNING_MSG);
     displayDisplay();
     while(true){
+
+      //display running indicator
+      if(runningIndCounterPrev != runningIndCounter){
+        displayClear();
+        displaySetCursor(0, 0);
+        printA(message, RUNNING_MSG);
+        printA(runningPromptArray, runningIndCounter%4);
+        displayDisplay();
+        runningIndCounterPrev = runningIndCounter;
+      }
   
       buttons = ~getButtonsNoneBlocking();
       //delay(100);
@@ -307,5 +335,4 @@ void runProgram(){
 
 void loop() {
   runProgram();
-  
 }

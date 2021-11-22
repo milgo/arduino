@@ -234,13 +234,14 @@ void printAtoBuf(const char *const* arr, int id, char* buf){
   strcpy_P(buf, (char*)pgm_read_word(&(arr[id])));
 }
 
-void printMessageAndWaitForButton(int msg, bool showVal, int v1, int v2){
-  unsigned char newButtons = 0;
+uint8_t printMessageAndWaitForButton(int msg, uint8_t showVal, int v1, int v2){
+  uint8_t newButtons = 0;
   while(true){
     displayClear();
+    displaySetCursor(0, 0);
     strcpy_P(bufferStr, (char*)pgm_read_word(&(message[msg])));
     display.print(bufferStr);
-    if(showVal){
+    if(showVal == 0){
       display.print(v1);display.print(", ");
       display.print(v2);
     }
@@ -250,12 +251,14 @@ void printMessageAndWaitForButton(int msg, bool showVal, int v1, int v2){
       break;
   }
   displayClear();
+  displaySetCursor(0, 0);
+  return newButtons;
 }
 
-void printMessageAndWaitForButton(int msg, int v1, int v2){
-  printMessageAndWaitForButton(msg, true, v1, v2);
+uint8_t printMessageAndWaitForButton(int msg, int v1, int v2){
+  return printMessageAndWaitForButton(msg, 0, v1, v2);
 }
 
-void printMessageAndWaitForButton(int msg){
-  printMessageAndWaitForButton(msg, false, 0);
+uint8_t printMessageAndWaitForButton(int msg){
+  return printMessageAndWaitForButton(msg, 1, 0, 0);
 }

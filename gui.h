@@ -31,8 +31,8 @@ extern int32_t enterValue(int msg, long int curVal, bool isSigned, int len, int 
 extern void printA(const char *const* arr, int id);
 extern void printAtoBuf(const char *const* arr, int id, char* buf);
 
-extern void printMessageAndWaitForButton(int msg);
-extern void printMessageAndWaitForButton(int msg, int v1, int v2);
+extern uint8_t printMessageAndWaitForButton(int msg);
+extern uint8_t printMessageAndWaitForButton(int msg, int v1, int v2);
 extern void displaySetTextNormal();
 extern void displaySetTextInvert();
 extern void displayClear();

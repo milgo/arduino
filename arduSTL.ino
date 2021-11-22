@@ -4,7 +4,7 @@
 #include "stl.h"
 #include "gui.h"
 
-
+boolean programChanged = 1;
 void writeProgramToEeprom(){
   printA(message, PROGRAMMING_EEPROM);
   displayDisplay();
@@ -18,6 +18,7 @@ void writeProgramToEeprom(){
   }
   //Write PS and the end of eeprom
   EEPROM.write(0x3FF, PS);
+  programChanged = 1;
   delay(1000);
 }
 
@@ -32,13 +33,26 @@ void readProgramFromEeprom(){
                   ((uint32_t)EEPROM.read(addr+3));
     addr+=4;
   }
+  programChanged = 1;
 }
 
 void clearProgramLocal(){
   for(uint8_t i=0; i<PS; i++){
       program[i] = 0;
   }
+  programChanged = 0;
   PS = 0;
+}
+
+int askToSaveChangesIfMade(){
+  if(programChanged == 0){
+    if(IS_PRESSED(printMessageAndWaitForButton(SAVE_CHANGES), BUTTON_ENTER)){
+      writeProgramToEeprom();
+      return 0;
+    }
+    else return 1;
+  }
+  return 0;
 }
 
 void setup() {
@@ -94,9 +108,9 @@ void setup() {
         int newMenuPosition = showMenu(mainMenu, 0, MAIN_MENU_SIZE);
         switch(newMenuPosition){
           case -1: break;
-          case 0: conf = false; break;
+          case 0: if(askToSaveChangesIfMade()==0){conf=false;} break;
           case 1: editProgram(); break;
-          case 2: writeProgramToEeprom(); break;
+          case 2: if(programChanged==0)writeProgramToEeprom();else printMessageAndWaitForButton(NO_CHANGES);break;
           case 3: clearProgramLocal(); break;
           default:break;
         }
@@ -127,6 +141,7 @@ ISR(TIMER1_COMPA_vect){
     timerCounter = 0;
   }
 }
+
 
 void insertProgramLine(int number, bool edit){
   //Serial.print("removing ");Serial.print(number); Serial.print("line");
@@ -191,10 +206,12 @@ void insertProgramLine(int number, bool edit){
           if(mem == CS || mem == AD){ //constant
             //Serial.print((long)command);Serial.print(" ");Serial.print((long)mem);Serial.print(" ");Serial.print((long)value);Serial.print(" ");
             program[number] = s_stll_v(command, mem, value);
+            programChanged = 0;
           }
           else{
             //Serial.print((long)command);Serial.print(" ");Serial.print((long)mem);Serial.print(" ");Serial.print((long)var_pos);Serial.print(" ");Serial.print((long)bit_pos);Serial.print(" ");
             program[number] = s_stll_m(command, mem, var_pos, bit_pos);
+            programChanged = 0;
           }
         }
       }
@@ -208,6 +225,7 @@ void removeProgramLine(int number){
     program[i] = program[i+1];
   }
   PS--;
+  programChanged = 0;
 }
 
 void editProgram(){
@@ -327,6 +345,8 @@ void runProgram(){
       }
     }
   }else{
+    displayClear();
+    displaySetCursor(0, 0);
     printA(message, NOPROGRAM_MSG);
     displayDisplay();
     delay(3000);

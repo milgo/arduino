@@ -92,8 +92,8 @@
 extern uint32_t program[MAX_PROGRAM_SIZE];
 extern uint8_t volatile PC;
 extern uint8_t volatile PS;
-extern uint8_t m[64];
-extern uint8_t buttons;
+extern uint8_t volatile m[64];
+extern uint8_t volatile buttons;
 
 void _and(uint32_t param);
 void _or(uint32_t param);

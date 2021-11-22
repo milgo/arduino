@@ -4,11 +4,9 @@
 #include "gui.h"
 
 /*
-
-Instruction:  00000000 00000000 00000000  00000000  00000000 00000000 00000000 00000000
-             |          Function         |Mem ptr |      Reserved         |Mem id |Bit|
-             |          Function         |Mem ptr |            Value                  |
-
+Instruction:  00000000 00000000 00000000 00000000
+             |Function |Mem ptr |Res |Mem id |Bit|
+             |Function |Mem ptr | Value          |
 */
 
 uint32_t program[MAX_PROGRAM_SIZE];
@@ -22,10 +20,10 @@ void (*func_ptr[])(uint32_t) = {_nop, _and, _or, _nand, _nor, _assign, _s, _r, _
  _eqI, _diffI, _gtI, _ltI, _gteqI, _lteqI, /*_eqD, _diffD, _gtD, _ltD, _gteqD, _lteqD, _eqR, _diffR, _gtR, _ltR, _gteqR, _lteqR,*/
  _ju, _jc, _jcn};
  
-uint8_t buttons;
-uint8_t m[64];
-uint8_t t[8];
-uint8_t c;
+uint8_t volatile buttons;
+uint8_t volatile m[64];
+uint8_t volatile t[8];
+uint8_t volatile c;
 
 uint8_t volatile * const memNull[] = {&nullByte};
 uint8_t volatile * const memQ[] = {&PORTB};

@@ -18,6 +18,8 @@
 #define MUST_BE_IN_RANGE 7
 #define PROGRAMMING_EEPROM 8
 #define READING_EEPROM 9
+#define SAVE_CHANGES 10
+#define NO_CHANGES 11
 
 const char enterVariablePositionMsgStr[] PROGMEM = "Enter var position:";
 const char enterBitPositionMsgStr[] PROGMEM = "Enter bit position:";
@@ -29,6 +31,8 @@ const char noProgramMsgStr[] PROGMEM = "No program";
 const char mustBeInRange[] PROGMEM = "Must be in range: ";
 const char programmingEepromMsgStr[] PROGMEM = "Programming eeprom...";
 const char readingEepromMsgStr[] PROGMEM = "Reading from eeprom...";
+const char saveChangesMsgStr[] PROGMEM = "Save changes? [ENTER]";
+const char noChangesMsgStr[] PROGMEM = "No changes!";
 
 const char *const message[] PROGMEM = {
   enterVariablePositionMsgStr, 
@@ -40,7 +44,9 @@ const char *const message[] PROGMEM = {
   enterBitPositionMsgStr,
   mustBeInRange,
   programmingEepromMsgStr,
-  readingEepromMsgStr
+  readingEepromMsgStr,
+  saveChangesMsgStr,
+  noChangesMsgStr
   };
 
 const char mainMenuRunStr[] PROGMEM = "Run";
@@ -252,7 +258,7 @@ const int16_t memValidationRules[] PROGMEM = {0, 0, 0, 0, 0,
                                   0, 1, 9, 0, 9,
                                   1, 5, 9, -32768, 32767,
                                   0, 1, 9, 0, 9,
-                                  0, 2, 9, 0, 32};
+                                  0, 2, 9, 0, 64};
 
 const char memPosAquireMsg[] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
 

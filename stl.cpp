@@ -58,7 +58,7 @@ uint8_t volatile *const *memMap[] = {
   memC
 };
 
-uint8_t volatile RLO = 0;
+uint8_t volatile RLO = 1;
 uint8_t volatile cancel_RLO = true;
 uint8_t volatile PC = 0, PS = 0;
 
@@ -103,6 +103,10 @@ void setupMem(){
   m[1] |=  0 << 1; //DiagStatusUpdate
   m[1] |=  1 << 2; //AlwaysTrue
   m[1] |=  0 << 3; //AlwaysFalse
+
+  m[1] |=  0 << 4; //Display 1 value dw29
+  m[1] |=  0 << 5; //Display 2 value dw30
+  m[1] |=  0 << 6; //Display 3 value dw31
 }
 
 void afterFirstScan(){
@@ -235,7 +239,7 @@ void _l(uint32_t param){
   uint8_t bytes = 1 << type; //byte, word, dword
 
  if(mem_ptr == CS){ //const
-    temp = param & 0xFFFFFFFF;
+    temp = param & 0xFFFF;
   }
   else{
     for(uint8_t i=0; i<bytes; i++){
@@ -254,9 +258,9 @@ void _t(uint32_t param){
   uint8_t type = mem_ptr-5;//0,1,2,3,4
   uint8_t bytes = 1 << type; //byte, word, dword
 
-    for(uint8_t i=0; i<bytes; i++){
-     *memMap[mem_ptr][mem_id+i] = accumulator[0]>>(i*8)&0xFF; 
-   }
+  for(uint8_t i=0; i<bytes; i++){
+    *memMap[mem_ptr][mem_id*bytes+i] = accumulator[0]>>(i*8)&0xFF; 
+  }
 
   accumulator[0] = 0;
 }

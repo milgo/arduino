@@ -311,8 +311,6 @@ void editProgram(){
   }
 }
 
-
-
 void runProgram(){
   //load
   setupMem();
@@ -331,6 +329,14 @@ void runProgram(){
         displaySetCursor(0, 0);
         printA(message, RUNNING_MSG);
         printA(runningPromptArray, runningIndCounter%4);
+
+        //display values
+        uint8_t lines = 0;
+        int16_t value;
+        if(m[1] & (1 << 4)){value = m[58] + (m[59] << 8); lines++;;displaySetCursor(0, lines*8);displayPrint(lines);printA(message, COLON); displayPrint(value);}
+        if(m[1] & (1 << 5)){value = m[60] + (m[61] << 8); lines++;displaySetCursor(0, lines*8);displayPrint(lines);printA(message, COLON); displayPrint(value);}
+        if(m[1] & (1 << 6)){value = m[62] + (m[63] << 8); lines++;displaySetCursor(0, lines*8);displayPrint(lines);printA(message, COLON); displayPrint(value);}
+        
         displayDisplay();
         runningIndCounterPrev = runningIndCounter;
       }

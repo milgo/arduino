@@ -20,6 +20,7 @@
 #define READING_EEPROM 9
 #define SAVE_CHANGES 10
 #define NO_CHANGES 11
+#define COLON 12
 
 const char enterVariablePositionMsgStr[] PROGMEM = "Enter var position:";
 const char enterBitPositionMsgStr[] PROGMEM = "Enter bit position:";
@@ -33,6 +34,7 @@ const char programmingEepromMsgStr[] PROGMEM = "Programming eeprom...";
 const char readingEepromMsgStr[] PROGMEM = "Reading from eeprom...";
 const char saveChangesMsgStr[] PROGMEM = "Save changes? [ENTER]";
 const char noChangesMsgStr[] PROGMEM = "No changes!";
+const char colon[] PROGMEM = ": ";
 
 const char *const message[] PROGMEM = {
   enterVariablePositionMsgStr, 
@@ -46,13 +48,14 @@ const char *const message[] PROGMEM = {
   programmingEepromMsgStr,
   readingEepromMsgStr,
   saveChangesMsgStr,
-  noChangesMsgStr
+  noChangesMsgStr,
+  colon
   };
 
 const char mainMenuRunStr[] PROGMEM = "Run";
 const char mainMenuEditStr[] PROGMEM = "Edit";
-const char mainMenuClearStr[] PROGMEM = "Program";
-const char mainMenuSetupStr[] PROGMEM = "Clear";
+const char mainMenuProgramStr[] PROGMEM = "Program";
+const char mainMenuClearStr[] PROGMEM = "Clear";
 
 const char comMenuBasicStr[] PROGMEM = "Basic";
 const char comMenuMoveStr[] PROGMEM = "Move";
@@ -144,8 +147,8 @@ const char memAddrStr[] PROGMEM = "@";
 const char *const mainMenu[] PROGMEM = {
   mainMenuRunStr, 
   mainMenuEditStr, 
-  mainMenuClearStr, 
-  mainMenuSetupStr
+  mainMenuProgramStr, 
+  mainMenuClearStr
   };
 
 const char *const commandGroupMenu[] PROGMEM = {
@@ -252,9 +255,9 @@ const int16_t memValidationRules[] PROGMEM = {0, 0, 0, 0, 0,
                                   0, 1, 7, 0, 7,
                                   0, 1, 7, 0, 7,
                                   0, 2, 9, 0, 63,
+                                  0, 1, 7, 0, 7,
                                   0, 2, 9, 0, 63,
                                   0, 2, 9, 0, 31,
-                                  0, 2, 9, 0, 16,
                                   0, 1, 9, 0, 9,
                                   1, 5, 9, -32768, 32767,
                                   0, 1, 9, 0, 9,

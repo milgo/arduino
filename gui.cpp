@@ -13,7 +13,7 @@ PCF8574 pcf20(0x20);
 
 int menuPosition = 0;
 int selectedPosition = 0;
-char bufferStr[30];
+char bufferStr[16];
 
 void setupGUI(){
 

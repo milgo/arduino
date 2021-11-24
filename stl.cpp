@@ -55,7 +55,8 @@ uint8_t volatile *const *memMap[] = {
   memM,
   memM,
   memNull,
-  memC
+  memC,
+  memNull
 };
 
 uint8_t volatile RLO = 1;

@@ -5,6 +5,9 @@
 #include "gui.h"
 
 boolean programChanged = 1;
+char serialBuf[16];
+char serialIndex = 0;
+
 void writeProgramToEeprom(){
   printA(message, PROGRAMMING_EEPROM);
   displayDisplay();
@@ -339,6 +342,171 @@ void runProgram(){
         
         displayDisplay();
         runningIndCounterPrev = runningIndCounter;
+      }
+
+      //accepting instructions from PC
+      if(Serial.available()){
+        serialBuf[serialIndex] = Serial.read();
+        if(serialBuf[serialIndex] == '\n'){
+          serialBuf[serialIndex] = '\0';
+          if(strcmp(serialBuf, "stop") == 0){
+            displayClear();
+            displaySetCursor(0, 0);
+            printA(message, PC_CONNECTION);
+            displayDisplay();
+            char stopLoop = 1;
+            while(stopLoop == 1){
+              
+              while(!Serial.available()){
+                memset(serialBuf, 0, 16);
+                Serial.readBytesUntil('\n', serialBuf, 16);
+                if(strcmp(serialBuf, "list") == 0){
+                  for(uint8_t i=0; i<PS; i++){
+
+                    //program listing
+                    uint8_t func_id = program[i] >> FUNC_BIT_POS;
+                    uint16_t param = program[i] & FUNC_PARAM_MASK;
+                    uint8_t mem_pos = (program[i] >> MEM_BIT_POS) & 0xFF;
+                    uint8_t var_pos = param >> 4 & 0xFF;
+                    uint8_t bit_pos = param & 0xF;
+                    int value = param & FUNC_PARAM_MASK;
+                    Serial.print(i+1);Serial.print(": ");
+                    strcpy_P(serialBuf, (char*)pgm_read_word(&(comStr[func_id])));
+                    Serial.print(serialBuf);
+                      
+                    Serial.print(" ");
+                    if(mem_pos>0){
+                      strcpy_P(serialBuf, (char*)pgm_read_word(&(memStr[mem_pos])));
+                      Serial.print(serialBuf);
+                      if(mem_pos == CS || mem_pos == AD)//constant
+                        Serial.print((long int)value);
+                      else
+                        Serial.print((long)var_pos);
+                      if(mem_pos<4){//if basic command
+                        Serial.print(".");
+                        Serial.print((long)bit_pos);
+                      }
+                    }
+                    Serial.println("");   
+                      
+                  }
+                }
+                if(strcmp(serialBuf, "program") == 0){
+                  
+                  Serial.print(">");
+                  char stopLoop = 1;
+                  while(stopLoop == 1){
+                    //memset(serialBuf, 0, 16);
+                    while(!Serial.available()){
+                      memset(serialBuf, 0, 16);
+                      Serial.readBytesUntil('\n', serialBuf, 16);
+
+                      if(strcmp(serialBuf, "end") == 0){
+                        stopLoop = 0;
+                        break;
+                      }
+
+                      if(serialBuf[0]!=0){
+                        int16_t ps=0, com=0, mem_ptr=0, mem_id=0, bit_pos=0;
+                        char* strtokIndx;
+                        char buf[4];
+                        strtokIndx = strtok(serialBuf, ":");
+                        ps = atoi(strtokIndx);
+                        strtokIndx = strtok(NULL, " ");
+
+                        
+                        //find comm
+                        for(int i=0; i<37; i++){
+                          strcpy_P(buf, (char*)pgm_read_word(&(comStr[i])));
+                          char* p = strchr(buf, ' ');
+                          if(p)*p=0;
+                          //Serial.println(buf);
+                          if(strcmp(buf, strtokIndx)==0){
+                            com=i;break;
+                          }
+                        }
+
+                        //find mem
+                        strtokIndx = strtok(NULL, "\n");
+                        char* p = NULL;
+                        for(int i=10; i>=0; i--){
+                          strcpy_P(buf, (char*)pgm_read_word(&(memStr[i])));
+                          Serial.println(buf);
+                          p = strstr(strtokIndx, buf);
+                          if(p!=NULL){
+                            mem_ptr = i;
+                            p+=strlen(buf);
+                            break;
+                          }
+                        }
+
+                        if(p!=NULL){
+                          //Serial.print("->");Serial.print(p);Serial.print("<-");
+                          strtokIndx = strtok(p, ".");
+                          mem_id = atoi(strtokIndx);
+                          strtokIndx = strtok(NULL, "\n");
+                          bit_pos = atoi(strtokIndx);
+                        }
+                        
+                        Serial.print("Line: ");Serial.print(ps);Serial.print(" com=");Serial.print(com);Serial.print(" mem_ptr=");Serial.print(mem_ptr);Serial.print(" mem_id=");Serial.print(mem_id);Serial.print(" bit_pos=");Serial.print(bit_pos);
+
+                        
+                        //get line number
+                        /*char token[5];
+                        uint8_t spos=0, tpos=0, i=0, ps=0, com=0;
+                        for(i=0;i<4;i++,spos++){
+                          if(serialBuf[spos]==':')break;
+                          if(serialBuf[spos]==' ')continue;
+                          token[tpos]=serialBuf[spos];tpos++;
+                        }
+                        token[tpos]='\0';
+                        
+                        ps = atoi(token);
+                        if(ps<=MAX_PROGRAM_SIZE){
+
+                          //get command
+                          Serial.print(ps);Serial.print(" ");
+                          //Serial.print("ok");
+                          tpos=0;spos++;
+                          for(i=0; i<4; i++,spos++){
+                            if(serialBuf[spos]==' ')continue;
+                            token[tpos]=serialBuf[spos];tpos++;
+                          }
+                          token[i] = '\0';
+                          Serial.print(token);
+
+                          for(i=0; i<37; i++){
+                            
+                          }
+                        }
+                        else{
+                          Serial.print(ps);
+                          Serial.print("error");
+                        }*/
+                      }
+                      
+                    }
+                  }
+                  
+                }
+                
+                if(strcmp(serialBuf, "run") == 0){
+                  stopLoop = 0;
+                  break;
+                }
+
+                //memset(serialBuf, 0, 16);
+              }
+            }
+          }
+          else if(strcmp(serialBuf, "mem") == 0){
+
+          }
+          serialIndex=-1;
+        }
+        serialIndex++;
+        if(serialIndex>15)
+          serialIndex = 15;
       }
   
       buttons = ~getButtonsNoneBlocking();

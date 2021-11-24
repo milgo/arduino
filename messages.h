@@ -21,6 +21,7 @@
 #define SAVE_CHANGES 10
 #define NO_CHANGES 11
 #define COLON 12
+#define PC_CONNECTION 13
 
 const char enterVariablePositionMsgStr[] PROGMEM = "Enter var position:";
 const char enterBitPositionMsgStr[] PROGMEM = "Enter bit position:";
@@ -35,6 +36,7 @@ const char readingEepromMsgStr[] PROGMEM = "Reading from eeprom...";
 const char saveChangesMsgStr[] PROGMEM = "Save changes? [ENTER]";
 const char noChangesMsgStr[] PROGMEM = "No changes!";
 const char colon[] PROGMEM = ": ";
+const char pcConnectionMsgStr[] PROGMEM = "Connected to PC...";
 
 const char *const message[] PROGMEM = {
   enterVariablePositionMsgStr, 
@@ -49,7 +51,8 @@ const char *const message[] PROGMEM = {
   readingEepromMsgStr,
   saveChangesMsgStr,
   noChangesMsgStr,
-  colon
+  colon,
+  pcConnectionMsgStr
   };
 
 const char mainMenuRunStr[] PROGMEM = "Run";
@@ -132,7 +135,7 @@ const char comJumpUncStr[] PROGMEM = "JU ";
 const char comJumpCondStr[] PROGMEM = "JC ";
 const char comJumpCondNotStr[] PROGMEM = "JCN";
 
-const char memNULLStr[] PROGMEM = "";
+const char memNULLStr[] PROGMEM = "~";
 const char memQStr[] PROGMEM = "Q";
 const char memIStr[] PROGMEM = "I";
 const char memMStr[] PROGMEM = "M";

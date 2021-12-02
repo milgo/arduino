@@ -20,9 +20,9 @@
 
 #define BUTTON_DOWN 0
 #define BUTTON_LEFT 2
-#define BUTTON_RIGHT 1
-#define BUTTON_UP 3
-#define BUTTON_ENTER 4
+#define BUTTON_RIGHT 3
+#define BUTTON_UP 4
+#define BUTTON_ENTER 1
 #define IS_PRESSED(BUTTONS, BUTTON) (((BUTTONS) & (1<<(BUTTON))) == (1<<(BUTTON)))
 
 extern void setupGUI();

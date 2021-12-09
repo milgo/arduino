@@ -3743,32 +3743,36 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 </library>
 <library name="pcf8574p">
 <packages>
-<package name="DIL16">
-<description>&lt;b&gt;Dual In Line Package&lt;/b&gt;</description>
-<wire x1="10.16" y1="2.921" x2="-10.16" y2="2.921" width="0.1524" layer="21"/>
-<wire x1="-10.16" y1="-2.921" x2="10.16" y2="-2.921" width="0.1524" layer="21"/>
-<wire x1="10.16" y1="2.921" x2="10.16" y2="-2.921" width="0.1524" layer="21"/>
-<wire x1="-10.16" y1="2.921" x2="-10.16" y2="1.016" width="0.1524" layer="21"/>
-<wire x1="-10.16" y1="-2.921" x2="-10.16" y2="-1.016" width="0.1524" layer="21"/>
-<wire x1="-10.16" y1="1.016" x2="-10.16" y2="-1.016" width="0.1524" layer="21" curve="-180"/>
-<pad name="1" x="-8.89" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="2" x="-6.35" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="7" x="6.35" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="8" x="8.89" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="3" x="-3.81" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="4" x="-1.27" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="6" x="3.81" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="5" x="1.27" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="9" x="8.89" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="10" x="6.35" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="11" x="3.81" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="12" x="1.27" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="13" x="-1.27" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="14" x="-3.81" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="15" x="-6.35" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="16" x="-8.89" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<text x="-10.541" y="-2.921" size="1.27" layer="25" ratio="10" rot="R90">&gt;NAME</text>
-<text x="-7.493" y="-0.635" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
+<package name="SO16(SW)">
+<description>Package generated from: SO16(SW).asc (!PADS-POWERPCB-V9.3-BASIC! DESIGN DATABASE ASCII FILE 1.0)&lt;p&gt;
+
+with :import-pads-powerpcb-v5.ulp Version 1.0.1 at 04.10.2012 14:11:30</description>
+<wire x1="-1.379028125" y1="2.129028125" x2="-0.193546875" y2="2.129028125" width="0.096775" layer="21"/>
+<wire x1="-0.193546875" y1="2.129028125" x2="-0.193546875" y2="2.3709625" width="0.096775" layer="21"/>
+<wire x1="-0.193546875" y1="2.3709625" x2="0.193546875" y2="2.3709625" width="0.096775" layer="21"/>
+<wire x1="0.193546875" y1="2.3709625" x2="0.193546875" y2="2.129028125" width="0.096775" layer="21"/>
+<wire x1="0.193546875" y1="2.129028125" x2="1.403221875" y2="2.129028125" width="0.096775" layer="21"/>
+<wire x1="1.403221875" y1="2.129028125" x2="1.403221875" y2="-2.129028125" width="0.096775" layer="21"/>
+<wire x1="1.403221875" y1="-2.129028125" x2="-1.379028125" y2="-2.129028125" width="0.096775" layer="21"/>
+<wire x1="-1.379028125" y1="-2.129028125" x2="-1.379028125" y2="2.129028125" width="0.096775" layer="21"/>
+<text x="-0.435484375" y="0.1451625" size="1.778" layer="25" align="center">&gt;VALUE</text>
+<text x="-0.435484375" y="0.919353125" size="1.778" layer="27" align="center">&gt;NAME</text>
+<smd name="1" x="-1.88709375" y="1.69354375" dx="0.716128125" dy="0.23225625" layer="1"/>
+<smd name="2" x="-1.88709375" y="1.209675" dx="0.716128125" dy="0.23225625" layer="1"/>
+<smd name="3" x="-1.88709375" y="0.72580625" dx="0.716128125" dy="0.23225625" layer="1"/>
+<smd name="4" x="-1.88709375" y="0.241934375" dx="0.716128125" dy="0.23225625" layer="1"/>
+<smd name="5" x="-1.88709375" y="-0.241934375" dx="0.716128125" dy="0.23225625" layer="1"/>
+<smd name="6" x="-1.88709375" y="-0.72580625" dx="0.716128125" dy="0.23225625" layer="1"/>
+<smd name="7" x="-1.88709375" y="-1.209675" dx="0.716128125" dy="0.23225625" layer="1"/>
+<smd name="8" x="-1.88709375" y="-1.69354375" dx="0.716128125" dy="0.23225625" layer="1"/>
+<smd name="9" x="1.88709375" y="-1.69354375" dx="0.716128125" dy="0.23225625" layer="1"/>
+<smd name="10" x="1.88709375" y="-1.209675" dx="0.716128125" dy="0.23225625" layer="1"/>
+<smd name="11" x="1.88709375" y="-0.72580625" dx="0.716128125" dy="0.23225625" layer="1"/>
+<smd name="12" x="1.88709375" y="-0.241934375" dx="0.716128125" dy="0.23225625" layer="1"/>
+<smd name="13" x="1.88709375" y="0.241934375" dx="0.716128125" dy="0.23225625" layer="1"/>
+<smd name="14" x="1.88709375" y="0.72580625" dx="0.716128125" dy="0.23225625" layer="1"/>
+<smd name="15" x="1.88709375" y="1.209675" dx="0.716128125" dy="0.23225625" layer="1"/>
+<smd name="16" x="1.88709375" y="1.69354375" dx="0.716128125" dy="0.23225625" layer="1"/>
 </package>
 </packages>
 <symbols>
@@ -3798,12 +3802,12 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="PCF8574P">
+<deviceset name="PCF8574">
 <gates>
-<gate name="G$1" symbol="PCF8574P" x="27.94" y="-7.62"/>
+<gate name="G$1" symbol="PCF8574P" x="-10.16" y="15.24"/>
 </gates>
 <devices>
-<device name="" package="DIL16">
+<device name="" package="SO16(SW)">
 <connects>
 <connect gate="G$1" pin="A0" pad="1"/>
 <connect gate="G$1" pin="A1" pad="2"/>
@@ -4735,7 +4739,7 @@ Silk outline shows header location.
 <part name="P+4" library="supply1" deviceset="VCC" device=""/>
 <part name="P+5" library="supply1" deviceset="VCC" device=""/>
 <part name="GND6" library="supply1" deviceset="GND" device=""/>
-<part name="U$1" library="pcf8574p" deviceset="PCF8574P" device=""/>
+<part name="U$1" library="pcf8574p" deviceset="PCF8574" device=""/>
 <part name="GND7" library="supply1" deviceset="GND" device=""/>
 <part name="P+6" library="supply1" deviceset="VCC" device=""/>
 <part name="P+7" library="supply1" deviceset="VCC" device=""/>
@@ -4756,7 +4760,7 @@ Silk outline shows header location.
 <instance part="R1" gate="G$1" x="-63.5" y="20.32" rot="R90"/>
 <instance part="R2" gate="G$1" x="-40.64" y="20.32" rot="R270"/>
 <instance part="R3" gate="G$1" x="-17.78" y="20.32" rot="R270"/>
-<instance part="R4" gate="G$1" x="5.08" y="20.32" rot="R270"/>
+<instance part="R4" gate="G$1" x="2.54" y="20.32" rot="R270"/>
 <instance part="R5" gate="G$1" x="25.4" y="20.32" rot="R270"/>
 <instance part="P+1" gate="VCC" x="-63.5" y="30.48"/>
 <instance part="GND1" gate="1" x="-63.5" y="-10.16"/>
@@ -4766,7 +4770,7 @@ Silk outline shows header location.
 <instance part="GND5" gate="1" x="27.94" y="-10.16"/>
 <instance part="P+2" gate="VCC" x="-40.64" y="30.48"/>
 <instance part="P+3" gate="VCC" x="-17.78" y="30.48"/>
-<instance part="P+4" gate="VCC" x="5.08" y="30.48"/>
+<instance part="P+4" gate="VCC" x="2.54" y="30.48"/>
 <instance part="P+5" gate="VCC" x="25.4" y="30.48"/>
 <instance part="GND6" gate="1" x="58.42" y="50.8"/>
 <instance part="U$1" gate="G$1" x="68.58" y="88.9"/>
@@ -4782,15 +4786,15 @@ Silk outline shows header location.
 <nets>
 <net name="B0" class="0">
 <segment>
-<pinref part="R1" gate="G$1" pin="1"/>
+<pinref part="U$1" gate="G$1" pin="P0"/>
+<wire x1="63.5" y1="86.36" x2="-55.88" y2="86.36" width="0.1524" layer="91"/>
 <pinref part="S1" gate="1" pin="S1"/>
+<pinref part="R1" gate="G$1" pin="1"/>
 <wire x1="-63.5" y1="15.24" x2="-63.5" y2="12.7" width="0.1524" layer="91"/>
 <wire x1="-63.5" y1="12.7" x2="-63.5" y2="10.16" width="0.1524" layer="91"/>
-<wire x1="-63.5" y1="12.7" x2="-55.88" y2="12.7" width="0.1524" layer="91"/>
-<wire x1="-55.88" y1="12.7" x2="-55.88" y2="81.28" width="0.1524" layer="91"/>
 <junction x="-63.5" y="12.7"/>
-<pinref part="U$1" gate="G$1" pin="P2"/>
-<wire x1="63.5" y1="81.28" x2="-55.88" y2="81.28" width="0.1524" layer="91"/>
+<wire x1="-63.5" y1="12.7" x2="-55.88" y2="12.7" width="0.1524" layer="91"/>
+<wire x1="-55.88" y1="12.7" x2="-55.88" y2="86.36" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="VCC" class="0">
@@ -4812,7 +4816,7 @@ Silk outline shows header location.
 <segment>
 <pinref part="P+4" gate="VCC" pin="VCC"/>
 <pinref part="R4" gate="G$1" pin="1"/>
-<wire x1="5.08" y1="27.94" x2="5.08" y2="25.4" width="0.1524" layer="91"/>
+<wire x1="2.54" y1="27.94" x2="2.54" y2="25.4" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="P+5" gate="VCC" pin="VCC"/>
@@ -4902,10 +4906,10 @@ Silk outline shows header location.
 <wire x1="-40.64" y1="15.24" x2="-40.64" y2="12.7" width="0.1524" layer="91"/>
 <wire x1="-40.64" y1="12.7" x2="-40.64" y2="10.16" width="0.1524" layer="91"/>
 <wire x1="-40.64" y1="12.7" x2="-33.02" y2="12.7" width="0.1524" layer="91"/>
-<wire x1="-33.02" y1="12.7" x2="-33.02" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="-33.02" y1="12.7" x2="-33.02" y2="71.12" width="0.1524" layer="91"/>
 <junction x="-40.64" y="12.7"/>
-<pinref part="U$1" gate="G$1" pin="P4"/>
-<wire x1="63.5" y1="76.2" x2="-33.02" y2="76.2" width="0.1524" layer="91"/>
+<pinref part="U$1" gate="G$1" pin="P6"/>
+<wire x1="63.5" y1="71.12" x2="-33.02" y2="71.12" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="B2" class="0">
@@ -4913,29 +4917,21 @@ Silk outline shows header location.
 <pinref part="R3" gate="G$1" pin="2"/>
 <wire x1="-17.78" y1="15.24" x2="-17.78" y2="12.7" width="0.1524" layer="91"/>
 <wire x1="-17.78" y1="12.7" x2="-10.16" y2="12.7" width="0.1524" layer="91"/>
-<wire x1="-10.16" y1="12.7" x2="-10.16" y2="83.82" width="0.1524" layer="91"/>
+<wire x1="-10.16" y1="12.7" x2="-10.16" y2="68.58" width="0.1524" layer="91"/>
 <junction x="-17.78" y="12.7"/>
 <pinref part="S3" gate="1" pin="S"/>
-<pinref part="U$1" gate="G$1" pin="P1"/>
-<wire x1="63.5" y1="83.82" x2="-10.16" y2="83.82" width="0.1524" layer="91"/>
 <wire x1="-17.78" y1="12.7" x2="-20.32" y2="12.7" width="0.1524" layer="91"/>
 <wire x1="-20.32" y1="12.7" x2="-20.32" y2="10.16" width="0.1524" layer="91"/>
+<pinref part="U$1" gate="G$1" pin="P7"/>
+<wire x1="63.5" y1="68.58" x2="-10.16" y2="68.58" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="B3" class="0">
 <segment>
-<pinref part="R4" gate="G$1" pin="2"/>
+<pinref part="U$1" gate="G$1" pin="P5"/>
+<wire x1="63.5" y1="73.66" x2="5.08" y2="73.66" width="0.1524" layer="91"/>
+<wire x1="5.08" y1="10.16" x2="5.08" y2="73.66" width="0.1524" layer="91"/>
 <pinref part="S4" gate="1" pin="S1"/>
-<wire x1="5.08" y1="15.24" x2="5.08" y2="12.7" width="0.1524" layer="91"/>
-<wire x1="5.08" y1="12.7" x2="5.08" y2="10.16" width="0.1524" layer="91"/>
-<wire x1="5.08" y1="12.7" x2="12.7" y2="12.7" width="0.1524" layer="91"/>
-<wire x1="12.7" y1="12.7" x2="12.7" y2="86.36" width="0.1524" layer="91"/>
-<junction x="5.08" y="12.7"/>
-<pinref part="S4" gate="1" pin="S"/>
-<wire x1="2.54" y1="10.16" x2="5.08" y2="10.16" width="0.1524" layer="91"/>
-<junction x="5.08" y="10.16"/>
-<pinref part="U$1" gate="G$1" pin="P0"/>
-<wire x1="12.7" y1="86.36" x2="63.5" y2="86.36" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="B4" class="0">
@@ -4943,9 +4939,9 @@ Silk outline shows header location.
 <pinref part="S5" gate="1" pin="S1"/>
 <wire x1="27.94" y1="12.7" x2="27.94" y2="10.16" width="0.1524" layer="91"/>
 <wire x1="27.94" y1="12.7" x2="35.56" y2="12.7" width="0.1524" layer="91"/>
-<wire x1="35.56" y1="12.7" x2="35.56" y2="78.74" width="0.1524" layer="91"/>
-<pinref part="U$1" gate="G$1" pin="P3"/>
-<wire x1="63.5" y1="78.74" x2="35.56" y2="78.74" width="0.1524" layer="91"/>
+<wire x1="35.56" y1="12.7" x2="35.56" y2="83.82" width="0.1524" layer="91"/>
+<pinref part="U$1" gate="G$1" pin="P1"/>
+<wire x1="63.5" y1="83.82" x2="35.56" y2="83.82" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$4" class="0">
@@ -4979,6 +4975,13 @@ Silk outline shows header location.
 <pinref part="S5" gate="1" pin="S"/>
 <pinref part="R5" gate="G$1" pin="2"/>
 <wire x1="25.4" y1="15.24" x2="25.4" y2="10.16" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$2" class="0">
+<segment>
+<pinref part="R4" gate="G$1" pin="2"/>
+<pinref part="S4" gate="1" pin="S"/>
+<wire x1="2.54" y1="15.24" x2="2.54" y2="10.16" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>

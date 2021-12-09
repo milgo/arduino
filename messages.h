@@ -67,6 +67,7 @@ const char comMenuCompareStr[] PROGMEM = "Compare";
 const char comMenuTimersStr[] PROGMEM = "Timers";
 const char comMenuCounterStr[] PROGMEM = "Counters";
 const char comMenuJumpStr[] PROGMEM = "Jump";
+const char comMenuDateTimeStr[] PROGMEM = "Date/Time";
 
 const char editMenuInsertStr[] PROGMEM = "Insert";
 const char editMenuEditStr[] PROGMEM = "Edit";
@@ -135,6 +136,19 @@ const char comJumpUncStr[] PROGMEM = "JU ";
 const char comJumpCondStr[] PROGMEM = "JC ";
 const char comJumpCondNotStr[] PROGMEM = "JCN";
 
+const char comDataTimeGetDayStr[] PROGMEM = "GDA";
+const char comDataTimeGetMonthStr[] PROGMEM = "GMO";
+const char comDataTimeGetYearStr[] PROGMEM = "GYE";
+const char comDataTimeGetHourStr[] PROGMEM = "GHO";
+const char comDataTimeGetMinutesStr[] PROGMEM = "GMI";
+const char comDataTimeGetSecondsStr[] PROGMEM = "GSE";
+const char comDataTimeSetDayStr[] PROGMEM = "SDA";
+const char comDataTimeSetMonthStr[] PROGMEM = "SMO";
+const char comDataTimeSetYearStr[] PROGMEM = "SYE";
+const char comDataTimeSetHourStr[] PROGMEM = "SHO";
+const char comDataTimeSetMinutesStr[] PROGMEM = "SMI";
+const char comDataTimeSetSecondsStr[] PROGMEM = "SSE";
+
 const char memNULLStr[] PROGMEM = "~";
 const char memQStr[] PROGMEM = "Q";
 const char memIStr[] PROGMEM = "I";
@@ -161,7 +175,8 @@ const char *const commandGroupMenu[] PROGMEM = {
   comMenuCounterStr,
   comMenuAritmeticStr, 
   comMenuCompareStr,
-  comMenuJumpStr
+  comMenuJumpStr,
+  comMenuDateTimeStr
   };
   
 const char *const editMenu[] PROGMEM = {
@@ -227,10 +242,24 @@ const char *const comStr[] PROGMEM = {
   comCompLtEqRStr,*/
   comJumpUncStr,
   comJumpCondStr,
-  comJumpCondNotStr
+  comJumpCondNotStr,
+
+  comDataTimeGetDayStr,
+  comDataTimeGetMonthStr,
+  comDataTimeGetYearStr,
+  comDataTimeGetHourStr,
+  comDataTimeGetMinutesStr,
+  comDataTimeGetSecondsStr,
+  comDataTimeSetDayStr,
+  comDataTimeSetMonthStr,
+  comDataTimeSetYearStr,
+  comDataTimeSetHourStr,
+  comDataTimeSetMinutesStr,
+  comDataTimeSetSecondsStr
+
   };
 
-const char comGroups[] = { 1, 10, 10, 12, 12, 18, 18, 24, 24, 28, 28, 34, 34, 37};
+const char comGroups[] = { 1, 10, 10, 12, 12, 18, 18, 24, 24, 28, 28, 34, 34, 37, 37, 49};
 
 const char *const memStr[] PROGMEM = {
   memNULLStr,
@@ -252,7 +281,8 @@ const char memGroups[] = {1, 5,
                           9, 10, 
                           0, 0, 
                           0, 0,
-                          10, 11};
+                          10, 11,
+                          0, 0};
 
 const int16_t memValidationRules[] PROGMEM = {0, 0, 0, 0, 0,
                                   0, 1, 7, 0, 7,

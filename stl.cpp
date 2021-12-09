@@ -1,7 +1,9 @@
+#include <MCP7940.h>
 #include <Arduino.h>
 #include "stl.h"
 #include "messages.h"
 #include "gui.h"
+
 
 /*
 Instruction:  00000000 00000000 00000000 00000000
@@ -18,7 +20,8 @@ void _nop(uint32_t param);
 void (*func_ptr[])(uint32_t) = {_nop, _and, _or, _nand, _nor, _assign, _s, _r, _fp, _fn, _l, _t, /**/_sp, _se, _sd, _ss, _sf, _rt, _cu, _cd, _cs, _cr, _cl, _clc,
  _addI, _subI, _mulI, _divI, /*_addD, _subD, _mulD, _divD, _addR, _subR, _mulR, _divR,*/
  _eqI, _diffI, _gtI, _ltI, _gteqI, _lteqI, /*_eqD, _diffD, _gtD, _ltD, _gteqD, _lteqD, _eqR, _diffR, _gtR, _ltR, _gteqR, _lteqR,*/
- _ju, _jc, _jcn};
+ _ju, _jc, _jcn,
+ _gda, _gmo, _gye, _gho, _gmi, _gse, _sda, _smo, _sye, _sho, _smi, _sse};
  
 uint8_t volatile buttons;
 uint8_t volatile m[64];
@@ -42,6 +45,8 @@ uint8_t volatile * const memT[] = {&t[0], &t[1], &t[2], &t[3], &t[4], &t[5], &t[
 uint8_t volatile fixedTimer[8];
 uint32_t volatile timer[8];
 int32_t volatile counter[8];
+
+MCP7940_Class MCP7940; 
 
 const PROGMEM uint8_t fixedTimerTime[]  = {10, 20, 40, 50, 80, 100, 160, 200};
 
@@ -108,6 +113,28 @@ void setupMem(){
   m[1] |=  0 << 4; //Display 1 value dw29
   m[1] |=  0 << 5; //Display 2 value dw30
   m[1] |=  0 << 6; //Display 3 value dw31
+
+  while (!MCP7940.begin()) {                                                  // Initialize RTC communications    //
+    Serial.println(F("Unable to find MCP7940M. Checking again in 3s."));      // Show error text                  //
+    delay(3000);                                                              // wait a second                    //
+  }
+
+  Serial.println(F("MCP7940 initialized."));                                  //                                  //
+  while (!MCP7940.deviceStatus()) {                                           // Turn oscillator on if necessary  //
+    Serial.println(F("Oscillator is off, turning it on."));                   //                                  //
+    bool deviceStatus = MCP7940.deviceStart();                                // Start oscillator and return state//
+    if (!deviceStatus) {                                                      // If it didn't start               //
+      Serial.println(F("Oscillator did not start, trying again."));           // Show error and                   //
+      delay(1000);                                                            // wait for a second                //
+    } // of if-then oscillator didn't start                                   //                                  //
+  } // of while the oscillator is off                                         //                                  //
+  if(!MCP7940.getBattery()){
+    MCP7940.setBattery(true);
+    Serial.println(F("Battery backup not set. Setting battery backup."));
+  }
+  else{
+    Serial.println(F("Battery backup is set."));
+  }
 }
 
 void afterFirstScan(){
@@ -497,4 +524,65 @@ void _jcn(uint32_t param){
   addr = param & 0xFF;
   if(RLO == 0)PC = addr;
   cancel_RLO = true;
+}
+
+void _gda(uint32_t param){
+  DateTime now = MCP7940.now();
+  accumulator[0] = now.day();
+}
+
+void _gmo(uint32_t param){
+  DateTime now = MCP7940.now();
+  accumulator[0] = now.month(); 
+}
+
+void _gye(uint32_t param){
+  DateTime now = MCP7940.now();
+  accumulator[0] = now.year();
+}
+
+void _gho(uint32_t param){
+  DateTime now = MCP7940.now();
+  accumulator[0] = now.hour();
+}
+
+void _gmi(uint32_t param){
+  DateTime now = MCP7940.now();
+  accumulator[0] = now.minute();
+}
+
+void _gse(uint32_t param){
+  DateTime now = MCP7940.now();
+  accumulator[0] = now.second();
+}
+
+void _sda(uint32_t param){
+  //Serial.print("sda ");Serial.println(accumulator[0]);
+  DateTime now = MCP7940.now();
+  MCP7940.adjust(DateTime(now.year(),now.month(),(uint8_t)accumulator[0],now.hour(),now.minute(),now.second()));
+}
+
+void _smo(uint32_t param){
+  DateTime now = MCP7940.now();
+  MCP7940.adjust(DateTime(now.year(),(uint8_t)accumulator[0],now.day(),now.hour(),now.minute(),now.second()));
+}
+
+void _sye(uint32_t param){
+  DateTime now = MCP7940.now();
+  MCP7940.adjust(DateTime((uint16_t)accumulator[0],now.month(),now.day(),now.hour(),now.minute(),now.second()));
+}
+
+void _sho(uint32_t param){
+  DateTime now = MCP7940.now();
+  MCP7940.adjust(DateTime(now.year(),now.month(),now.day(),(uint8_t)accumulator[0],now.minute(),now.second()));
+}
+
+void _smi(uint32_t param){
+  DateTime now = MCP7940.now();
+  MCP7940.adjust(DateTime(now.year(),now.month(),now.day(),now.hour(),(uint8_t)accumulator[0],now.second()));
+}
+
+void _sse(uint32_t param){
+  DateTime now = MCP7940.now();
+  MCP7940.adjust(DateTime(now.year(),now.month(),now.day(),now.hour(),now.minute(),(uint8_t)accumulator[0]));
 }

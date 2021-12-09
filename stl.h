@@ -166,6 +166,20 @@ void _ju(uint32_t param);
 void _jc(uint32_t param);
 void _jcn(uint32_t param);
 
+void _sda(uint32_t param);
+void _smo(uint32_t param);
+void _sye(uint32_t param);
+void _sho(uint32_t param);
+void _smi(uint32_t param);
+void _sse(uint32_t param);
+
+void _gda(uint32_t param);
+void _gmo(uint32_t param);
+void _gye(uint32_t param);
+void _gho(uint32_t param);
+void _gmi(uint32_t param);
+void _gse(uint32_t param);
+
 extern void setupMem();
 extern void afterFirstScan();
 extern void executeCommandAt(int pl);

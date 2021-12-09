@@ -26,8 +26,8 @@ uint8_t volatile t[8];
 uint8_t volatile c;
 
 uint8_t volatile * const memNull[] = {&nullByte};
-uint8_t volatile * const memQ[] = {&PORTB};
-uint8_t volatile * const memI[] = {&buttons, &PIND};
+uint8_t volatile * const memQ[] = {&PORTD};
+uint8_t volatile * const memI[] = {&buttons, &PINC, &PINB};
 uint8_t volatile * const memM[] = {&m[0], &m[1], &m[2], &m[3], &m[4], &m[5], &m[6], &m[7],
                                    &m[8], &m[9], &m[10], &m[11], &m[12], &m[13], &m[14], &m[15],
                                    &m[16], &m[17], &m[18], &m[19], &m[20], &m[21], &m[22], &m[23], 

@@ -5,8 +5,11 @@
 #include "gui.h"
 
 boolean programChanged = 1;
+
+#ifdef SERIAL_ENABLE
 char serialBuf[16];
 char serialIndex = 0;
+#endif
 
 void writeProgramToEeprom(){
   printA(message, PROGRAMMING_EEPROM);
@@ -81,9 +84,14 @@ void setup() {
 
   PS = 7; */
 
-  DDRB = B00100000;//PORTB output pin 5
-  PORTD = B11111100;//pullup on pin 2
+  //DDRB = B00100000;//PORTB output pin 5
+  //PORTD = B11111100;//pullup on pin 2
 
+  DDRD = B11111100;//PORTD output
+  
+  PORTC = B00001111;//pullup
+  PORTB = B00010010;//pullup
+  
   //setup global timer
   //------------------
   noInterrupts();
@@ -344,6 +352,8 @@ void runProgram(){
         runningIndCounterPrev = runningIndCounter;
       }
 
+      #ifdef SERIAL_ENABLE
+
       //accepting instructions from PC
       if(Serial.available()){
         serialBuf[serialIndex] = Serial.read();
@@ -523,6 +533,8 @@ void runProgram(){
         if(serialIndex>15)
           serialIndex = 15;
       }
+
+      #endif
   
       buttons = ~getButtonsNoneBlocking();
       //delay(100);

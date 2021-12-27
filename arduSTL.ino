@@ -162,17 +162,18 @@ void insertProgramLine(int number, bool edit){
   int32_t value = 0;
   if(comGroup>=0){
     command = showMenu(comStr, comGroups[comGroup*2], comGroups[comGroup*2+1]);
-    if(command>=0 && memGroups[comGroup*2]>=0){
 
-      uint8_t memPtrFrom, memPtrTo;
-      memPtrFrom = memGroups[comGroup*2];
-      memPtrTo = memGroups[comGroup*2+1];
+    uint8_t memPtrFrom, memPtrTo;
+    memPtrFrom = pgm_read_byte(&(memGroups[command*2]));
+    memPtrTo = pgm_read_byte(&(memGroups[command*2+1]));
+    
+    if(command>=0 && memPtrFrom>=0){
 
-      if(command == 11){// if transfer command
+      /*if(command == 11){// if transfer or persist command
         memPtrTo -= 1; //exclude constant from load operator
-      }
+      }*/
 
-      if(memGroups[comGroup*2]>0){ //if operation with mem selection
+      if(memPtrFrom>0){ //if operation with mem selection
         mem = showMenu(memStr, memPtrFrom, memPtrTo);
         if(mem >= 0){
 

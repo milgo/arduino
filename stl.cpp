@@ -1,3 +1,4 @@
+#include <FRAM.h>
 #include <MCP7940.h>
 #include <Arduino.h>
 #include "stl.h"
@@ -17,7 +18,7 @@ uint8_t nullByte;
 
 void _nop(uint32_t param);
 
-void (*func_ptr[])(uint32_t) = {_nop, _and, _or, _nand, _nor, _assign, _s, _r, _fp, _fn, _l, _t, /**/_sp, _se, _sd, _ss, _sf, _rt, _cu, _cd, _cs, _cr, _cl, _clc,
+void (*func_ptr[])(uint32_t) = {_nop, _and, _or, _nand, _nor, _assign, _s, _r, _fp, _fn, _pb, _l, _t, _pv, /**/_sp, _se, _sd, _ss, _sf, _rt, _cu, _cd, _cs, _cr, _cl, _clc,
  _addI, _subI, _mulI, _divI, /*_addD, _subD, _mulD, _divD, _addR, _subR, _mulR, _divR,*/
  _eqI, _diffI, _gtI, _ltI, _gteqI, _lteqI, /*_eqD, _diffD, _gtD, _ltD, _gteqD, _lteqD, _eqR, _diffR, _gtR, _ltR, _gteqR, _lteqR,*/
  _ju, _jc, _jcn,
@@ -46,7 +47,8 @@ uint8_t volatile fixedTimer[8];
 uint32_t volatile timer[8];
 int32_t volatile counter[8];
 
-MCP7940_Class MCP7940; 
+MCP7940_Class MCP7940;
+FRAM Fram(0b00);
 
 const PROGMEM uint8_t fixedTimerTime[]  = {10, 20, 40, 50, 80, 100, 160, 200};
 
@@ -259,6 +261,16 @@ void _fn(uint32_t param){
   cancel_RLO = false;
 }
 
+void _pb(uint32_t param){
+  setupMemForBitOperatrions(param);
+  mask = 1 << bit_pos;
+  uint8_t r = Fram.ReadByte(0, mem_id);
+  if(((r & mask) ^ (*memMap[mem_ptr][mem_id] & mask)) > 0){
+    r = (r & ~mask) | (*memMap[mem_ptr][mem_id] & mask);
+    Fram.WriteByte(0, mem_id, r);
+  }
+}
+
 void _l(uint32_t param){
   setupMem(param);
   
@@ -271,7 +283,7 @@ void _l(uint32_t param){
   }
   else{
     for(uint8_t i=0; i<bytes; i++){
-      uint32_t t = *memMap[mem_ptr][mem_id+i];
+      uint32_t t = *memMap[mem_ptr][mem_id*bytes+i];
       temp += t<<(i*8); 
    }
   }
@@ -291,6 +303,39 @@ void _t(uint32_t param){
   }
 
   accumulator[0] = 0;
+}
+
+void _pv(uint32_t param){
+  setupMem(param);
+  
+  uint32_t framVal = 0, ramVal = 0;
+  uint8_t type = mem_ptr-5;//0,1,2,3,4
+  uint8_t bytes = 1 << type; //byte, word, dword
+
+  //load from fram
+  for(uint8_t i=0; i<bytes; i++){
+      uint32_t t = Fram.ReadByte(0, mem_id*bytes+i);
+      framVal += t<<(i*8); 
+  }
+
+  Serial.print("fram: ");Serial.println(framVal);
+
+  //load from ram
+  for(uint8_t i=0; i<bytes; i++){
+      uint32_t t = *memMap[mem_ptr][mem_id*bytes+i];
+      ramVal += t<<(i*8); 
+  }
+
+  Serial.print("ram: ");Serial.println(ramVal);
+
+  if(ramVal != framVal){
+    Serial.println("diff!");
+    for(uint8_t i=0; i<bytes; i++){
+      //*memMap[mem_ptr][mem_id*bytes+i] = accumulator[0]>>(i*8)&0xFF;
+      Fram.WriteByte(0, mem_id*bytes+i, ramVal>>(i*8)&0xFF);
+    }
+  }
+  
 }
 
 void _sp(uint32_t param){

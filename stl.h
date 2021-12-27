@@ -105,9 +105,10 @@ void _s(uint32_t param);
 void _r(uint32_t param);
 void _fp(uint32_t param);
 void _fn(uint32_t param);
+void _pb(uint32_t param);
 void _l(uint32_t param);
 void _t(uint32_t param);
-
+void _pv(uint32_t param);
 //_sp, _se, _sd, _ss, _sf, _rt
 
 void _sp(uint32_t param);

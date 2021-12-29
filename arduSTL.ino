@@ -6,6 +6,8 @@
 
 boolean programChanged = 1;
 
+#define SCREEN_SAVER_TIME 60
+
 #ifdef SERIAL_ENABLE
 char serialBuf[16];
 char serialIndex = 0;
@@ -136,11 +138,15 @@ const char _2[] PROGMEM = {"."};
 const char _3[] PROGMEM = {".."};
 const char _4[] PROGMEM = {"..."};
 const char* const runningPromptArray[] PROGMEM = {_1, _2, _3, _4};
+
+uint8_t screenSaverCounter;
 uint8_t runningIndCounter;
 uint8_t runningIndCounterPrev;
 
 void runEvery500ms(){
   runningIndCounter++;
+  if(screenSaverCounter<SCREEN_SAVER_TIME)
+    screenSaverCounter++;
 }
 
 int timerCounter = 0;
@@ -330,30 +336,40 @@ void runProgram(){
   displayClear();
   displaySetTextNormal();
   
+  runningIndCounter = 0;
+  runningIndCounterPrev = 0;
+  screenSaverCounter = 0;
   //run
   if(program[0]!=0x0){
-    printA(message, RUNNING_MSG);
-    displayDisplay();
+    //----
+    
     while(true){
+      
+      displayClear();
+      if(screenSaverCounter < 60){
 
-      //display running indicator
-      if(runningIndCounterPrev != runningIndCounter){
-        displayClear();
-        displaySetCursor(0, 0);
-        printA(message, RUNNING_MSG);
-        printA(runningPromptArray, runningIndCounter%4);
-
-        //display values
-        uint8_t lines = 0;
-        int16_t value;
-        if(m[1] & (1 << 4)){value = m[58] + (m[59] << 8); lines++;;displaySetCursor(0, lines*8);displayPrint(lines);printA(message, COLON); displayPrint(value);}
-        if(m[1] & (1 << 5)){value = m[60] + (m[61] << 8); lines++;displaySetCursor(0, lines*8);displayPrint(lines);printA(message, COLON); displayPrint(value);}
-        if(m[1] & (1 << 6)){value = m[62] + (m[63] << 8); lines++;displaySetCursor(0, lines*8);displayPrint(lines);printA(message, COLON); displayPrint(value);}
-        
-        displayDisplay();
-        runningIndCounterPrev = runningIndCounter;
+        //display running indicator
+        if(runningIndCounterPrev != runningIndCounter){
+          
+          displaySetCursor(0, 0);
+          printA(message, RUNNING_MSG);
+          printA(runningPromptArray, runningIndCounter%4);
+  
+          //display values
+          uint8_t lines = 0;
+          int16_t value;
+          if(m[1] & (1 << 4)){value = m[58] + (m[59] << 8); lines++;;displaySetCursor(0, lines*8);displayPrint(lines);printA(message, COLON); displayPrint(value);}
+          if(m[1] & (1 << 5)){value = m[60] + (m[61] << 8); lines++;displaySetCursor(0, lines*8);displayPrint(lines);printA(message, COLON); displayPrint(value);}
+          if(m[1] & (1 << 6)){value = m[62] + (m[63] << 8); lines++;displaySetCursor(0, lines*8);displayPrint(lines);printA(message, COLON); displayPrint(value);}
+          
+          displayDisplay();
+          runningIndCounterPrev = runningIndCounter;
+        }
       }
-
+      else{
+        displayDisplay();
+      }
+      //----
       #ifdef SERIAL_ENABLE
 
       //accepting instructions from PC
@@ -537,8 +553,16 @@ void runProgram(){
       }
 
       #endif
-  
-      buttons = ~getButtonsNoneBlocking();
+
+      uint8_t newButtons = ~getButtonsNoneBlocking();
+
+      if(screenSaverCounter<60)
+        buttons = newButtons;
+        
+      if(buttons != newButtons)
+        screenSaverCounter=0;
+        
+      
       //delay(100);
       
       executeCommandAt(PC++);

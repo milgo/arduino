@@ -104,6 +104,46 @@ void mem_print(uint32_t param){
   Serial.print(" ACCD=");Serial.println(d);*/
 }
 
+void extractParams(uint32_t param){
+  mem_ptr = (param >> MEM_BIT_POS) & 0xFF;
+  mem_id = param >> 4 & 0xFF;
+  bit_pos = param & 0x7;
+}
+
+void loadFromFram(){
+  //Serial.println(F("loading from FRAM"));
+  for(int i=0; i<=PS; i++){
+    uint8_t func_id = program[i] >> FUNC_BIT_POS;
+
+    if(func_id == PV || func_id == PB){
+
+      extractParams(program[i]);
+      uint32_t framVal = 0;
+      uint8_t type = mem_ptr-5;//0,1,2,3,4
+      uint8_t bytes = 1 << type; //byte, word, dword
+
+      //load from fram
+      for(uint8_t i=0; i<bytes; i++){
+          uint32_t t = Fram.ReadByte(0, mem_id*bytes+i);
+          
+          framVal += t<<(i*8); 
+      }
+
+      if(func_id == PV){
+        //Serial.print(F("PV:"));Serial.println(framVal);
+        for(uint8_t i=0; i<bytes; i++){
+          *memMap[mem_ptr][mem_id*bytes+i] = framVal>>(i*8)&0xFF;
+        }
+      }else if(func_id == PB){
+        //Serial.print(F("PB:"));Serial.println(framVal);
+        mask = 1 << bit_pos;
+        *memMap[mem_ptr][mem_id*bytes+i] = (*memMap[mem_ptr][mem_id*bytes+i] & ~mask) | (framVal & mask);
+      }
+      
+    }
+  }
+}
+
 void setupMem(){
   //set_b(M, 0, 0);
   //set_b(M, 1, 0);
@@ -137,6 +177,8 @@ void setupMem(){
   else{
     Serial.println(F("Battery backup is set."));
   }
+
+  loadFromFram();
 }
 
 void afterFirstScan(){
@@ -174,55 +216,45 @@ void pushToAcc(uint32_t param){
   accumulator[0] = param;
 }
 
-void setupMem(uint32_t param){
-  mem_ptr = param >> MEM_BIT_POS & 0xFF;
-  mem_id = param >> 4 & 0xFF;
-}
-
-void setupMemForBitOperatrions(uint32_t param){
-  setupMem(param);
-  bit_pos = param & 0x7;
-}
-
 void _nop(uint32_t param){}
 
 void _and(uint32_t param){
-  setupMemForBitOperatrions(param);
+  extractParams(param);
   if(cancel_RLO) RLO = (*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1;
   else RLO &= (*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1;
   cancel_RLO = false;
 }
 
 void _nand(uint32_t param){
-  setupMemForBitOperatrions(param);
+  extractParams(param);
   if(cancel_RLO) RLO = ~(*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1;
   else RLO &= ~(*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1;
   cancel_RLO = false;
 }
 
 void _or(uint32_t param){
-  setupMemForBitOperatrions(param);
+  extractParams(param);
   if(cancel_RLO) RLO = (*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1;
   else RLO |= (*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1; 
   cancel_RLO = false;
 }
 
 void _nor(uint32_t param){
-  setupMemForBitOperatrions(param);
+  extractParams(param);
   if(cancel_RLO) RLO = ~(*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1;
   else RLO |= ~(*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1; 
   cancel_RLO = false;
 }
 
 void _assign(uint32_t param){
-  setupMemForBitOperatrions(param);
+  extractParams(param);
   mask = 1 << bit_pos;
   *memMap[mem_ptr][mem_id] = ((*memMap[mem_ptr][mem_id] & ~mask) | RLO << bit_pos);
   cancel_RLO = true;
 }
 
 void _s(uint32_t param){
-  setupMemForBitOperatrions(param);
+  extractParams(param);
   mask = 1 << bit_pos;
   if(RLO==0x1)
     *memMap[mem_ptr][mem_id] = ((*memMap[mem_ptr][mem_id] & ~mask) | RLO << bit_pos);
@@ -230,7 +262,7 @@ void _s(uint32_t param){
 }
 
 void _r(uint32_t param){
-  setupMemForBitOperatrions(param);
+  extractParams(param);
   mask = 1 << bit_pos;
   if(RLO==0x1)
     *memMap[mem_ptr][mem_id] = ((*memMap[mem_ptr][mem_id] & ~mask));
@@ -238,7 +270,7 @@ void _r(uint32_t param){
 }
 
 void _fp(uint32_t param){
-  setupMemForBitOperatrions(param);
+  extractParams(param);
   mask = 1 << bit_pos;
   uint8_t m = (*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1;
   if(RLO == 0)*memMap[mem_ptr][mem_id] = ((*memMap[mem_ptr][mem_id] & ~mask));
@@ -250,7 +282,7 @@ void _fp(uint32_t param){
 }
 
 void _fn(uint32_t param){
-  setupMemForBitOperatrions(param);
+  extractParams(param);
   mask = 1 << bit_pos;
   uint8_t m = (*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1;
   if(RLO == 1)*memMap[mem_ptr][mem_id] = ((*memMap[mem_ptr][mem_id] & ~mask) | 1 << bit_pos);
@@ -262,7 +294,7 @@ void _fn(uint32_t param){
 }
 
 void _pb(uint32_t param){
-  setupMemForBitOperatrions(param);
+  extractParams(param);
   mask = 1 << bit_pos;
   uint8_t r = Fram.ReadByte(0, mem_id);
   if(((r & mask) ^ (*memMap[mem_ptr][mem_id] & mask)) > 0){
@@ -272,7 +304,7 @@ void _pb(uint32_t param){
 }
 
 void _l(uint32_t param){
-  setupMem(param);
+  extractParams(param);
   
   uint32_t temp = 0;
   uint8_t type = mem_ptr-5;//0,1,2,3,4
@@ -292,7 +324,7 @@ void _l(uint32_t param){
 }
 
 void _t(uint32_t param){
-  setupMem(param);
+  extractParams(param);
   
   uint32_t temp = 0;
   uint8_t type = mem_ptr-5;//0,1,2,3,4
@@ -306,7 +338,7 @@ void _t(uint32_t param){
 }
 
 void _pv(uint32_t param){
-  setupMem(param);
+  extractParams(param);
   
   uint32_t framVal = 0, ramVal = 0;
   uint8_t type = mem_ptr-5;//0,1,2,3,4
@@ -317,8 +349,7 @@ void _pv(uint32_t param){
       uint32_t t = Fram.ReadByte(0, mem_id*bytes+i);
       framVal += t<<(i*8); 
   }
-
-  Serial.print("fram: ");Serial.println(framVal);
+  //Serial.print("fram: ");Serial.println(framVal);
 
   //load from ram
   for(uint8_t i=0; i<bytes; i++){
@@ -326,10 +357,10 @@ void _pv(uint32_t param){
       ramVal += t<<(i*8); 
   }
 
-  Serial.print("ram: ");Serial.println(ramVal);
+  //Serial.print("ram: ");Serial.println(ramVal);
 
   if(ramVal != framVal){
-    Serial.println("diff!");
+    //Serial.println("diff!");
     for(uint8_t i=0; i<bytes; i++){
       //*memMap[mem_ptr][mem_id*bytes+i] = accumulator[0]>>(i*8)&0xFF;
       Fram.WriteByte(0, mem_id*bytes+i, ramVal>>(i*8)&0xFF);
@@ -339,7 +370,7 @@ void _pv(uint32_t param){
 }
 
 void _sp(uint32_t param){
-  setupMem(param);
+  extractParams(param);
 
   if(RLO == 1){
 
@@ -361,7 +392,7 @@ void _sp(uint32_t param){
 }
 
 void _se(uint32_t param){
-  setupMem(param);
+  extractParams(param);
 
   if(RLO == 1){
 
@@ -381,7 +412,7 @@ void _se(uint32_t param){
 }
 
 void _sd(uint32_t param){
-  setupMem(param);
+  extractParams(param);
 
   if(RLO == 1){
 
@@ -404,7 +435,7 @@ void _sd(uint32_t param){
 }
 
 void _ss(uint32_t param){
-  setupMem(param);
+  extractParams(param);
 
   if(RLO == 1){
 
@@ -427,7 +458,7 @@ void _ss(uint32_t param){
 }
 
 void _sf(uint32_t param){
-  setupMem(param);
+  extractParams(param);
 
   if(RLO == 1){
 
@@ -451,7 +482,7 @@ void _sf(uint32_t param){
 }
 
 void _rt(uint32_t param){
-  setupMem(param);
+  extractParams(param);
 
   if(RLO == 1){
     *memMap[mem_ptr][mem_id] &= ~(0x3);

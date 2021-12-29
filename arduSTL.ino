@@ -223,6 +223,7 @@ void insertProgramLine(int number, bool edit){
           else{
             //Serial.print((long)command);Serial.print(" ");Serial.print((long)mem);Serial.print(" ");Serial.print((long)var_pos);Serial.print(" ");Serial.print((long)bit_pos);Serial.print(" ");
             program[number] = s_stll_m(command, mem, var_pos, bit_pos);
+            //Serial.println(mem);
             programChanged = 0;
           }
         }

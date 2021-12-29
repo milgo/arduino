@@ -8,69 +8,9 @@
 #define MEM_BIT_POS 16
 #define FUNC_PARAM_MASK 0xFFFFUL
 #define MAX_PROGRAM_SIZE 64
-#define NOP 0ULL
-#define A 1UL
-#define O 2UL
-#define AN 3UL
-#define ON 4UL
-#define ASGN 5UL
-#define S 6UL
-#define R 7UL
-#define FP 8UL
-#define FN 9UL
-#define L 10UL
-#define T 11UL
-#define TSP 12UL
-#define TSE 13UL
-#define TSD 14UL
-#define TSS 15UL
-#define TSF 16UL
-#define TRT 17UL
 
-#define CU 18UL
-#define CD 19UL
-#define SC 20UL
-#define RC 21UL
-#define LC 22UL
-#define CLC 23UL
-
-#define ADDI 24UL
-#define SUBI 25UL
-#define MULI 26UL
-#define DIVI 27UL
-/*#define ADDD 28ULL
-#define SUBD 29ULL
-#define MULD 30ULL
-#define DIVD 31ULL
-#define ADDR 32ULL
-#define SUBR 33ULL
-#define MULR 34ULL
-#define DIVR 35ULL*/
-
-#define EQI 28UL
-#define DIFFI 29UL
-#define GTI 30UL
-#define LTI 31UL
-#define GTEQI 32UL
-#define LTEQI 33UL
-
-/*#define EQD 42ULL
-#define DIFFD 43ULL
-#define GTD 44ULL
-#define LTD 45ULL
-#define GTEQD 46ULL
-#define LTEQD 47ULL
-
-#define EQR 48ULL
-#define DIFFR 49ULL
-#define GTR 50ULL
-#define LTR 51ULL
-#define GTEQR 52ULL
-#define LTEQR 53ULL*/
-
-#define JU 34UL
-#define JC 35UL
-#define JCN 36UL
+#define PB 10
+#define PV 13
 
 #define Q 1UL
 #define I 2UL

@@ -7,6 +7,8 @@
 boolean programChanged = 1;
 
 #define SCREEN_SAVER_TIME 60
+#define EXIT_RUNNING_TIME 6
+#define EXIT_RUNNNING_BUTTONS(BUTTONS) IS_PRESSED(BUTTONS, BUTTON_LEFT) && IS_PRESSED(BUTTONS, BUTTON_RIGHT)
 
 #ifdef SERIAL_ENABLE
 char serialBuf[16];
@@ -115,22 +117,6 @@ void setup() {
   /*if(!IS_PRESSED(getButtonsNoneBlocking(), BUTTON_ENTER)){
     if(!IS_PRESSED(getButtonsBlocking(), BUTTON_ENTER))
       delay(100);*/
-
-      boolean conf = true;
-      while(conf){
-        int newMenuPosition = showMenu(mainMenu, 0, MAIN_MENU_SIZE);
-        switch(newMenuPosition){
-          case -1: break;
-          case 0: if(askToSaveChangesIfMade()==0){conf=false;} break;
-          case 1: editProgram(); break;
-          case 2: if(programChanged==0)writeProgramToEeprom();else printMessageAndWaitForButton(NO_CHANGES);break;
-          case 3: clearProgramLocal(); break;
-          default:break;
-        }
-      }
-
-  //}
-  
 }
 
 const char _1[] PROGMEM = {""};
@@ -139,6 +125,7 @@ const char _3[] PROGMEM = {".."};
 const char _4[] PROGMEM = {"..."};
 const char* const runningPromptArray[] PROGMEM = {_1, _2, _3, _4};
 
+uint8_t exitRunningCounter;
 uint8_t screenSaverCounter;
 uint8_t runningIndCounter;
 uint8_t runningIndCounterPrev;
@@ -147,6 +134,11 @@ void runEvery500ms(){
   runningIndCounter++;
   if(screenSaverCounter<SCREEN_SAVER_TIME)
     screenSaverCounter++;
+  if(EXIT_RUNNNING_BUTTONS(buttons))
+    exitRunningCounter--;
+  else{
+    exitRunningCounter = EXIT_RUNNING_TIME;
+  }
 }
 
 int timerCounter = 0;
@@ -339,11 +331,13 @@ void runProgram(){
   runningIndCounter = 0;
   runningIndCounterPrev = 0;
   screenSaverCounter = 0;
+  exitRunningCounter = EXIT_RUNNING_TIME;
+  
   //run
   if(program[0]!=0x0){
     //----
     
-    while(true){
+    while(exitRunningCounter>0){
       
       displayClear();
       if(screenSaverCounter < 60){
@@ -581,5 +575,19 @@ void runProgram(){
 }
 
 void loop() {
-  runProgram();
+  
+  //while(conf){
+      int newMenuPosition = showMenu(mainMenu, 0, MAIN_MENU_SIZE);
+      switch(newMenuPosition){
+        case -1: break;
+        case 0: if(askToSaveChangesIfMade()==0){runProgram();} break;
+        case 1: editProgram(); break;
+        case 2: if(programChanged==0)writeProgramToEeprom();else printMessageAndWaitForButton(NO_CHANGES);break;
+        case 3: clearProgramLocal(); break;
+        default:break;
+      }
+  //}
+
+  //}
+  
 }

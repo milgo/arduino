@@ -574,18 +574,20 @@ void runProgram(){
   }
 }
 
+int newMenuPosition = -2;
+
 void loop() {
   
   //while(conf){
-      int newMenuPosition = showMenu(mainMenu, 0, MAIN_MENU_SIZE);
       switch(newMenuPosition){
         case -1: break;
         case 0: if(askToSaveChangesIfMade()==0){runProgram();} break;
         case 1: editProgram(); break;
         case 2: if(programChanged==0)writeProgramToEeprom();else printMessageAndWaitForButton(NO_CHANGES);break;
         case 3: clearProgramLocal(); break;
-        default:break;
+        default: runProgram(); break;
       }
+      newMenuPosition = showMenu(mainMenu, 0, MAIN_MENU_SIZE);
   //}
 
   //}

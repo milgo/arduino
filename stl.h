@@ -9,19 +9,18 @@
 #define FUNC_PARAM_MASK 0xFFFFUL
 #define MAX_PROGRAM_SIZE 64
 
-#define PB 10
-#define PV 13
-
-#define Q 1UL
-#define I 2UL
+#define DO 1UL
+#define DI 2UL
 #define M 3UL
 #define TIM 4UL
 #define MB 5UL
 #define MW 6UL
 #define MD 7UL
-#define CS 8UL
-#define CN 9UL
-#define AD 10UL
+#define AI 8UL
+#define AO 9UL
+#define CS 10UL
+#define CN 11UL
+#define AD 12UL
 
 #define s_stll_v(a1, a2, a3) ((a1<<FUNC_BIT_POS) | ((a2) << (MEM_BIT_POS)) | (a3 & FUNC_PARAM_MASK))
 #define s_stll_m(a1, a2, a3, a4) ((a1<<FUNC_BIT_POS) | ((a2) << (MEM_BIT_POS)) | (a3<<4) | (a4))
@@ -45,10 +44,8 @@ void _s(uint32_t param);
 void _r(uint32_t param);
 void _fp(uint32_t param);
 void _fn(uint32_t param);
-void _pb(uint32_t param);
 void _l(uint32_t param);
 void _t(uint32_t param);
-void _pv(uint32_t param);
 //_sp, _se, _sd, _ss, _sf, _rt
 
 void _sp(uint32_t param);
@@ -126,5 +123,7 @@ extern void afterFirstScan();
 extern void executeCommandAt(int pl);
 extern void executeCommand(uint32_t param);
 extern void timersRoutine();
+extern void readAnalog();
+extern void writeAnalog();
 
 #endif //_STL_H

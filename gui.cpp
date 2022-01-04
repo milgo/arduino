@@ -23,6 +23,8 @@ void setupGUI(){
     for(;;); // Don't proceed, loop forever
   }
 
+  display.setTextWrap(false);
+
   // Show initial display buffer contents on the screen --
   // the library initializes this with an Adafruit splash screen.
   displayDisplay();
@@ -76,7 +78,7 @@ void exitCurrentMenu(int currentMenuPos){
   //Serial.println(modulo);
 }
 
-int showMenu(const char * const *menu, int from, int to){
+int showMenu(const char * const *menu, const char *const *descMenu, int from, int to){
   int pos = 0, start = 0; int len = to - from;
   unsigned char newButtons = 0;
   while(true){
@@ -96,13 +98,22 @@ int showMenu(const char * const *menu, int from, int to){
       if(from+i>=to)break;
       
       if(pos == i){
-          displaySetTextInvert(); 
+        displaySetTextInvert();
       }
   
       displaySetCursor(0, (i-start)*8);
 
       strcpy_P(bufferStr, (char*)pgm_read_word(&(menu[from+i])));
-      display.println(bufferStr);
+      display.print(bufferStr);
+      
+
+      if(descMenu){
+        display.print(F(":"));
+        strcpy_P(bufferStr, (char*)pgm_read_word(&(descMenu[from+i])));
+        display.println(bufferStr);
+      }else{
+        display.println();
+      }
         
       if(pos == i){
         displaySetTextNormal();

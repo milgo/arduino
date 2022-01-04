@@ -26,7 +26,7 @@
 #define IS_PRESSED(BUTTONS, BUTTON) (((BUTTONS) & (1<<(BUTTON))) == (1<<(BUTTON)))
 
 extern void setupGUI();
-extern int showMenu(const char * const *menu, int from, int to);
+extern int showMenu(const char * const *menu, const char* const *descMenu, int from, int to);
 extern int32_t enterValue(int msg, long int curVal, bool isSigned, int len, int maxDigit);
 extern void printA(const char *const* arr, int id);
 extern void printAtoBuf(const char *const* arr, int id, char* buf);

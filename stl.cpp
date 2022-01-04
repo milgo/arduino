@@ -17,7 +17,7 @@ uint8_t nullByte;
 
 void _nop(uint32_t param);
 
-void (*func_ptr[])(uint32_t) = {_nop, _and, _or, _nand, _nor, _assign, _s, _r, _fp, _fn, _l, _t, /**/_sp, _se, _sd, _ss, _sf, _rt, _cu, _cd, _cs, _cr, _cl, _clc,
+void (*func_ptr[])(uint32_t) = {_nop, _and, _or, _nand, _nor, _assign, _s, _r, _fp, _fn, _l, _t, /**/_sp, _se, _sd, _ss, _sf, _rt, _cu, _cd, _cs, _cr, _cl, /*_clc,*/
  _addI, _subI, _mulI, _divI, /*_addD, _subD, _mulD, _divD, _addR, _subR, _mulR, _divR,*/
  _eqI, _diffI, _gtI, _ltI, _gteqI, _lteqI, /*_eqD, _diffD, _gtD, _ltD, _gteqD, _lteqD, _eqR, _diffR, _gtR, _ltR, _gteqR, _lteqR,*/
  _ju, _jc, _jcn};
@@ -442,9 +442,9 @@ void _cl(uint32_t param){
   cancel_RLO = true;
 }
 
-void _clc(uint32_t param){
+/*void _clc(uint32_t param){
   
-}
+}*/
 
 int32_t accI0 = 0, accI1 = 0;
 void _addI(uint32_t param){accI0 = (int32_t)(accumulator[1])+(int32_t)(accumulator[0]); accumulator[0] = accI0;}

@@ -75,67 +75,117 @@ const char editMenuRemoveStr[] PROGMEM = "Remove";
 const char comNOPStr[] PROGMEM = "NOP";
 const char comBasicAStr[] PROGMEM = "A  ";
 const char comBasicOStr[] PROGMEM = "O  ";
-
 const char comBasicANStr[] PROGMEM = "AN ";
 const char comBasicONStr[] PROGMEM = "ON ";
-
 const char comBasicAssignStr[] PROGMEM = "=  ";
 const char comBasicSStr[] PROGMEM = "S  ";
 const char comBasicRStr[] PROGMEM = "R  ";
 const char comBasicFPStr[] PROGMEM = "FP ";
 const char comBasicFNStr[] PROGMEM = "FN ";
-
 const char comMoveLStr[] PROGMEM = "L  ";
 const char comMoveTStr[] PROGMEM = "T  ";
-
 const char comAritAddIStr[] PROGMEM = "+I ";
 const char comAritSubIStr[] PROGMEM = "-I ";
 const char comAritMulIStr[] PROGMEM = "*I ";
 const char comAritDivIStr[] PROGMEM = "/I ";
-/*const char comAritAddDStr[] PROGMEM = "+D ";
-const char comAritSubDStr[] PROGMEM = "-D ";
-const char comAritMulDStr[] PROGMEM = "*D ";
-const char comAritDivDStr[] PROGMEM = "/D ";
-const char comAritAddRStr[] PROGMEM = "+R ";
-const char comAritSubRStr[] PROGMEM = "-R ";
-const char comAritMulRStr[] PROGMEM = "*R ";
-const char comAritDivRStr[] PROGMEM = "/R ";*/
 const char comCompEqIStr[] PROGMEM = "==I";
 const char comCompDiffIStr[] PROGMEM = "<>I";
 const char comCompGtIStr[] PROGMEM = ">I ";
 const char comCompLtIStr[] PROGMEM = "<I ";
 const char comCompGtEqIStr[] PROGMEM = ">=I";
 const char comCompLtEqIStr[] PROGMEM = "<=I";
-/*const char comCompEqDStr[] PROGMEM = "==D";
-const char comCompDiffDStr[] PROGMEM = "<>D";
-const char comCompGtDStr[] PROGMEM = ">D ";
-const char comCompLtDStr[] PROGMEM = "<D ";
-const char comCompGtEqDStr[] PROGMEM = ">=D";
-const char comCompLtEqDStr[] PROGMEM = "<=D";
-const char comCompEqRStr[] PROGMEM = "==R";
-const char comCompDiffRStr[] PROGMEM = "<>R";
-const char comCompGtRStr[] PROGMEM = ">R ";
-const char comCompLtRStr[] PROGMEM = "<R ";
-const char comCompGtEqRStr[] PROGMEM = ">=R";
-const char comCompLtEqRStr[] PROGMEM = "<=R";*/
-
 const char comTimerSPStr[] PROGMEM = "SP ";
 const char comTimerSEStr[] PROGMEM = "SE ";
 const char comTimerSDStr[] PROGMEM = "SD ";
 const char comTimerSSStr[] PROGMEM = "SS ";
 const char comTimerSFStr[] PROGMEM = "SF ";
 const char comTimerRStr[] PROGMEM = "R  ";
-
 const char comCounterCUStr[] PROGMEM = "CU ";
 const char comCounterCDStr[] PROGMEM = "CD ";
 const char comCounterStr[] PROGMEM = "S  ";
 const char comCounterRStr[] PROGMEM = "R  ";
 const char comCounterLStr[] PROGMEM = "L ";
 const char comCounterLCStr[] PROGMEM = "LC ";
-
 const char comJumpUncStr[] PROGMEM = "JU ";
 const char comJumpCondStr[] PROGMEM = "JC ";
 const char comJumpCondNotStr[] PROGMEM = "JCN";
+
+const char comDescNOPStr[] PROGMEM = "No operation";
+const char comDescBasicAStr[] PROGMEM = "And with RLO";
+const char comDescBasicOStr[] PROGMEM = "Or with RLO";
+const char comDescBasicANStr[] PROGMEM = "Not And with RLO";
+const char comDescBasicONStr[] PROGMEM = "Not Or with RLO";
+const char comDescBasicAssignStr[] PROGMEM = "Assign RLO";
+const char comDescBasicSStr[] PROGMEM = "Set";
+const char comDescBasicRStr[] PROGMEM = "Reset";
+const char comDescBasicFPStr[] PROGMEM = "Positive edge";
+const char comDescBasicFNStr[] PROGMEM = "Negative edge";
+const char comDescMoveLStr[] PROGMEM = "Load to ACC";
+const char comDescMoveTStr[] PROGMEM = "Transfer from ACC";
+const char comDescAritAddIStr[] PROGMEM = "Add to ACC";
+const char comDescAritSubIStr[] PROGMEM = "Sub from ACC";
+const char comDescAritMulIStr[] PROGMEM = "Mul with ACC";
+const char comDescAritDivIStr[] PROGMEM = "Div with ACC ";
+const char comDescCompEqIStr[] PROGMEM = "Equals to ACC";
+const char comDescCompDiffIStr[] PROGMEM = "Diffrent from ACC";
+const char comDescCompGtIStr[] PROGMEM = "Greater than ACC";
+const char comDescCompLtIStr[] PROGMEM = "Less that ACC ";
+const char comDescCompGtEqIStr[] PROGMEM = "Greater or equals ACC";
+const char comDescCompLtEqIStr[] PROGMEM = "Less or equal to ACC";
+const char comDescTimerSPStr[] PROGMEM = "Pulse timer on RLO";
+const char comDescTimerSEStr[] PROGMEM = "Extended pulse timer on RLO";
+const char comDescTimerSDStr[] PROGMEM = "On-Delay timer on RLO";
+const char comDescTimerSSStr[] PROGMEM = "Retentive On-Delay timer on RLO";
+const char comDescTimerSFStr[] PROGMEM = "Off-Delay timer on RLO";
+const char comDescTimerRStr[] PROGMEM = "Reset timer on RLO";
+const char comDescCounterCUStr[] PROGMEM = "Increment counter on RLO";
+const char comDescCounterCDStr[] PROGMEM = "Decrement counter on RLO";
+const char comDescCounterStr[] PROGMEM = "Set counter to ACC on RLO";
+const char comDescCounterRStr[] PROGMEM = "Reset counter on RLO";
+const char comDescCounterLStr[] PROGMEM = "Load counter to ACC";
+
+const char comDescJumpUncStr[] PROGMEM = "Jump unconditional";
+const char comDescJumpCondStr[] PROGMEM = "Jump conditional";
+const char comDescJumpCondNotStr[] PROGMEM = "Jump conditional if not";
+
+const char *const comDesc[] PROGMEM = {
+    comDescNOPStr,
+    comDescBasicAStr,
+    comDescBasicOStr,
+    comDescBasicANStr,
+    comDescBasicONStr,
+    comDescBasicAssignStr,
+    comDescBasicSStr,
+    comDescBasicRStr,
+    comDescBasicFPStr,
+    comDescBasicFNStr,
+    comDescMoveLStr,
+    comDescMoveTStr,
+    comDescTimerSPStr,
+    comDescTimerSEStr,
+    comDescTimerSDStr,
+    comDescTimerSSStr,
+    comDescTimerSFStr,
+    comDescTimerRStr,
+    comDescCounterCUStr,
+    comDescCounterCDStr,
+    comDescCounterStr,
+    comDescCounterRStr,
+    comDescCounterLStr,
+    comDescAritAddIStr,
+    comDescAritSubIStr,
+    comDescAritMulIStr,
+    comDescAritDivIStr,
+    comDescCompEqIStr,
+    comDescCompDiffIStr,
+    comDescCompGtIStr,
+    comDescCompLtIStr,
+    comDescCompGtEqIStr,
+    comDescCompLtEqIStr,
+    comDescJumpUncStr,
+    comDescJumpCondStr,
+    comDescJumpCondNotStr
+  };
 
 const char memNULLStr[] PROGMEM = "~";
 const char memQStr[] PROGMEM = "DO";
@@ -151,6 +201,36 @@ const char memAOStr[] PROGMEM = "AO";
 const char memConstStr[] PROGMEM = "#";
 const char memAddrStr[] PROGMEM = "@";
 
+const char memDescNULLStr[] PROGMEM = "";
+const char memDescDOStr[] PROGMEM = "Digital output";
+const char memDescDIStr[] PROGMEM = "Digital input";
+const char memDescMStr[] PROGMEM = "Bit marker";
+const char memDescTStr[] PROGMEM = "Timer";
+const char memDescMBStr[] PROGMEM = "Memory byte";
+const char memDescMWStr[] PROGMEM = "Memory word";
+const char memDescMDStr[] PROGMEM = "Memory double word";
+const char memDescCStr[] PROGMEM = "Counter";
+const char memDescAIStr[] PROGMEM = "Analog input";
+const char memDescAOStr[] PROGMEM = "Analog output";
+const char memDescConstStr[] PROGMEM = "Constant";
+const char memDescAddrStr[] PROGMEM = "Program line number";
+
+const char *const memDesc[] PROGMEM = {
+    memDescNULLStr,
+    memDescDOStr,
+    memDescDIStr,
+    memDescMStr,
+    memDescTStr,
+    memDescMBStr,
+    memDescMWStr,
+    memDescMDStr,
+    memDescCStr,
+    memDescAIStr,
+    memDescAOStr,
+    memDescConstStr,
+    memDescAddrStr
+};
+
 const char *const mainMenu[] PROGMEM = {
   mainMenuRunStr, 
   mainMenuEditStr, 
@@ -165,10 +245,10 @@ const char *const commandGroupMenu[] PROGMEM = {
   comMenuCounterStr,
   comMenuAritmeticStr, 
   comMenuCompareStr,
-  comMenuJumpStr,
+  comMenuJumpStr
   };
 
-const char comGroups[] = { 1, 10, 10, 12, 12, 18, 18, 24, 24, 28, 28, 34, 34, 37};  
+const char comGroups[] = { 1, 10, 10, 12, 12, 18, 18, 23, 23, 27, 27, 33, 33, 36};  
   
 const char *const editMenu[] PROGMEM = {
   editMenuInsertStr,
@@ -203,7 +283,7 @@ const char *const comStr[] PROGMEM = {
   comCounterStr,
   comCounterRStr,
   comCounterLStr,
-  comCounterLCStr,
+  //comCounterLCStr,
   
   comAritAddIStr,
   comAritSubIStr,
@@ -238,7 +318,7 @@ const char *const comStr[] PROGMEM = {
   comCompLtEqRStr,*/
   comJumpUncStr,
   comJumpCondStr,
-  comJumpCondNotStr,
+  comJumpCondNotStr
 
   };
 
@@ -257,7 +337,7 @@ const char *const memStr[] PROGMEM = {
   memMDStr,
   memConstStr,
   memCStr,
-  memAddrStr,
+  memAddrStr
 };
 
 /*const char memGroups[] = {1, 5, 
@@ -298,7 +378,7 @@ const char memGroups[] PROGMEM = {0, 0,
                           11, 12, 
                           11, 12, 
                           11, 12, 
-                          11, 12, 
+                          //11, 12, 
                           
                           0, 0, 
                           0, 0, 

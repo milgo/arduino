@@ -150,10 +150,10 @@ void insertProgramLine(int number, bool edit){
   //Serial.print("removing ");Serial.print(number); Serial.print("line");
   int32_t command = 0, mem = -1;
   uint8_t var_pos = 0, bit_pos = 0;
-  int8_t comGroup = showMenu(commandGroupMenu, 0, COMM_MENU_SIZE);
+  int8_t comGroup = showMenu(commandGroupMenu, NULL, 0, COMM_MENU_SIZE);
   int32_t value = 0;
   if(comGroup>=0){
-    command = showMenu(comStr, comGroups[comGroup*2], comGroups[comGroup*2+1]);
+    command = showMenu(comStr, comDesc, comGroups[comGroup*2], comGroups[comGroup*2+1]);
 
     uint8_t memPtrFrom, memPtrTo;
     memPtrFrom = pgm_read_byte(&(memGroups[command*2]));
@@ -166,7 +166,7 @@ void insertProgramLine(int number, bool edit){
       }*/
 
       if(memPtrFrom>0){ //if operation with mem selection
-        mem = showMenu(memStr, memPtrFrom, memPtrTo);
+        mem = showMenu(memStr, memDesc, memPtrFrom, memPtrTo);
         if(mem >= 0){
 
           char sig = pgm_read_word(&memValidationRules[mem*5]);
@@ -244,7 +244,7 @@ void editProgram(){
     displayClear();
 
     if(IS_PRESSED(newButtons, BUTTON_ENTER) && pos < PS) {
-      int res = showMenu(editMenu, 0, 3);
+      int res = showMenu(editMenu, NULL, 0, 3);
       switch(res){
         case 0: insertProgramLine(pos, false);break;
         case 1: insertProgramLine(pos, true);break;
@@ -400,7 +400,7 @@ void loop() {
         case 3: clearProgramLocal(); break;
         default: runProgram(); break;
       }
-      newMenuPosition = showMenu(mainMenu, 0, MAIN_MENU_SIZE);
+      newMenuPosition = showMenu(mainMenu, NULL, 0, MAIN_MENU_SIZE);
   //}
 
   //}

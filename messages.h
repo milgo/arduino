@@ -23,6 +23,19 @@
 #define COLON 12
 #define PC_CONNECTION 13
 
+const char _0[] PROGMEM = "0"; 
+const char _1[] PROGMEM = "1"; 
+const char _2[] PROGMEM = "2"; 
+const char _3[] PROGMEM = "3"; 
+const char _4[] PROGMEM = "4"; 
+const char _5[] PROGMEM = "5"; 
+const char _6[] PROGMEM = "6"; 
+const char _7[] PROGMEM = "7"; 
+const char _8[] PROGMEM = "8"; 
+const char _9[] PROGMEM = "9"; 
+
+const char *const numbers[] PROGMEM = {_0, _1, _2, _3, _4, _5, _6, _7, _8, _9};
+
 const char enterVariablePositionMsgStr[] PROGMEM = "Enter var position:";
 const char enterBitPositionMsgStr[] PROGMEM = "Enter bit position:";
 const char enterValueMsgStr[] PROGMEM = "Enter value:";
@@ -188,8 +201,8 @@ const char *const comDesc[] PROGMEM = {
   };
 
 const char memNULLStr[] PROGMEM = "~";
-const char memQStr[] PROGMEM = "DO";
-const char memIStr[] PROGMEM = "DI";
+const char memDOStr[] PROGMEM = "DO";
+const char memDIStr[] PROGMEM = "DI";
 const char memMStr[] PROGMEM = "M";
 const char memTStr[] PROGMEM = "T";
 const char memMBStr[] PROGMEM = "MB";
@@ -221,13 +234,13 @@ const char *const memDesc[] PROGMEM = {
     memDescDIStr,
     memDescMStr,
     memDescTStr,
+    memDescAIStr,
+    memDescAOStr,
     memDescMBStr,
     memDescMWStr,
     memDescMDStr,
-    memDescCStr,
-    memDescAIStr,
-    memDescAOStr,
     memDescConstStr,
+    memDescCStr,
     memDescAddrStr
 };
 
@@ -326,8 +339,8 @@ const char *const comStr[] PROGMEM = {
 
 const char *const memStr[] PROGMEM = {
   memNULLStr,
-  memQStr,
-  memIStr,
+  memDOStr,
+  memDIStr,
   memMStr,
   memTStr,
   memAIStr,
@@ -410,12 +423,12 @@ const char memGroups[] PROGMEM = {0, 0,
                           0, 0};                          
 
 const int16_t memValidationRules[] PROGMEM = {0, 0, 0, 0, 0, //signed?, how many digits?, max digit, min value, max value 
-                                  0, 1, 7, 0, 7,
-                                  0, 1, 7, 0, 7,
+                                  0, 1, 0, 0, 0,
+                                  0, 1, 0, 0, 0,
                                   0, 2, 9, 0, 63,
                                   0, 1, 7, 0, 7,
                                   0, 1, 7, 0, 7,
-                                  0, 1, 7, 0, 7,
+                                  0, 2, 9, 0, 11,
                                   0, 2, 9, 0, 63,
                                   0, 2, 9, 0, 31,
                                   0, 1, 9, 0, 9,                         

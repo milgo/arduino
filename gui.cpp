@@ -181,7 +181,9 @@ int32_t enterValue(int msg, long int curVal, bool isSigned, int len, int maxDigi
         if(v[0]==0)display.print("+");
         else display.print("-");
       }else{
-        display.print(v[i]);
+        //display.print(v[i]);//tablica znakow cyfr
+        strcpy_P(bufferStr, (char*)pgm_read_word(&(numbers[v[i]])));
+        display.print(bufferStr);
       }
     }
 

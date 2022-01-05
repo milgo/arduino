@@ -26,7 +26,7 @@ uint8_t volatile buttons;
 uint8_t volatile m[64];
 uint8_t volatile t[8];
 uint8_t volatile ai[8];
-uint8_t volatile ao[8];
+uint8_t volatile ao[12];
 uint8_t volatile c;
 
 uint8_t volatile * const memNull[] = {&nullByte};
@@ -43,7 +43,7 @@ uint8_t volatile * const memM[] = {&m[0], &m[1], &buttons, &m[3], &m[4], &m[5], 
 uint8_t volatile * const memC[] = {&c};
 uint8_t volatile * const memT[] = {&t[0], &t[1], &t[2], &t[3], &t[4], &t[5], &t[6], &t[7]};
 uint8_t volatile * const memAI[] = {&ai[0], &ai[1], &ai[2], &ai[3], &ai[4], &ai[5], &ai[6], &ai[7]};
-uint8_t volatile * const memAO[] = {&ao[0], &ao[1], &ao[2], &ao[3], &ao[4], &ao[5], &ao[6], &ao[7]};
+uint8_t volatile * const memAO[] = {&ao[0], &ao[1], &ao[2], &ao[3], &ao[4], &ao[5], &ao[6], &ao[7], &ao[8], &ao[9], &ao[10], &ao[11]};
 
 uint8_t volatile fixedTimer[8];
 uint32_t volatile timer[8];
@@ -122,6 +122,21 @@ void setupMem(){
   m[1] |=  0 << 4; //Display 1 value dw29
   m[1] |=  0 << 5; //Display 2 value dw30
   m[1] |=  0 << 6; //Display 3 value dw31
+
+  PORTB = 0;
+  int i;
+  for(i=0; i<64; i++)m[i] = 0;
+  for(i=0; i<8; i++)t[i] = 0;
+  for(i=0; i<8; i++)ai[i] = 0;
+  for(i=0; i<12; i++)ao[i] = 0;
+  for(i=0; i<8; i++)fixedTimer[i] = 0;
+  for(i=0; i<8; i++)timer[i] = 0;
+  for(i=0; i<8; i++)counter[i] = 0;
+  c = 0;
+
+  for(int i=0; i<12; i++){
+    analogWrite(i, 0);
+  }
 }
 
 void afterFirstScan(){
@@ -165,7 +180,7 @@ void readAnalog(){
 }
 
 void writeAnalog(){
-  for(int i=0; i<8; i++){
+  for(int i=0; i<12; i++){
      if(ao[i]>0)analogWrite(i, ao[i]); //10-bit to 8-bit
   }
 }

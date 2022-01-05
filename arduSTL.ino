@@ -30,6 +30,8 @@ void writeProgramToEeprom(){
 void readProgramFromEeprom(){
   int addr = 0;
   PS = EEPROM.read(0x3FF);
+  if(PS == 0xFF)
+    PS = 0;
   //Serial.println(PS);
   for(uint8_t i=0; i<PS; i++){
     program[i] = ((uint32_t)EEPROM.read(addr) << 24UL) +
@@ -62,34 +64,14 @@ int askToSaveChangesIfMade(){
 
 void setup() {
   Serial.begin(9600);
-//EEPROM.write(0x3FF, 0);
+  //EEPROM.write(0x3FF, 0xFF);
   setupGUI();
 
-  /*program[0] = s_stll_v(L, CS, 6000UL);
-  program[1] = s_stll_m(A, I, 0, 0);
-  program[2] = s_stll_m(TSF, TIM, 0, 0);
-  program[3] = s_stll_m(A, TIM, 0, 0);
-  program[4] = s_stll_m(ASGN, Q, 0, 5);
-  program[5] = s_stll_m(A, I, 0, 1);
-  program[6] = s_stll_m(TRT, TIM, 0, 0);
-  PS = 7;*/
-  /*program[0] = s_stll_v(L, CS, 3);
-  program[1] = s_stll_v(L, CS, 10);
-  program[2] = s_stll_s(LTI);
-  program[3] = s_stll_v(JCN, AD, 7);
-  program[4] = s_stll_m(A, I, 0, 1);
-  program[5] = s_stll_m(ASGN, Q, 0, 5);
-  program[6] = s_stll_s(NOP);
 
-  PS = 7; */
-
-  //DDRB = B00100000;//PORTB output pin 5
-  //PORTD = B11111100;//pullup on pin 2
-
-  DDRD = B11111100;//PORTD output
-  
-  PORTC = B00001111;//pullup
-  PORTB = B00010010;//pullup
+  DDRB = B11111111;//PORTD output
+  PORTD = B00000000;
+  PORTD = B11111111;//pullup
+  //PORTB = B00010010;//pullup
   
   //setup global timer
   //------------------
@@ -113,11 +95,11 @@ void setup() {
       delay(100);*/
 }
 
-const char _1[] PROGMEM = {""};
-const char _2[] PROGMEM = {"."};
-const char _3[] PROGMEM = {".."};
-const char _4[] PROGMEM = {"..."};
-const char* const runningPromptArray[] PROGMEM = {_1, _2, _3, _4};
+const char _0dot[] PROGMEM = {""};
+const char _1dot[] PROGMEM = {"."};
+const char _2dot[] PROGMEM = {".."};
+const char _3dot[] PROGMEM = {"..."};
+const char* const runningPromptArray[] PROGMEM = {_0dot, _1dot, _2dot, _3dot};
 
 uint8_t exitRunningCounter;
 uint8_t screenSaverCounter;

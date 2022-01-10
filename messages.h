@@ -17,6 +17,14 @@
 #define SAVE_CHANGES 10
 #define NO_CHANGES 11
 #define COLON 12
+#define ENTER_INPUT_NR_MSG 13
+#define ENTER_OUTPUT_NR_MSG 14
+#define ENTER_BYTE_NR_MSG 15
+#define ENTER_WORD_NR_MSG 16
+#define ENTER_DWORD_NR_MSG 17
+#define ENTER_TIMER_NR_MSG 18
+#define ENTER_COUNTER_NR_MSG 19
+#define ENTER_PROGRAM_LINE_NR_MSG 20
 
 const char _0[] PROGMEM = "0"; 
 const char _1[] PROGMEM = "1"; 
@@ -45,6 +53,15 @@ const char saveChangesMsgStr[] PROGMEM = "Save changes? [ENTER]";
 const char noChangesMsgStr[] PROGMEM = "No changes!";
 const char colon[] PROGMEM = ": ";
 
+const char enterInputNrMsgStr[] PROGMEM = "Enter input nr:";
+const char enterOutputNrMsgStr[] PROGMEM = "Enter output nr:";
+const char enterByteNrMsgStr[] PROGMEM = "Enter byte nr:";
+const char enterWordNrMsgStr[] PROGMEM = "Enter word nr:";
+const char enterDWordNrMsgStr[] PROGMEM = "Enter dword nr:";
+const char enterTimerNrMsgStr[] PROGMEM = "Enter timer nr:";
+const char enterCounterNrMsgStr[] PROGMEM = "Enter counter nr:";
+const char enterProgramLineMsgStr[] PROGMEM = "Enter program line:";
+
 const char *const message[] PROGMEM = {
   enterVariablePositionMsgStr, 
   enterValueMsgStr,
@@ -59,6 +76,14 @@ const char *const message[] PROGMEM = {
   saveChangesMsgStr,
   noChangesMsgStr,
   colon,
+  enterInputNrMsgStr,
+  enterOutputNrMsgStr,
+  enterByteNrMsgStr,
+  enterWordNrMsgStr,
+  enterDWordNrMsgStr,
+  enterTimerNrMsgStr,
+  enterCounterNrMsgStr,
+  enterProgramLineMsgStr
   };
 
 const char mainMenuRunStr[] PROGMEM = "Run";
@@ -388,18 +413,30 @@ const int16_t memValidationRules[] PROGMEM = {0, 0, 0, 0, 0, //signed?, how many
                                   0, 1, 7, 0, 7, //DI
                                   0, 1, 7, 0, 7, //T
                                   0, 2, 9, 0, 63,//M
-                                  0, 2, 9, 0, 13,//DO
+                                  0, 2, 9, 8, 13,//DO
                                   1, 5, 9, -32768, 32767,//CONST
                                   0, 1, 7, 0, 7,//AI
                                   0, 2, 9, 0, 63,//MB
                                   0, 2, 9, 0, 31,//MW
                                   0, 1, 9, 0, 9,//MD        
                                   0, 2, 9, 0, 11,//AO            
-                                  0, 1, 9, 0, 9,//C
+                                  0, 1, 9, 0, 7,//C
                                   0, 2, 9, 0, MAX_PROGRAM_SIZE};//ADDR
                                
 const char memBitAquireEnabled[] PROGMEM = {0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0}; 
-const char memValueAquireMsg[] PROGMEM = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0}; 
+const char memValueAquireMsg[] PROGMEM = {0, 
+                                          ENTER_INPUT_NR_MSG, 
+                                          ENTER_TIMER_NR_MSG, 
+                                          ENTER_BYTE_NR_MSG, 
+                                          ENTER_OUTPUT_NR_MSG, 
+                                          ENTER_VALUE_MSG, 
+                                          ENTER_INPUT_NR_MSG, 
+                                          ENTER_BYTE_NR_MSG, 
+                                          ENTER_WORD_NR_MSG, 
+                                          ENTER_DWORD_NR_MSG, 
+                                          ENTER_OUTPUT_NR_MSG, 
+                                          ENTER_COUNTER_NR_MSG,
+                                          ENTER_PROGRAM_LINE_NR_MSG}; 
 
 
 

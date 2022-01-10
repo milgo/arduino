@@ -248,6 +248,7 @@ void printAtoBuf(const char *const* arr, int id, char* buf){
 }
 
 uint8_t printMessageAndWaitForButton(int msg, uint8_t showVal, int v1, int v2){
+  display.setTextWrap(true);
   uint8_t newButtons = 0;
   while(true){
     displayClear();
@@ -266,6 +267,7 @@ uint8_t printMessageAndWaitForButton(int msg, uint8_t showVal, int v1, int v2){
   displayClear();
   displaySetCursor(0, 0);
   return newButtons;
+  display.setTextWrap(false);
 }
 
 uint8_t printMessageAndWaitForButton(int msg, int v1, int v2){

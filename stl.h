@@ -10,16 +10,16 @@
 #define FUNC_PARAM_MASK 0xFFFFUL
 #define MAX_PROGRAM_SIZE 64
 
-#define DO 1UL
-#define DI 2UL
+#define DI 1UL
+#define TIM 2UL
 #define M 3UL
-#define TIM 4UL
-#define MB 5UL
-#define MW 6UL
-#define MD 7UL
-#define AI 8UL
-#define AO 9UL
-#define CS 10UL
+#define DO 4UL
+#define CS 5UL
+#define AI 6UL
+#define MB 7UL
+#define MW 8UL
+#define MD 9UL
+#define AO 10UL
 #define CN 11UL
 #define AD 12UL
 

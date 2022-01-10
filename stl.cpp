@@ -52,12 +52,12 @@ uint8_t volatile *const *memMap[] = {
   memT,
   memM,
   memDO,
-  memAI,
-  memAO,
-  memM,
-  memM,
-  memM,
   memNull,
+  memAI,
+  memM,
+  memM,
+  memM,
+  memAO,
   memC,
   memNull
 };

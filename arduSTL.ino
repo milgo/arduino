@@ -23,13 +23,7 @@ void setup() {
   Serial.begin(9600);
   //EEPROM.write(0x3FF, 0xFF);
   setupGUI();
-
-
-  //DDRB = B11111111;//PORTD output
-  //PORTD = B00000000;
-  //PORTD = B11111111;//pullup
-  //PORTB = B00010010;//pullup
-
+  
   pinMode(0, INPUT);
   pinMode(1, INPUT);
   pinMode(2, INPUT);

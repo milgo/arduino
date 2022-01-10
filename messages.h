@@ -227,12 +227,12 @@ const char *const memDesc[] PROGMEM = {
     memDescTStr,
     memDescMStr,
     memDescDOStr,
+    memDescConstStr,
     memDescAIStr,
-    memDescAOStr,
     memDescMBStr,
     memDescMWStr,
     memDescMDStr,
-    memDescConstStr,
+    memDescAOStr,
     memDescCStr,
     memDescAddrStr
 };
@@ -315,12 +315,12 @@ const char *const memStr[] PROGMEM = {
   memTStr,
   memMStr,
   memDOStr,
+  memConstStr,
   memAIStr,
-  memAOStr,
   memMBStr,
   memMWStr,
   memMDStr,
-  memConstStr,
+  memAOStr,
   memCStr,
   memAddrStr
 };
@@ -337,16 +337,16 @@ const char memGroups[] PROGMEM = {0, 0,
                           3, 4, 
                           //3, 4, 
                           
-                          5, 11, 
-                          5, 10,
+                          5, 10, 
+                          7, 11,
                           //5, 8,
                           
-                          4, 5, 
-                          4, 5, 
-                          4, 5, 
-                          4, 5, 
-                          4, 5, 
-                          4, 5, 
+                          2, 3, 
+                          2, 3, 
+                          2, 3, 
+                          2, 3, 
+                          2, 3, 
+                          2, 3, 
                           
                           11, 12, 
                           11, 12, 
@@ -389,12 +389,12 @@ const int16_t memValidationRules[] PROGMEM = {0, 0, 0, 0, 0, //signed?, how many
                                   0, 1, 7, 0, 7, //T
                                   0, 2, 9, 0, 63,//M
                                   0, 2, 9, 0, 13,//DO
+                                  1, 5, 9, -32768, 32767,//CONST
                                   0, 1, 7, 0, 7,//AI
-                                  0, 2, 9, 0, 11,//AO
                                   0, 2, 9, 0, 63,//MB
                                   0, 2, 9, 0, 31,//MW
-                                  0, 1, 9, 0, 9,//MD                    
-                                  1, 5, 9, -32768, 32767,//CONST
+                                  0, 1, 9, 0, 9,//MD        
+                                  0, 2, 9, 0, 11,//AO            
                                   0, 1, 9, 0, 9,//C
                                   0, 2, 9, 0, MAX_PROGRAM_SIZE};//ADDR
                                

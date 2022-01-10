@@ -3,11 +3,6 @@
 
 #include <avr/pgmspace.h>
 
-#define _FROM_0_TO_7 0x1
-#define _POSITIVE_I 0x2
-#define _NEGATIVE_POSITIVE_I 0x3;
-#define _POSITIVE
-
 #define ENTER_VARIABLE_POS_MSG 0
 #define ENTER_VALUE_MSG 1
 #define LIMIT_MSG 2
@@ -21,7 +16,6 @@
 #define SAVE_CHANGES 10
 #define NO_CHANGES 11
 #define COLON 12
-#define PC_CONNECTION 13
 
 const char _0[] PROGMEM = "0"; 
 const char _1[] PROGMEM = "1"; 
@@ -49,7 +43,6 @@ const char readingEepromMsgStr[] PROGMEM = "Reading from eeprom...";
 const char saveChangesMsgStr[] PROGMEM = "Save changes? [ENTER]";
 const char noChangesMsgStr[] PROGMEM = "No changes!";
 const char colon[] PROGMEM = ": ";
-const char pcConnectionMsgStr[] PROGMEM = "Connected to PC...";
 
 const char *const message[] PROGMEM = {
   enterVariablePositionMsgStr, 
@@ -65,7 +58,6 @@ const char *const message[] PROGMEM = {
   saveChangesMsgStr,
   noChangesMsgStr,
   colon,
-  pcConnectionMsgStr
   };
 
 const char mainMenuRunStr[] PROGMEM = "Run";
@@ -230,10 +222,10 @@ const char memDescAddrStr[] PROGMEM = "Program line number";
 
 const char *const memDesc[] PROGMEM = {
     memDescNULLStr,
-    memDescDOStr,
     memDescDIStr,
-    memDescMStr,
     memDescTStr,
+    memDescMStr,
+    memDescDOStr,
     memDescAIStr,
     memDescAOStr,
     memDescMBStr,
@@ -296,39 +288,18 @@ const char *const comStr[] PROGMEM = {
   comCounterStr,
   comCounterRStr,
   comCounterLStr,
-  //comCounterLCStr,
   
   comAritAddIStr,
   comAritSubIStr,
   comAritMulIStr,
   comAritDivIStr,
-  
-  /*comAritAddDStr,
-  comAritSubDStr,
-  comAritMulDStr,
-  comAritDivDStr,
-  comAritAddRStr,
-  comAritSubRStr,
-  comAritMulRStr,
-  comAritDivRStr,*/
+
   comCompEqIStr,
   comCompDiffIStr,
   comCompGtIStr,
   comCompLtIStr,
   comCompGtEqIStr,
   comCompLtEqIStr,
-  /*comCompEqDStr,
-  comCompDiffDStr,
-  comCompGtDStr,
-  comCompLtDStr,
-  comCompGtEqDStr,
-  comCompLtEqDStr,
-  comCompEqRStr,
-  comCompDiffRStr,
-  comCompGtRStr,
-  comCompLtRStr,
-  comCompGtEqRStr,
-  comCompLtEqRStr,*/
   comJumpUncStr,
   comJumpCondStr,
   comJumpCondNotStr
@@ -339,10 +310,10 @@ const char *const comStr[] PROGMEM = {
 
 const char *const memStr[] PROGMEM = {
   memNULLStr,
-  memDOStr,
   memDIStr,
-  memMStr,
   memTStr,
+  memMStr,
+  memDOStr,
   memAIStr,
   memAOStr,
   memMBStr,
@@ -353,26 +324,16 @@ const char *const memStr[] PROGMEM = {
   memAddrStr
 };
 
-/*const char memGroups[] = {1, 5, 
-                          5, 9, 
-                          4, 5, 
-                          9, 10, 
-                          0, 0, 
-                          0, 0,
-                          10, 11,
-                          0, 0};*/
-
-
 const char memGroups[] PROGMEM = {0, 0, 
-                          1, 5, 
-                          1, 5, 
-                          1, 5, 
-                          1, 5, 
-                          1, 4, 
-                          1, 4, 
-                          1, 4, 
-                          1, 4, 
-                          1, 4, 
+                          1, 3, 
+                          1, 3, 
+                          1, 3, 
+                          1, 3, 
+                          3, 5, 
+                          3, 5, 
+                          3, 5, 
+                          3, 4, 
+                          3, 4, 
                           //3, 4, 
                           
                           5, 11, 
@@ -424,9 +385,9 @@ const char memGroups[] PROGMEM = {0, 0,
 
 const int16_t memValidationRules[] PROGMEM = {0, 0, 0, 0, 0, //signed?, how many digits?, max digit, min value, max value 
                                   0, 1, 0, 0, 0,
-                                  0, 1, 0, 0, 0,
-                                  0, 2, 9, 0, 63,
                                   0, 1, 7, 0, 7,
+                                  0, 2, 9, 0, 63,
+                                  0, 1, 0, 0, 0,
                                   0, 1, 7, 0, 7,
                                   0, 2, 9, 0, 11,
                                   0, 2, 9, 0, 63,
@@ -436,7 +397,7 @@ const int16_t memValidationRules[] PROGMEM = {0, 0, 0, 0, 0, //signed?, how many
                                   0, 1, 9, 0, 9,
                                   0, 2, 9, 0, 64};
 
-const char memPosAquireMsg[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
+const char memPosAquireMsg[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0}; //MAKE IT PROGMEM AND CHANGE NAME 
 
 
 

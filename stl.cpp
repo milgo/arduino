@@ -4,23 +4,18 @@
 #include "messages.h"
 #include "gui.h"
 
-
-/*
-Instruction:  00000000 00000000 00000000 00000000
-             |Function |Mem ptr |Res |Mem id |Bit|
-             |Function |Mem ptr | Value          |
-*/
-
 uint32_t program[MAX_PROGRAM_SIZE];
 int32_t accumulator[2];
 uint8_t nullByte;
-
+boolean programChanged = 1;
 void _nop(uint32_t param);
 
-void (*func_ptr[])(uint32_t) = {_nop, _and, _or, _nand, _nor, _assign, _s, _r, _fp, _fn, _l, _t, /**/_sp, _se, _sd, _ss, _sf, _rt, _cu, _cd, _cs, _cr, _cl, /*_clc,*/
- _addI, _subI, _mulI, _divI, /*_addD, _subD, _mulD, _divD, _addR, _subR, _mulR, _divR,*/
- _eqI, _diffI, _gtI, _ltI, _gteqI, _lteqI, /*_eqD, _diffD, _gtD, _ltD, _gteqD, _lteqD, _eqR, _diffR, _gtR, _ltR, _gteqR, _lteqR,*/
- _ju, _jc, _jcn};
+void (*func_ptr[])(uint32_t) = {_nop, _and, _or, _nand, _nor, _assign, _s, _r, _fp, _fn, 
+      _l, _t, 
+      _sp, _se, _sd, _ss, _sf, _rt, _cu, _cd, _cs, _cr, _cl, 
+       _addI, _subI, _mulI, _divI,
+       _eqI, _diffI, _gtI, _ltI, _gteqI, _lteqI,
+       _ju, _jc, _jcn};
  
 uint8_t volatile buttons;
 uint8_t volatile m[64];
@@ -30,8 +25,8 @@ uint8_t volatile ao[12];
 uint8_t volatile c;
 
 uint8_t volatile * const memNull[] = {&nullByte};
-uint8_t volatile * const memDO[] = {&PORTB};
 uint8_t volatile * const memDI[] = {&PIND};
+uint8_t volatile * const memDO[] = {&PORTB};
 uint8_t volatile * const memM[] = {&m[0], &m[1], &buttons, &m[3], &m[4], &m[5], &m[6], &m[7],
                                    &m[8], &m[9], &m[10], &m[11], &m[12], &m[13], &m[14], &m[15],
                                    &m[16], &m[17], &m[18], &m[19], &m[20], &m[21], &m[22], &m[23], 
@@ -53,10 +48,10 @@ const PROGMEM uint8_t fixedTimerTime[]  = {10, 20, 40, 50, 80, 100, 160, 200};
 
 uint8_t volatile *const *memMap[] = {
   memNull,
-  memDO,
   memDI,
-  memM,
   memT,
+  memM,
+  memDO,
   memAI,
   memAO,
   memM,
@@ -73,36 +68,45 @@ uint8_t volatile PC = 0, PS = 0;
 
 uint8_t mem_ptr, bit_pos, mask, mem_id, addr;
 
-void print_binary(int number, uint8_t len){
-  /*static int bits;
-  if(number){
-    bits++;
-    print_binary(number >> 1, len);
-    if(bits)for(uint8_t x = (len - bits);x;x--)Serial.write('0');
-    bits=0;
-    Serial.write((number & 1)?'1':'0');
-  }*/
+void writeProgramToEeprom(){
+  printA(message, PROGRAMMING_EEPROM);
+  displayDisplay();
+  int addr = 0;
+  for(uint8_t i=0; i<PS; i++){
+    EEPROM.write(addr, (program[i] >> 24) & 0xFF);
+    EEPROM.write(addr+1, (program[i] >> 16) & 0xFF);
+    EEPROM.write(addr+2, (program[i] >> 8) & 0xFF);
+    EEPROM.write(addr+3, program[i] & 0xFF);
+    addr+=4;
+  }
+  //Write PS and the end of eeprom
+  EEPROM.write(0x3FF, PS);
+  programChanged = 1;
+  delay(1000);
 }
 
-void mem_print(uint32_t param){
-  /*uint8_t func_id = param >> FUNC_BIT_POS;
-  mem_ptr = param >> 32;
-  mem_id = (param >> 4) & 0xFF;
-  bit_pos = param & 0x7;
-  int val = ((*memMap[mem_ptr][mem_id] & (1<<bit_pos))>0);
-  char buf[10];
-  printAtoBuf(comStr, func_id, buf); 
-  Serial.print(buf);
-  Serial.print(" ");
-  printAtoBuf(memStr, mem_ptr, buf); 
-  Serial.print(buf);
-  Serial.print(mem_id);
-  Serial.print(".");Serial.print(bit_pos);
-  Serial.print("=");Serial.print(val);
-  Serial.print(" RLO=");Serial.print(RLO, BIN);
-  double d = accumulator[0];
-  Serial.print(" ACC=");Serial.print((long int)(accumulator[0]>>32));Serial.print((long int)accumulator[0]);
-  Serial.print(" ACCD=");Serial.println(d);*/
+void readProgramFromEeprom(){
+  int addr = 0;
+  PS = EEPROM.read(0x3FF);
+  if(PS == 0xFF)
+    PS = 0;
+  //Serial.println(PS);
+  for(uint8_t i=0; i<PS; i++){
+    program[i] = ((uint32_t)EEPROM.read(addr) << 24UL) +
+                  ((uint32_t)EEPROM.read(addr+1) << 16UL)+
+                  ((uint32_t)EEPROM.read(addr+2) << 8UL) +
+                  ((uint32_t)EEPROM.read(addr+3));
+    addr+=4;
+  }
+  programChanged = 1;
+}
+
+void clearProgramLocal(){
+  for(uint8_t i=0; i<PS; i++){
+      program[i] = 0;
+  }
+  programChanged = 0;
+  PS = 0;
 }
 
 void extractParams(uint32_t param){
@@ -159,10 +163,7 @@ void timersRoutine(){//10ms
 
 void executeCommand(uint32_t instr){
   uint8_t func_id = instr >> FUNC_BIT_POS;
-  //uint32_t param = instr & FUNC_PARAM_MASK;
   (*func_ptr[func_id])(instr);
-  mem_print(instr);
-  //delay(200);
 }
 
 void executeCommandAt(int pl){

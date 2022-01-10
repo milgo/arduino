@@ -1,55 +1,12 @@
 
-#include <EEPROM.h>
+
 #include "messages.h"
 #include "stl.h"
 #include "gui.h"
 
-boolean programChanged = 1;
-
 #define SCREEN_SAVER_TIME 60
 #define EXIT_RUNNING_TIME 6
 #define EXIT_RUNNNING_BUTTONS(BUTTONS) IS_PRESSED(BUTTONS, BUTTON_LEFT) && IS_PRESSED(BUTTONS, BUTTON_RIGHT)
-
-void writeProgramToEeprom(){
-  printA(message, PROGRAMMING_EEPROM);
-  displayDisplay();
-  int addr = 0;
-  for(uint8_t i=0; i<PS; i++){
-    EEPROM.write(addr, (program[i] >> 24) & 0xFF);
-    EEPROM.write(addr+1, (program[i] >> 16) & 0xFF);
-    EEPROM.write(addr+2, (program[i] >> 8) & 0xFF);
-    EEPROM.write(addr+3, program[i] & 0xFF);
-    addr+=4;
-  }
-  //Write PS and the end of eeprom
-  EEPROM.write(0x3FF, PS);
-  programChanged = 1;
-  delay(1000);
-}
-
-void readProgramFromEeprom(){
-  int addr = 0;
-  PS = EEPROM.read(0x3FF);
-  if(PS == 0xFF)
-    PS = 0;
-  //Serial.println(PS);
-  for(uint8_t i=0; i<PS; i++){
-    program[i] = ((uint32_t)EEPROM.read(addr) << 24UL) +
-                  ((uint32_t)EEPROM.read(addr+1) << 16UL)+
-                  ((uint32_t)EEPROM.read(addr+2) << 8UL) +
-                  ((uint32_t)EEPROM.read(addr+3));
-    addr+=4;
-  }
-  programChanged = 1;
-}
-
-void clearProgramLocal(){
-  for(uint8_t i=0; i<PS; i++){
-      program[i] = 0;
-  }
-  programChanged = 0;
-  PS = 0;
-}
 
 int askToSaveChangesIfMade(){
   if(programChanged == 0){
@@ -88,6 +45,7 @@ void setup() {
   interrupts();
   //------------------
   readProgramFromEeprom();
+  programChanged = 1;
 
   //If enter pressed after reset then go to menu
   /*if(!IS_PRESSED(getButtonsNoneBlocking(), BUTTON_ENTER)){

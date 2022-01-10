@@ -1,6 +1,7 @@
 #ifndef _STL_H
 #define _STL_H
 
+#include <EEPROM.h>
 #include <stdint.h>
 #include <avr/io.h>
 
@@ -33,6 +34,7 @@ extern uint8_t volatile PC;
 extern uint8_t volatile PS;
 extern uint8_t volatile m[64];
 extern uint8_t volatile buttons;
+extern boolean programChanged;
 
 void _and(uint32_t param);
 void _or(uint32_t param);
@@ -46,7 +48,6 @@ void _fp(uint32_t param);
 void _fn(uint32_t param);
 void _l(uint32_t param);
 void _t(uint32_t param);
-//_sp, _se, _sd, _ss, _sf, _rt
 
 void _sp(uint32_t param);
 void _se(uint32_t param);
@@ -54,8 +55,6 @@ void _sd(uint32_t param);
 void _ss(uint32_t param);
 void _sf(uint32_t param);
 void _rt(uint32_t param);
-
-//_cu, _cd, _cs, _cr, _cl, _clc
 
 void _cu(uint32_t param);
 void _cd(uint32_t param);
@@ -69,16 +68,6 @@ void _subI(uint32_t param);
 void _mulI(uint32_t param);
 void _divI(uint32_t param);
 
-/*void _addD(uint32_t param);
-void _subD(uint32_t param);
-void _mulD(uint32_t param);
-void _divD(uint32_t param);
-
-void _addR(uint32_t param);
-void _subR(uint32_t param);
-void _mulR(uint32_t param);
-void _divR(uint32_t param);*/
-
 void _eqI(uint32_t param);
 void _diffI(uint32_t param);
 void _gtI(uint32_t param);
@@ -86,37 +75,9 @@ void _ltI(uint32_t param);
 void _gteqI(uint32_t param);
 void _lteqI(uint32_t param);
 
-/*void _eqD(uint32_t param);
-void _diffD(uint32_t param);
-void _gtD(uint32_t param);
-void _ltD(uint32_t param);
-void _gteqD(uint32_t param);
-void _lteqD(uint32_t param);
-
-void _eqR(uint32_t param);
-void _diffR(uint32_t param);
-void _gtR(uint32_t param);
-void _ltR(uint32_t param);
-void _gteqR(uint32_t param);
-void _lteqR(uint32_t param);*/
-
 void _ju(uint32_t param);
 void _jc(uint32_t param);
 void _jcn(uint32_t param);
-
-void _sda(uint32_t param);
-void _smo(uint32_t param);
-void _sye(uint32_t param);
-void _sho(uint32_t param);
-void _smi(uint32_t param);
-void _sse(uint32_t param);
-
-void _gda(uint32_t param);
-void _gmo(uint32_t param);
-void _gye(uint32_t param);
-void _gho(uint32_t param);
-void _gmi(uint32_t param);
-void _gse(uint32_t param);
 
 extern void setupMem();
 extern void afterFirstScan();
@@ -125,5 +86,7 @@ extern void executeCommand(uint32_t param);
 extern void timersRoutine();
 extern void readAnalog();
 extern void writeAnalog();
-
+extern void writeProgramToEeprom();
+extern void readProgramFromEeprom();
+extern void clearProgramLocal();
 #endif //_STL_H

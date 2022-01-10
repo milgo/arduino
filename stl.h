@@ -34,7 +34,7 @@ extern uint8_t volatile PC;
 extern uint8_t volatile PS;
 extern uint8_t volatile m[64];
 extern uint8_t volatile buttons;
-extern boolean programChanged;
+extern uint8_t programChanged;
 
 void _and(uint32_t param);
 void _or(uint32_t param);

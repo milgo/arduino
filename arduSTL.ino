@@ -25,11 +25,27 @@ void setup() {
   setupGUI();
 
 
-  DDRB = B11111111;//PORTD output
-  PORTD = B00000000;
-  PORTD = B11111111;//pullup
+  //DDRB = B11111111;//PORTD output
+  //PORTD = B00000000;
+  //PORTD = B11111111;//pullup
   //PORTB = B00010010;//pullup
-  
+
+  pinMode(0, INPUT);
+  pinMode(1, INPUT);
+  pinMode(2, INPUT);
+  pinMode(3, INPUT);
+  pinMode(4, INPUT);
+  pinMode(5, INPUT);
+  pinMode(6, INPUT);
+  pinMode(7, INPUT);
+
+  pinMode(8, OUTPUT);
+  pinMode(9, OUTPUT);
+  pinMode(10, OUTPUT);
+  pinMode(11, OUTPUT);
+  pinMode(12, OUTPUT);
+  pinMode(13, OUTPUT);
+
   //setup global timer
   //------------------
   noInterrupts();
@@ -114,8 +130,9 @@ void insertProgramLine(int number, bool edit){
           char dig = pgm_read_word(&memValidationRules[mem*5+2]);
           int16_t minimum = pgm_read_word(&memValidationRules[mem*5+3]);
           int16_t maximum = pgm_read_word(&memValidationRules[mem*5+4]);
-  
-          value = enterValue(memPosAquireMsg[mem], 0, sig, len, dig);
+
+          uint8_t enterMsg = pgm_read_word(&memValueAquireMsg[mem]);
+          value = enterValue(enterMsg, 0, sig, len, dig);
           
           if(value < minimum || value > maximum){
             printMessageAndWaitForButton(MUST_BE_IN_RANGE, minimum, maximum);
@@ -124,8 +141,9 @@ void insertProgramLine(int number, bool edit){
           
           if(mem != CS && mem != AD)//const
             var_pos = value;
-  
-          if(mem < 4){
+
+          uint8_t enterBit = pgm_read_word(&memBitAquireEnabled[mem]);
+          if(enterBit == 1){
             bit_pos = enterValue(ENTER_BIT_POS_MSG, 0, 0, 1, 7);
           }
   
@@ -229,7 +247,9 @@ void editProgram(){
             displayPrint((long int)value);
           else
             displayPrint((long)var_pos);
-          if(mem_pos<4){//if basic command
+            
+          uint8_t enterBit = pgm_read_word(&memBitAquireEnabled[mem_pos]);
+          if(enterBit == 1){
             displayPrint(".");
             displayPrint((long)bit_pos);
           }

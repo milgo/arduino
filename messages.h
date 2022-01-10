@@ -2,6 +2,7 @@
 #define _MESSAGES_H
 
 #include <avr/pgmspace.h>
+#include "stl.h"
 
 #define ENTER_VARIABLE_POS_MSG 0
 #define ENTER_VALUE_MSG 1
@@ -193,8 +194,8 @@ const char *const comDesc[] PROGMEM = {
   };
 
 const char memNULLStr[] PROGMEM = "~";
-const char memDOStr[] PROGMEM = "DO";
-const char memDIStr[] PROGMEM = "DI";
+const char memDOStr[] PROGMEM = "D";
+const char memDIStr[] PROGMEM = "D";
 const char memMStr[] PROGMEM = "M";
 const char memTStr[] PROGMEM = "T";
 const char memMBStr[] PROGMEM = "MB";
@@ -325,10 +326,10 @@ const char *const memStr[] PROGMEM = {
 };
 
 const char memGroups[] PROGMEM = {0, 0, 
-                          1, 3, 
-                          1, 3, 
-                          1, 3, 
-                          1, 3, 
+                          1, 4, 
+                          1, 4, 
+                          1, 4, 
+                          1, 4, 
                           3, 5, 
                           3, 5, 
                           3, 5, 
@@ -384,20 +385,21 @@ const char memGroups[] PROGMEM = {0, 0,
                           0, 0};                          
 
 const int16_t memValidationRules[] PROGMEM = {0, 0, 0, 0, 0, //signed?, how many digits?, max digit, min value, max value 
-                                  0, 1, 0, 0, 0,
-                                  0, 1, 7, 0, 7,
-                                  0, 2, 9, 0, 63,
-                                  0, 1, 0, 0, 0,
-                                  0, 1, 7, 0, 7,
-                                  0, 2, 9, 0, 11,
-                                  0, 2, 9, 0, 63,
-                                  0, 2, 9, 0, 31,
-                                  0, 1, 9, 0, 9,                         
-                                  1, 5, 9, -32768, 32767,
-                                  0, 1, 9, 0, 9,
-                                  0, 2, 9, 0, 64};
-
-const char memPosAquireMsg[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0}; //MAKE IT PROGMEM AND CHANGE NAME 
+                                  0, 1, 7, 0, 7, //DI
+                                  0, 1, 7, 0, 7, //T
+                                  0, 2, 9, 0, 63,//M
+                                  0, 2, 9, 0, 13,//DO
+                                  0, 1, 7, 0, 7,//AI
+                                  0, 2, 9, 0, 11,//AO
+                                  0, 2, 9, 0, 63,//MB
+                                  0, 2, 9, 0, 31,//MW
+                                  0, 1, 9, 0, 9,//MD                    
+                                  1, 5, 9, -32768, 32767,//CONST
+                                  0, 1, 9, 0, 9,//C
+                                  0, 2, 9, 0, MAX_PROGRAM_SIZE};//ADDR
+                               
+const char memBitAquireEnabled[] PROGMEM = {0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0}; 
+const char memValueAquireMsg[] PROGMEM = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0}; 
 
 
 

@@ -7,7 +7,7 @@
 uint32_t program[MAX_PROGRAM_SIZE];
 int32_t accumulator[2];
 uint8_t nullByte;
-boolean programChanged = 1;
+uint8_t programChanged = 1;
 void _nop(uint32_t param);
 
 void (*func_ptr[])(uint32_t) = {_nop, _and, _or, _nand, _nor, _assign, _s, _r, _fp, _fn, 
@@ -25,8 +25,8 @@ uint8_t volatile ao[12];
 uint8_t volatile c;
 
 uint8_t volatile * const memNull[] = {&nullByte};
-uint8_t volatile * const memDI[] = {&PIND};
-uint8_t volatile * const memDO[] = {&PORTB};
+uint8_t volatile * const memDI[] = {&nullByte};
+uint8_t volatile * const memDO[] = {&nullByte};
 uint8_t volatile * const memM[] = {&m[0], &m[1], &buttons, &m[3], &m[4], &m[5], &m[6], &m[7],
                                    &m[8], &m[9], &m[10], &m[11], &m[12], &m[13], &m[14], &m[15],
                                    &m[16], &m[17], &m[18], &m[19], &m[20], &m[21], &m[22], &m[23], 
@@ -186,67 +186,90 @@ void writeAnalog(){
   }
 }
 
+volatile uint8_t *getMemPtr(uint8_t ptr, uint8_t id){
+  return memMap[mem_ptr][mem_id];
+}
+
+uint8_t getMemBit(uint8_t ptr, uint8_t id, uint8_t b){
+  if(ptr == 1){
+    return digitalRead(id);
+  }
+  return (*getMemPtr(ptr, id)>>bit_pos) & 0x1;
+}
+
+void setMemBit(uint8_t ptr, uint8_t id, uint8_t b, uint8_t v){
+  if(ptr == 4){
+    digitalWrite(id,v);
+  }else{
+    mask = 1 << bit_pos;
+    *memMap[mem_ptr][mem_id] = ((*memMap[mem_ptr][mem_id] & ~mask) | v << bit_pos);
+  }
+}
+
+void resetMemBit(uint8_t ptr, uint8_t id, uint8_t b){
+  mask = 1 << bit_pos;
+  *memMap[mem_ptr][mem_id] = (*memMap[mem_ptr][mem_id] & ~mask);
+}
+
 void _nop(uint32_t param){}
 
 void _and(uint32_t param){
   extractParams(param);
-  if(cancel_RLO) RLO = (*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1;
-  else RLO &= (*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1;
+  if(cancel_RLO) RLO = getMemBit(mem_ptr,mem_id,bit_pos);
+  else RLO &= getMemBit(mem_ptr,mem_id,bit_pos);
   cancel_RLO = false;
 }
 
 void _nand(uint32_t param){
   extractParams(param);
-  if(cancel_RLO) RLO = ~(*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1;
-  else RLO &= ~(*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1;
+  if(cancel_RLO) RLO = ~getMemBit(mem_ptr,mem_id,bit_pos);
+  else RLO &= ~getMemBit(mem_ptr,mem_id,bit_pos);
   cancel_RLO = false;
 }
 
 void _or(uint32_t param){
   extractParams(param);
-  if(cancel_RLO) RLO = (*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1;
-  else RLO |= (*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1; 
+  if(cancel_RLO) RLO = getMemBit(mem_ptr,mem_id,bit_pos);
+  else RLO |= getMemBit(mem_ptr,mem_id,bit_pos); 
   cancel_RLO = false;
 }
 
 void _nor(uint32_t param){
   extractParams(param);
-  if(cancel_RLO) RLO = ~(*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1;
-  else RLO |= ~(*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1; 
+  if(cancel_RLO) RLO = ~getMemBit(mem_ptr,mem_id,bit_pos);
+  else RLO |= ~getMemBit(mem_ptr,mem_id,bit_pos); 
   cancel_RLO = false;
 }
 
 void _assign(uint32_t param){
   extractParams(param);
-  mask = 1 << bit_pos;
-  *memMap[mem_ptr][mem_id] = ((*memMap[mem_ptr][mem_id] & ~mask) | RLO << bit_pos);
+  setMemBit(mem_ptr,mem_id,bit_pos,RLO);
   cancel_RLO = true;
 }
 
 void _s(uint32_t param){
   extractParams(param);
-  mask = 1 << bit_pos;
   if(RLO==0x1)
-    *memMap[mem_ptr][mem_id] = ((*memMap[mem_ptr][mem_id] & ~mask) | RLO << bit_pos);
+    setMemBit(mem_ptr,mem_id,bit_pos,0x1);
   cancel_RLO = true;
 }
 
 void _r(uint32_t param){
   extractParams(param);
-  mask = 1 << bit_pos;
   if(RLO==0x1)
-    *memMap[mem_ptr][mem_id] = ((*memMap[mem_ptr][mem_id] & ~mask));
+    resetMemBit(mem_ptr,mem_id,bit_pos);
   cancel_RLO = true;
 }
 
 void _fp(uint32_t param){
   extractParams(param);
-  mask = 1 << bit_pos;
-  uint8_t m = (*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1;
-  if(RLO == 0)*memMap[mem_ptr][mem_id] = ((*memMap[mem_ptr][mem_id] & ~mask));
+  //mask = 1 << bit_pos;
+  uint8_t m = getMemBit(mem_ptr,mem_id,bit_pos);
+  if(RLO == 0)resetMemBit(mem_ptr,mem_id,bit_pos);//*memMap[mem_ptr][mem_id] = ((*memMap[mem_ptr][mem_id] & ~mask));
   if(RLO == 0x1 && m == 0x0){
     RLO = 0x1;
-    *memMap[mem_ptr][mem_id] = ((*memMap[mem_ptr][mem_id] & ~mask) | 1 << bit_pos);
+    //*memMap[mem_ptr][mem_id] = ((*memMap[mem_ptr][mem_id] & ~mask) | 1 << bit_pos);
+    setMemBit(mem_ptr,mem_id,bit_pos,0x1);
   }else{RLO = 0x0;}
   cancel_RLO = false;
 }
@@ -254,11 +277,12 @@ void _fp(uint32_t param){
 void _fn(uint32_t param){
   extractParams(param);
   mask = 1 << bit_pos;
-  uint8_t m = (*memMap[mem_ptr][mem_id]>>bit_pos) & 0x1;
-  if(RLO == 1)*memMap[mem_ptr][mem_id] = ((*memMap[mem_ptr][mem_id] & ~mask) | 1 << bit_pos);
+  uint8_t m = getMemBit(mem_ptr,mem_id,bit_pos);
+  if(RLO == 1)setMemBit(mem_ptr,mem_id,bit_pos,0x1);//*memMap[mem_ptr][mem_id] = ((*memMap[mem_ptr][mem_id] & ~mask) | 1 << bit_pos);
   if(RLO == 0x0 && m == 0x1){
     RLO = 0x1;
-    *memMap[mem_ptr][mem_id] = ((*memMap[mem_ptr][mem_id] & ~mask));
+    //*memMap[mem_ptr][mem_id] = ((*memMap[mem_ptr][mem_id] & ~mask));
+    resetMemBit(mem_ptr,mem_id,bit_pos);
   }else{RLO = 0x0;}  
   cancel_RLO = false;
 }
@@ -296,6 +320,8 @@ void _t(uint32_t param){
 
   accumulator[0] = 0;
 }
+
+//change getting mem_ptr to using function
 
 void _sp(uint32_t param){
   extractParams(param);

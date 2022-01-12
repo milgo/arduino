@@ -30,6 +30,8 @@
 #define reset_b(m, p, b) *memMap[m][p] &= ~_BV(b);
 
 extern uint32_t program[MAX_PROGRAM_SIZE];
+extern uint8_t volatile RLO;
+extern uint8_t volatile cancel_RLO;
 extern uint8_t volatile PC;
 extern uint8_t volatile PS;
 extern uint8_t volatile m[64];

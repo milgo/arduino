@@ -116,16 +116,6 @@ void extractParams(uint32_t param){
 }
 
 void setupMem(){
-  //set_b(M, 0, 0);
-  //set_b(M, 1, 0);
-  m[1] |=  1 << 0; //FirstScan
-  m[1] |=  0 << 1; //DiagStatusUpdate
-  m[1] |=  1 << 2; //AlwaysTrue
-  m[1] |=  0 << 3; //AlwaysFalse
-
-  m[1] |=  0 << 4; //Display 1 value dw29
-  m[1] |=  0 << 5; //Display 2 value dw30
-  m[1] |=  0 << 6; //Display 3 value dw31
 
   PORTB = 0;
   int i;
@@ -137,6 +127,18 @@ void setupMem(){
   for(i=0; i<8; i++)timer[i] = 0;
   for(i=0; i<8; i++)counter[i] = 0;
   c = 0;
+
+  //set_b(M, 0, 0);
+  //set_b(M, 1, 0);
+  m[1] |=  1 << 0; //FirstScan
+  m[1] |=  0 << 1; //DiagStatusUpdate
+  m[1] |=  1 << 2; //AlwaysTrue
+  m[1] |=  0 << 3; //AlwaysFalse
+
+  m[1] |=  0 << 4; //Display 1 value dw29
+  m[1] |=  0 << 5; //Display 2 value dw30
+  m[1] |=  0 << 6; //Display 3 value dw31
+
 
   for(int i=0; i<12; i++){
     analogWrite(i, 0);
@@ -187,28 +189,36 @@ void writeAnalog(){
 }
 
 volatile uint8_t *getMemPtr(uint8_t ptr, uint8_t id){
-  return memMap[mem_ptr][mem_id];
+  return memMap[ptr][id];
+}
+
+void setMem(uint8_t ptr, uint8_t id, uint8_t val){
+  *memMap[ptr][id] = val;
 }
 
 uint8_t getMemBit(uint8_t ptr, uint8_t id, uint8_t b){
   if(ptr == 1){
     return digitalRead(id);
   }
-  return (*getMemPtr(ptr, id)>>bit_pos) & 0x1;
+  return (*getMemPtr(ptr, id)>>b) & 0x1;
 }
 
 void setMemBit(uint8_t ptr, uint8_t id, uint8_t b, uint8_t v){
   if(ptr == 4){
     digitalWrite(id,v);
   }else{
-    mask = 1 << bit_pos;
-    *memMap[mem_ptr][mem_id] = ((*memMap[mem_ptr][mem_id] & ~mask) | v << bit_pos);
+    mask = 1 << b;
+    *memMap[ptr][id] = ((*memMap[ptr][id] & ~mask) | v << b);
   }
 }
 
 void resetMemBit(uint8_t ptr, uint8_t id, uint8_t b){
-  mask = 1 << bit_pos;
-  *memMap[mem_ptr][mem_id] = (*memMap[mem_ptr][mem_id] & ~mask);
+  mask = 1 << b;
+  if(ptr == 4){
+    digitalWrite(id,0);
+  }else{
+    *memMap[ptr][id] = (*memMap[ptr][id] & ~mask);
+  }
 }
 
 void _nop(uint32_t param){}
@@ -222,8 +232,8 @@ void _and(uint32_t param){
 
 void _nand(uint32_t param){
   extractParams(param);
-  if(cancel_RLO) RLO = ~getMemBit(mem_ptr,mem_id,bit_pos);
-  else RLO &= ~getMemBit(mem_ptr,mem_id,bit_pos);
+  if(cancel_RLO) RLO = getMemBit(mem_ptr,mem_id,bit_pos);
+  else RLO &= (~getMemBit(mem_ptr,mem_id,bit_pos)&0x1);
   cancel_RLO = false;
 }
 
@@ -236,8 +246,8 @@ void _or(uint32_t param){
 
 void _nor(uint32_t param){
   extractParams(param);
-  if(cancel_RLO) RLO = ~getMemBit(mem_ptr,mem_id,bit_pos);
-  else RLO |= ~getMemBit(mem_ptr,mem_id,bit_pos); 
+  if(cancel_RLO) RLO = getMemBit(mem_ptr,mem_id,bit_pos);
+  else RLO |= (~getMemBit(mem_ptr,mem_id,bit_pos)&0x1);
   cancel_RLO = false;
 }
 
@@ -299,7 +309,7 @@ void _l(uint32_t param){
   }
   else{
     for(uint8_t i=0; i<bytes; i++){
-      uint32_t t = *memMap[mem_ptr][mem_id*bytes+i];
+      uint32_t t = *getMemPtr(mem_ptr,mem_id*bytes+i);//*memMap[mem_ptr][mem_id*bytes+i];
       temp += t<<(i*8); 
    }
   }
@@ -315,7 +325,7 @@ void _t(uint32_t param){
   uint8_t bytes = 1 << type; //byte, word, dword
 
   for(uint8_t i=0; i<bytes; i++){
-    *memMap[mem_ptr][mem_id*bytes+i] = accumulator[0]>>(i*8)&0xFF; 
+    setMem(mem_ptr, mem_id*bytes+i, accumulator[0]>>(i*8)&0xFF); 
   }
 
   accumulator[0] = 0;
@@ -484,27 +494,11 @@ void _cl(uint32_t param){
   cancel_RLO = true;
 }
 
-/*void _clc(uint32_t param){
-  
-}*/
-
 int32_t accI0 = 0, accI1 = 0;
 void _addI(uint32_t param){accI0 = (int32_t)(accumulator[1])+(int32_t)(accumulator[0]); accumulator[0] = accI0;}
 void _subI(uint32_t param){accI0 = (int32_t)(accumulator[1])-(int32_t)(accumulator[0]); accumulator[0] = accI0;}
 void _mulI(uint32_t param){accI0 = (int32_t)(accumulator[1])*(int32_t)(accumulator[0]); accumulator[0] = accI0;}
 void _divI(uint32_t param){accI0 = (int32_t)(accumulator[1])/(int32_t)(accumulator[0]); accumulator[0] = accI0;}
-
-/*int64_t accD0 = 0, accD1 = 0;
-void _addD(uint32_t param){accD0 = (int64_t)(accumulator[1])+(int64_t)(accumulator[0]); accumulator[0] = accD0;}
-void _subD(uint32_t param){accD0 = (int64_t)(accumulator[1])-(int64_t)(accumulator[0]); accumulator[0] = accD0;}
-void _mulD(uint32_t param){accD0 = (int64_t)(accumulator[1])*(int64_t)(accumulator[0]); accumulator[0] = accD0;}
-void _divD(uint32_t param){accD0 = (int64_t)(accumulator[1])/(int64_t)(accumulator[0]); accumulator[0] = accD0;}
-
-double accR0 = 0.0, accR1 = 0.0;
-void _addR(uint32_t param){accR0 = (double)(accumulator[1])+(double)(accumulator[0]); accumulator[0] = accR0;}
-void _subR(uint32_t param){accR0 = (double)(accumulator[1])-(double)(accumulator[0]); accumulator[0] = accR0;}
-void _mulR(uint32_t param){accR0 = (double)(accumulator[1])*(double)(accumulator[0]); accumulator[0] = accR0;}
-void _divR(uint32_t param){accR0 = (double)(accumulator[1])/(double)(accumulator[0]); accumulator[0] = accR0;}*/
 
 void loadIFromAcc(){
   accI0 = (uint32_t)accumulator[0]; accI1 = (uint32_t)accumulator[1];
@@ -516,28 +510,6 @@ void _gtI(uint32_t param){loadIFromAcc(); RLO=(accI1>accI0); cancel_RLO=false;}
 void _ltI(uint32_t param){loadIFromAcc(); RLO=(accI1<accI0); cancel_RLO=false;}
 void _gteqI(uint32_t param){loadIFromAcc(); RLO=(accI1>=accI0); cancel_RLO=false;}
 void _lteqI(uint32_t param){loadIFromAcc(); RLO=(accI1<=accI0); cancel_RLO=false;}
-
-/*void loadDFromAcc(){
-  accD0 = (uint32_t)accumulator[0]; accD1 = (uint32_t)accumulator[1];
-}
-
-void _eqD(uint32_t param){loadDFromAcc(); RLO=(accD1==accD0); cancel_RLO=false;}
-void _diffD(uint32_t param){loadDFromAcc(); RLO=(accD1!=accD0); cancel_RLO=false;}
-void _gtD(uint32_t param){loadDFromAcc(); RLO=(accD1>accD0); cancel_RLO=false;}
-void _ltD(uint32_t param){loadDFromAcc(); RLO=(accD1<accD0); cancel_RLO=false;}
-void _gteqD(uint32_t param){loadDFromAcc(); RLO=(accD1>=accD0); cancel_RLO=false;}
-void _lteqD(uint32_t param){loadDFromAcc(); RLO=(accD1<=accD0); cancel_RLO=false;}
-
-void loadRFromAcc(){
-  accR0 = (double)accumulator[0]; accR1 = (double)accumulator[1];
-}
-
-void _eqR(uint32_t param){loadRFromAcc(); RLO=(accR1==accR0); cancel_RLO=false;}
-void _diffR(uint32_t param){loadRFromAcc(); RLO=(accR1!=accR0); cancel_RLO=false;}
-void _gtR(uint32_t param){loadRFromAcc(); RLO=(accR1>accR0); cancel_RLO=false;}
-void _ltR(uint32_t param){loadRFromAcc(); RLO=(accR1<accR0); cancel_RLO=false;}
-void _gteqR(uint32_t param){loadRFromAcc(); RLO=(accR1>=accR0); cancel_RLO=false;}
-void _lteqR(uint32_t param){loadRFromAcc(); RLO=(accR1<=accR0); cancel_RLO=false;}*/
 
 void _ju(uint32_t param){
   addr = param & 0xFF;

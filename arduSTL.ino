@@ -1,5 +1,3 @@
-
-
 #include "messages.h"
 #include "stl.h"
 #include "gui.h"
@@ -330,6 +328,8 @@ void runProgram(){
       if(PC>=PS){
         afterFirstScan();
         PC=0;
+        RLO=0;
+        cancel_RLO=true;
       }
     }
   }else{

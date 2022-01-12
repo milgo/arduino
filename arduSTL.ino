@@ -8,13 +8,16 @@
 
 int askToSaveChangesIfMade(){
   if(programChanged == 0){
-    if(IS_PRESSED(printMessageAndWaitForButton(SAVE_CHANGES), BUTTON_ENTER)){
-      writeProgramToEeprom();
+    int8_t button = printMessageAndWaitForButton(SAVE_CHANGES);
+    if(IS_PRESSED(button, BUTTON_ENTER)){
       return 0;
     }
-    else return 1;
+    else if(IS_PRESSED(button, BUTTON_LEFT)){
+      return 1;
+    }
+    else return -1;
   }
-  return 0;
+  return -1;
 }
 
 void setup() {
@@ -332,6 +335,9 @@ void runProgram(){
         cancel_RLO=true;
       }
     }
+
+    readProgramFromEeprom();
+    
   }else{
     displayClear();
     displaySetCursor(0, 0);
@@ -348,7 +354,16 @@ void loop() {
   //while(conf){
       switch(newMenuPosition){
         case -1: break;
-        case 0: if(askToSaveChangesIfMade()==0){runProgram();} break;
+        case 0:{ 
+          int8_t res = askToSaveChangesIfMade();
+          switch(res){
+            case -1:runProgram();break;
+            case 0:writeProgramToEeprom();runProgram();break;
+            case 1:break; 
+            default:break;
+          }
+          break;
+        }
         case 1: editProgram(); break;
         case 2: if(programChanged==0)writeProgramToEeprom();else printMessageAndWaitForButton(NO_CHANGES);break;
         case 3: clearProgramLocal(); break;

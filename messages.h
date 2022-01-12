@@ -49,7 +49,7 @@ const char noProgramMsgStr[] PROGMEM = "No program";
 const char mustBeInRange[] PROGMEM = "Must be in range: ";
 const char programmingEepromMsgStr[] PROGMEM = "Programming eeprom...";
 const char readingEepromMsgStr[] PROGMEM = "Reading from eeprom...";
-const char saveChangesMsgStr[] PROGMEM = "Save changes? [ENTER]";
+const char saveChangesMsgStr[] PROGMEM = "Save changes? [ENTER]\nDiscard? [RIGHT]\nCancel? [LEFT]";
 const char noChangesMsgStr[] PROGMEM = "No changes!";
 const char colon[] PROGMEM = ": ";
 

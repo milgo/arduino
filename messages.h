@@ -25,6 +25,7 @@
 #define ENTER_TIMER_NR_MSG 18
 #define ENTER_COUNTER_NR_MSG 19
 #define ENTER_PROGRAM_LINE_NR_MSG 20
+#define CLEAR_LOCAL_PROGRAM_MSG 21
 
 const char _0[] PROGMEM = "0"; 
 const char _1[] PROGMEM = "1"; 
@@ -48,6 +49,7 @@ const char runningMsgStr[] PROGMEM = "Running";
 const char noProgramMsgStr[] PROGMEM = "No program";
 const char mustBeInRange[] PROGMEM = "Must be in range: ";
 const char programmingEepromMsgStr[] PROGMEM = "Programming eeprom...";
+const char clearMsgStr[] PROGMEM = "Erasing local program...";
 const char readingEepromMsgStr[] PROGMEM = "Reading from eeprom...";
 const char saveChangesMsgStr[] PROGMEM = "Save changes? [ENTER]\nDiscard? [RIGHT]\nCancel? [LEFT]";
 const char noChangesMsgStr[] PROGMEM = "No changes!";
@@ -83,7 +85,8 @@ const char *const message[] PROGMEM = {
   enterDWordNrMsgStr,
   enterTimerNrMsgStr,
   enterCounterNrMsgStr,
-  enterProgramLineMsgStr
+  enterProgramLineMsgStr,
+  clearMsgStr
   };
 
 const char mainMenuRunStr[] PROGMEM = "Run";

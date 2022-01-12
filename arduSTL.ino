@@ -366,7 +366,7 @@ void loop() {
         }
         case 1: editProgram(); break;
         case 2: if(programChanged==0)writeProgramToEeprom();else printMessageAndWaitForButton(NO_CHANGES);break;
-        case 3: clearProgramLocal(); break;
+        case 3: printA(message, CLEAR_LOCAL_PROGRAM_MSG); displayDisplay(); clearProgramLocal(); delay(1000); break;
         default: runProgram(); break;
       }
       newMenuPosition = showMenu(mainMenu, NULL, 0, MAIN_MENU_SIZE);

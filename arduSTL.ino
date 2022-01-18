@@ -312,8 +312,9 @@ void runProgram(){
           runningIndCounterPrev = runningIndCounter;
         }
       }
-      else{
+      else if (screenSaverCounter==60){
         displayDisplay();
+        screenSaverCounter=61;
       }
 
       uint8_t newButtons = ~getButtonsNoneBlocking();
@@ -327,12 +328,11 @@ void runProgram(){
       
       //delay(100);
       
-      executeCommandAt(PC++);
+      executeCommandAt(PC);
+      PC++;
       if(PC>=PS){
-        afterFirstScan();
+        onLoopEnd();
         PC=0;
-        RLO=0;
-        cancel_RLO=true;
       }
     }
 

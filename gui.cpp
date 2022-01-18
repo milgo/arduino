@@ -52,11 +52,7 @@ uint8_t getButtonsBlocking(){
 }
 
 uint8_t getButtonsNoneBlocking(){
-  uint8_t res = 0;
-  for(int i=0; i<8; i++){
-    res |= pcf20.readButton(i)<<i;
-  }
-  return res;
+  return pcf20.read8();
 }
 
 

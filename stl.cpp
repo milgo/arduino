@@ -40,6 +40,7 @@ uint8_t volatile * const memT[] = {&t[0], &t[1], &t[2], &t[3], &t[4], &t[5], &t[
 uint8_t volatile * const memAI[] = {&ai[0], &ai[1], &ai[2], &ai[3], &ai[4], &ai[5], &ai[6], &ai[7]};
 uint8_t volatile * const memAO[] = {&ao[0], &ao[1], &ao[2], &ao[3], &ao[4], &ao[5], &ao[6], &ao[7], &ao[8], &ao[9], &ao[10], &ao[11]};
 
+uint8_t volatile activeAImask;
 uint8_t volatile fixedTimer[8];
 uint32_t volatile timer[8];
 int32_t volatile counter[8];
@@ -64,9 +65,10 @@ uint8_t volatile *const *memMap[] = {
 
 uint8_t volatile RLO = 1;
 uint8_t volatile cancel_RLO = true;
-uint8_t volatile PC = 0, PS = 0;
+int8_t volatile PC = 0, PS = 0;
 
-uint8_t mem_ptr, bit_pos, mask, mem_id, addr;
+uint8_t mem_ptr, bit_pos, mask, mem_id;
+int8_t addr;
 
 void writeProgramToEeprom(){
   printA(message, PROGRAMMING_EEPROM);
@@ -117,7 +119,7 @@ void extractParams(uint32_t param){
 
 void setupMem(){
 
-  PORTB = 0;
+  //PORTB = 0;
   int i;
   for(i=0; i<64; i++)m[i] = 0;
   for(i=0; i<8; i++)t[i] = 0;
@@ -139,14 +141,20 @@ void setupMem(){
   m[1] |=  0 << 5; //Display 2 value dw30
   m[1] |=  0 << 6; //Display 3 value dw31
 
-
   for(int i=0; i<12; i++){
+    if(i==9 || i==10)continue;//problematic outputs
     analogWrite(i, 0);
   }
+
+  activeAImask = 0x00;
 }
 
-void afterFirstScan(){
+void onLoopEnd(){
   m[1] &= ~(1<<0);
+  accumulator[1] = 0;
+  accumulator[0] = 0;
+  RLO=0;
+  cancel_RLO=true;
 }
 
 void timersRoutine(){//10ms
@@ -172,19 +180,34 @@ void executeCommandAt(int pl){
   executeCommand(program[pl]);
 }
 
+int32_t popFromACC(){
+  int32_t res = accumulator[0];
+  accumulator[0]=accumulator[1];
+  accumulator[1]=0;
+  //Serial.print("after pop: ");Serial.print(accumulator[0]);Serial.print(",");Serial.println(accumulator[1]);
+  return res;
+}
+
 void pushToAcc(uint32_t param){
   accumulator[1] = accumulator[0];
-  accumulator[0] = param;
+  accumulator[0] = (int32_t)param;
+  //Serial.print("after push: ");Serial.print(accumulator[0]);Serial.print(",");Serial.println(accumulator[1]);
 }
 
 void readAnalog(){
-  for(int i=0; i<8; i++)
-    ai[i] = analogRead(i) >> 2; //10-bit to 8-bit
+  for(int i=0; i<8; i++){
+    //Serial.print("activeAImask: ");Serial.print(activeAImask);Serial.print(", ");Serial.print(" 1<<i: ");Serial.println( 1<<i);
+    if((activeAImask & 1<<i) == 1<<i){
+      ai[i] = analogRead(i) >> 2; //10-bit to 8-bit
+      //Serial.print("reading ai: ");Serial.print(i);
+    }
+  }
 }
 
 void writeAnalog(){
   for(int i=0; i<12; i++){
-     if(ao[i]>0)analogWrite(i, ao[i]); //10-bit to 8-bit
+     //Serial.print("analogWrite");Serial.println(i);
+     if(ao[i]>0)analogWrite(i, ao[i]);
   }
 }
 
@@ -232,7 +255,7 @@ void _and(uint32_t param){
 
 void _nand(uint32_t param){
   extractParams(param);
-  if(cancel_RLO) RLO = getMemBit(mem_ptr,mem_id,bit_pos);
+  if(cancel_RLO) RLO = ~getMemBit(mem_ptr,mem_id,bit_pos)&0x1;
   else RLO &= (~getMemBit(mem_ptr,mem_id,bit_pos)&0x1);
   cancel_RLO = false;
 }
@@ -246,7 +269,7 @@ void _or(uint32_t param){
 
 void _nor(uint32_t param){
   extractParams(param);
-  if(cancel_RLO) RLO = getMemBit(mem_ptr,mem_id,bit_pos);
+  if(cancel_RLO) RLO = ~getMemBit(mem_ptr,mem_id,bit_pos)&0x1;
   else RLO |= (~getMemBit(mem_ptr,mem_id,bit_pos)&0x1);
   cancel_RLO = false;
 }
@@ -304,12 +327,17 @@ void _l(uint32_t param){
   uint8_t type = mem_ptr-7;//0,1,2,3,4
   uint8_t bytes = 1 << type; //byte, word, dword
 
- if(mem_ptr == CS){ //const
+  if(mem_ptr == CS){ //const //dodaj AI
     temp = param & 0xFFFF;
+  }
+  else if(mem_ptr == AI){ //const //dodaj AI
+    activeAImask = 1 << mem_id;
+    temp = *getMemPtr(mem_ptr,mem_id);
+    //Serial.print("activeAImask: ");Serial.println(activeAImask);
   }
   else{
     for(uint8_t i=0; i<bytes; i++){
-      uint32_t t = *getMemPtr(mem_ptr,mem_id*bytes+i);//*memMap[mem_ptr][mem_id*bytes+i];
+      uint32_t t = *getMemPtr(mem_ptr,mem_id*bytes+i);
       temp += t<<(i*8); 
    }
   }
@@ -320,15 +348,20 @@ void _l(uint32_t param){
 void _t(uint32_t param){
   extractParams(param);
   
-  uint32_t temp = 0;
-  uint8_t type = mem_ptr-7;//0,1,2,3,4
-  uint8_t bytes = 1 << type; //byte, word, dword
+  int32_t temp = popFromACC();
 
-  for(uint8_t i=0; i<bytes; i++){
-    setMem(mem_ptr, mem_id*bytes+i, accumulator[0]>>(i*8)&0xFF); 
+  //dodaj AO
+  if(mem_ptr == AO){ //const //dodaj AI
+    setMem(mem_ptr, mem_id, temp&0xFF);
   }
-
-  accumulator[0] = 0;
+  else
+  {
+    uint8_t type = mem_ptr-7;//0,1,2,3,4
+    uint8_t bytes = 1 << type; //byte, word, dword
+    for(uint8_t i=0; i<bytes; i++){
+      setMem(mem_ptr, mem_id*bytes+i, temp>>(i*8)&0xFF); 
+    }
+  }
 }
 
 //change getting mem_ptr to using function
@@ -488,10 +521,8 @@ void _cr(uint32_t param){
 
 void _cl(uint32_t param){
   mem_id = (param >> 4) & 0xFF;
-  if(RLO == 1){
-    accumulator[0] = counter[mem_id];
-  }
-  cancel_RLO = true;
+  pushToAcc(counter[mem_id]);
+  //cancel_RLO = true;
 }
 
 int32_t accI0 = 0, accI1 = 0;
@@ -501,7 +532,8 @@ void _mulI(uint32_t param){accI0 = (int32_t)(accumulator[1])*(int32_t)(accumulat
 void _divI(uint32_t param){accI0 = (int32_t)(accumulator[1])/(int32_t)(accumulator[0]); accumulator[0] = accI0;}
 
 void loadIFromAcc(){
-  accI0 = (uint32_t)accumulator[0]; accI1 = (uint32_t)accumulator[1];
+  accI0 = (int32_t)accumulator[0]; 
+  accI1 = (int32_t)accumulator[1];
 }
  
 void _eqI(uint32_t param){loadIFromAcc(); RLO=(accI1==accI0); cancel_RLO=false;}
@@ -513,17 +545,17 @@ void _lteqI(uint32_t param){loadIFromAcc(); RLO=(accI1<=accI0); cancel_RLO=false
 
 void _ju(uint32_t param){
   addr = param & 0xFF;
-  PC = addr;
+  PC = addr - 2;
 }
 
 void _jc(uint32_t param){
   addr = param & 0xFF;
-  if(RLO == 1)PC = addr;
+  if(RLO == 1)PC = addr - 2;
   cancel_RLO = true;
 }
 
 void _jcn(uint32_t param){
   addr = param & 0xFF;
-  if(RLO == 0)PC = addr;
+  if(RLO == 0)PC = addr - 2;
   cancel_RLO = true;
 }

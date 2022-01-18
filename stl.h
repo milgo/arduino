@@ -30,10 +30,8 @@
 #define reset_b(m, p, b) *memMap[m][p] &= ~_BV(b);
 
 extern uint32_t program[MAX_PROGRAM_SIZE];
-extern uint8_t volatile RLO;
-extern uint8_t volatile cancel_RLO;
-extern uint8_t volatile PC;
-extern uint8_t volatile PS;
+extern int8_t volatile PC;
+extern int8_t volatile PS;
 extern uint8_t volatile m[64];
 extern uint8_t volatile buttons;
 extern uint8_t programChanged;
@@ -82,7 +80,7 @@ void _jc(uint32_t param);
 void _jcn(uint32_t param);
 
 extern void setupMem();
-extern void afterFirstScan();
+extern void onLoopEnd();
 extern void executeCommandAt(int pl);
 extern void executeCommand(uint32_t param);
 extern void timersRoutine();

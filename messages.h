@@ -94,7 +94,7 @@ const char mainMenuEditStr[] PROGMEM = "Edit";
 const char mainMenuProgramStr[] PROGMEM = "Program";
 const char mainMenuClearStr[] PROGMEM = "Clear";
 
-const char comMenuBasicStr[] PROGMEM = "Basic";
+const char comMenuBasicStr[] PROGMEM = "Logic";
 const char comMenuMoveStr[] PROGMEM = "Move";
 const char comMenuAritmeticStr[] PROGMEM = "Aritmetic";
 const char comMenuCompareStr[] PROGMEM = "Compare";
@@ -136,7 +136,7 @@ const char comTimerSFStr[] PROGMEM = "SF ";
 const char comTimerRStr[] PROGMEM = "R  ";
 const char comCounterCUStr[] PROGMEM = "CU ";
 const char comCounterCDStr[] PROGMEM = "CD ";
-const char comCounterStr[] PROGMEM = "S  ";
+const char comCounterSStr[] PROGMEM = "S  ";
 const char comCounterRStr[] PROGMEM = "R  ";
 const char comCounterLStr[] PROGMEM = "L  ";
 const char comCounterLCStr[] PROGMEM = "LC ";
@@ -314,7 +314,7 @@ const char *const comStr[] PROGMEM = {
   
   comCounterCUStr,
   comCounterCDStr,
-  comCounterStr,
+  comCounterSStr,
   comCounterRStr,
   comCounterLStr,
   
@@ -424,7 +424,7 @@ const int16_t memValidationRules[] PROGMEM = {0, 0, 0, 0, 0, //signed?, how many
                                   0, 1, 9, 0, 9,//MD        
                                   0, 2, 9, 0, 11,//AO            
                                   0, 1, 9, 0, 7,//C
-                                  0, 2, 9, 0, MAX_PROGRAM_SIZE};//ADDR
+                                  0, 2, 9, 1, MAX_PROGRAM_SIZE};//ADDR
                                
 const char memBitAquireEnabled[] PROGMEM = {0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0}; 
 const char memValueAquireMsg[] PROGMEM = {0, 

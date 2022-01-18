@@ -14,7 +14,7 @@
 #define MUST_BE_IN_RANGE 7
 #define PROGRAMMING_EEPROM 8
 #define READING_EEPROM 9
-#define SAVE_CHANGES 10
+#define RESERVED_0 10
 #define NO_CHANGES 11
 #define COLON 12
 #define ENTER_INPUT_NR_MSG 13
@@ -51,7 +51,7 @@ const char mustBeInRange[] PROGMEM = "Must be in range: ";
 const char programmingEepromMsgStr[] PROGMEM = "Programming eeprom...";
 const char clearMsgStr[] PROGMEM = "Erasing local program...";
 const char readingEepromMsgStr[] PROGMEM = "Reading from eeprom...";
-const char saveChangesMsgStr[] PROGMEM = "Save changes? [ENTER]\nDiscard? [RIGHT]\nCancel? [LEFT]";
+const char reserved0MsgStr[] PROGMEM = "";
 const char noChangesMsgStr[] PROGMEM = "No changes!";
 const char colon[] PROGMEM = ": ";
 
@@ -75,7 +75,7 @@ const char *const message[] PROGMEM = {
   mustBeInRange,
   programmingEepromMsgStr,
   readingEepromMsgStr,
-  saveChangesMsgStr,
+  reserved0MsgStr,
   noChangesMsgStr,
   colon,
   enterInputNrMsgStr,
@@ -88,6 +88,10 @@ const char *const message[] PROGMEM = {
   enterProgramLineMsgStr,
   clearMsgStr
   };
+
+const char runMenuSaveAndRunStr[] PROGMEM = "Save&Run";
+const char runMenuDiscardStr[] PROGMEM = "Discard";
+const char runMenuCanceStr[] PROGMEM = "Cancel";
 
 const char mainMenuRunStr[] PROGMEM = "Run";
 const char mainMenuEditStr[] PROGMEM = "Edit";
@@ -264,6 +268,12 @@ const char *const memDesc[] PROGMEM = {
     memDescCStr,
     memDescAddrStr
 };
+
+const char *const runMenu[] PROGMEM = {
+  runMenuSaveAndRunStr, 
+  runMenuDiscardStr, 
+  runMenuCanceStr
+  };
 
 const char *const mainMenu[] PROGMEM = {
   mainMenuRunStr, 

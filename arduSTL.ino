@@ -6,20 +6,6 @@
 #define EXIT_RUNNING_TIME 6
 #define EXIT_RUNNNING_BUTTONS(BUTTONS) IS_PRESSED(BUTTONS, BUTTON_LEFT) && IS_PRESSED(BUTTONS, BUTTON_RIGHT)
 
-int askToSaveChangesIfMade(){
-  if(programChanged == 0){
-    int8_t button = printMessageAndWaitForButton(SAVE_CHANGES);
-    if(IS_PRESSED(button, BUTTON_ENTER)){
-      return 0;
-    }
-    else if(IS_PRESSED(button, BUTTON_LEFT)){
-      return 1;
-    }
-    else return -1;
-  }
-  return -1;
-}
-
 void setup() {
   Serial.begin(9600);
   //EEPROM.write(0x3FF, 0xFF);
@@ -355,11 +341,11 @@ void loop() {
       switch(newMenuPosition){
         case -1: break;
         case 0:{ 
-          int8_t res = askToSaveChangesIfMade();
+          int8_t res = showMenu(runMenu, NULL, 0, 3);
           switch(res){
-            case -1:runProgram();break;
             case 0:writeProgramToEeprom();runProgram();break;
-            case 1:break; 
+            case 1:runProgram();break;
+            case 2:break; 
             default:break;
           }
           break;

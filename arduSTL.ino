@@ -8,7 +8,6 @@
 
 void setup() {
   Serial.begin(9600);
-  //EEPROM.write(0x3FF, 0xFF);
   setupGUI();
   
   pinMode(0, INPUT);
@@ -27,27 +26,19 @@ void setup() {
   pinMode(12, OUTPUT);
   pinMode(13, OUTPUT);
 
-  //setup global timer
-  //------------------
   noInterrupts();
   TCCR1A = 0;
   TCCR1B = 0;
   TCNT1=0;
 
   OCR1A=20000;
-  //OCR1A=2500;
   
   TCCR1B|=(1<<CS11)|(1<<WGM12);
   TIMSK1|=(1<<OCIE1A);
   interrupts();
-  //------------------
+  
   readProgramFromEeprom();
   programChanged = 1;
-
-  //If enter pressed after reset then go to menu
-  /*if(!IS_PRESSED(getButtonsNoneBlocking(), BUTTON_ENTER)){
-    if(!IS_PRESSED(getButtonsBlocking(), BUTTON_ENTER))
-      delay(100);*/
 }
 
 const char _0dot[] PROGMEM = {""};
@@ -84,7 +75,6 @@ ISR(TIMER1_COMPA_vect){
 
 
 void insertProgramLine(int number, bool edit){
-  //Serial.print("removing ");Serial.print(number); Serial.print("line");
   int32_t command = 0, mem = -1;
   uint8_t var_pos = 0, bit_pos = 0;
   int8_t comGroup = showMenu(commandGroupMenu, NULL, 0, COMM_MENU_SIZE);
@@ -97,10 +87,6 @@ void insertProgramLine(int number, bool edit){
     memPtrTo = pgm_read_byte(&(memGroups[command*2+1]));
     
     if(command>=0 && memPtrFrom>=0){
-
-      /*if(command == 11){// if transfer or persist command
-        memPtrTo -= 1; //exclude constant from load operator
-      }*/
 
       if(memPtrFrom>0){ //if operation with mem selection
         mem = showMenu(memStr, memDesc, memPtrFrom, memPtrTo);
@@ -146,15 +132,12 @@ void insertProgramLine(int number, bool edit){
             if(PS<MAX_PROGRAM_SIZE)PS++;
           }
 
-          if(mem == CS || mem == AD){ //constant
-            //Serial.print((long)command);Serial.print(" ");Serial.print((long)mem);Serial.print(" ");Serial.print((long)value);Serial.print(" ");
+          if(mem == CS || mem == AD){ //constant or address
             program[number] = s_stll_v(command, mem, value);
             programChanged = 0;
           }
           else{
-            //Serial.print((long)command);Serial.print(" ");Serial.print((long)mem);Serial.print(" ");Serial.print((long)var_pos);Serial.print(" ");Serial.print((long)bit_pos);Serial.print(" ");
             program[number] = s_stll_m(command, mem, var_pos, bit_pos);
-            //Serial.println(mem);
             programChanged = 0;
           }
         }
@@ -164,7 +147,6 @@ void insertProgramLine(int number, bool edit){
 }
 
 void removeProgramLine(int number){
-  //Serial.print("removing ");Serial.print(number); Serial.print("line");
   for(int i=number;i<PS;i++){
     program[i] = program[i+1];
   }
@@ -201,8 +183,6 @@ void editProgram(){
     if(pos<pl && pl>0)pl--;
     else if(pos>pl+3 && pl<PS-3)pl++;
 
-    //Serial.print(pos); Serial.print(", "); Serial.println(pl);
-    
     for(int i=pl; i<pl+4 && i<=PS; i++){
       displaySetCursor(0, (i-pl)*8);
       uint8_t func_id = program[i] >> FUNC_BIT_POS;
@@ -218,7 +198,6 @@ void editProgram(){
 
       if(i<PS){
         displayPrint(i+1);displayPrint(": ");
-        //printCommand(func_id);
         printA(comStr, func_id);
         displayPrint(" ");
         if(mem_pos>0){
@@ -252,8 +231,6 @@ void editProgram(){
     displayDisplay();
     newButtons = getButtonsBlocking();
     delay(100);
-    //pl++;
-    //if(pl>5)pl=0;
   }
 }
 
@@ -270,7 +247,6 @@ void runProgram(){
   
   //run
   if(program[0]!=0x0){
-    //----
     
     while(exitRunningCounter>0){
 
@@ -310,9 +286,6 @@ void runProgram(){
         
       if(buttons != newButtons)
         screenSaverCounter=0;
-        
-      
-      //delay(100);
       
       executeCommandAt(PC);
       PC++;
@@ -337,10 +310,9 @@ int newMenuPosition = -2;
 
 void loop() {
   
-  //while(conf){
-      switch(newMenuPosition){
-        case -1: break;
-        case 0:{ 
+  switch(newMenuPosition){
+    case -1: break;
+    case 0:{ 
           int8_t res = showMenu(runMenu, NULL, 0, 3);
           switch(res){
             case 0:writeProgramToEeprom();runProgram();break;
@@ -349,15 +321,13 @@ void loop() {
             default:break;
           }
           break;
-        }
-        case 1: editProgram(); break;
-        case 2: if(programChanged==0)writeProgramToEeprom();else printMessageAndWaitForButton(NO_CHANGES);break;
-        case 3: printA(message, CLEAR_LOCAL_PROGRAM_MSG); displayDisplay(); clearProgramLocal(); delay(1000); break;
-        default: runProgram(); break;
-      }
-      newMenuPosition = showMenu(mainMenu, NULL, 0, MAIN_MENU_SIZE);
-  //}
-
-  //}
+          } 
+    case 1: editProgram(); break;
+    case 2: if(programChanged==0)writeProgramToEeprom();else printMessageAndWaitForButton(NO_CHANGES);break;
+    case 3: printA(message, CLEAR_LOCAL_PROGRAM_MSG); displayDisplay(); clearProgramLocal(); delay(1000); break;
+    default: runProgram(); break;
+  }
   
+  newMenuPosition = showMenu(mainMenu, NULL, 0, MAIN_MENU_SIZE);
+     
 }

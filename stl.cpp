@@ -119,7 +119,6 @@ void extractParams(uint32_t param){
 
 void setupMem(){
 
-  //PORTB = 0;
   int i;
   for(i=0; i<64; i++)m[i] = 0;
   for(i=0; i<8; i++)t[i] = 0;
@@ -130,8 +129,6 @@ void setupMem(){
   for(i=0; i<8; i++)counter[i] = 0;
   c = 0;
 
-  //set_b(M, 0, 0);
-  //set_b(M, 1, 0);
   m[1] |=  1 << 0; //FirstScan
   m[1] |=  0 << 1; //DiagStatusUpdate
   m[1] |=  1 << 2; //AlwaysTrue

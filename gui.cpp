@@ -25,12 +25,9 @@ void setupGUI(){
 
   display.setTextWrap(false);
 
-  // Show initial display buffer contents on the screen --
-  // the library initializes this with an Adafruit splash screen.
   displayDisplay();
-  delay(2000); // Pause for 2 seconds
+  delay(2000);
 
-  // Clear the buffer
   displayClear();
   displayDisplay();
 }
@@ -63,15 +60,12 @@ void enterCurrentOption(int newMenuPosition){
 }
 
 void exitCurrentMenu(int currentMenuPos){
-  
   menuPosition = (currentMenuPos) / 4 - 1;// / 4 - modulo;
   int modulo = menuPosition % 4;
   menuPosition -= modulo;
   if(menuPosition<0)menuPosition=0;
   if(modulo<0)modulo=0;
   selectedPosition = menuPosition + modulo;
-  //menuPosition = menuPosition * 4;
-  //Serial.println(modulo);
 }
 
 int showMenu(const char * const *menu, const char *const *descMenu, int from, int to){
@@ -177,7 +171,6 @@ int32_t enterValue(int msg, long int curVal, bool isSigned, int len, int maxDigi
         if(v[0]==0)display.print("+");
         else display.print("-");
       }else{
-        //display.print(v[i]);//tablica znakow cyfr
         strcpy_P(bufferStr, (char*)pgm_read_word(&(numbers[v[i]])));
         display.print(bufferStr);
       }
@@ -199,9 +192,6 @@ int32_t enterValue(int msg, long int curVal, bool isSigned, int len, int maxDigi
 
   //set sign
   if(v[0]>0)retVal*=-1;
-
-  //Serial.print("retVal=");
-  //Serial.println(retVal);
 
   return retVal;
 }
